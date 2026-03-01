@@ -30,7 +30,7 @@
 {{ $flat := $store.Get "flat" }}
 {{ range $index, $entry := $flat }}
     {{ if $page.IsMenuCurrent $entry.Menu $entry }}
-    <nav class="mt-4 pt-2 text-sm border-t border-gray-200 dark:border-gray-700">
+    <nav class="mt-4 py-2 text-sm border-t border-gray-200 dark:border-gray-700">
         <div class="flex justify-between">
         {{ if gt $index 0 }}
             {{ with index $flat (sub $index 1) }}

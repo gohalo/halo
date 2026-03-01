@@ -377,6 +377,6 @@ func hello() {
 {{< /tab >}}
 {{< /tabs >}}
 
-## Others
+# Others
 
 示例代码仓库 [test/file.txt]({{< param "example" >}}/test/file.txt) 。

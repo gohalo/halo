@@ -1,0 +1,5 @@
+{{- partial "component/notice.html" (dict
+    "type" (.Attributes.type | default "note")
+    "title" (.Attributes.title | default "")
+    "content" (.Inner | .Page.RenderString)
+) -}}

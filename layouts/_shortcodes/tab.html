@@ -1,0 +1,6 @@
+{{- $label := cond .IsNamedParams (.Get "label") (.Get 0) | default (printf "Tab %v" .Ordinal) -}}
+{{- $selected := cond .IsNamedParams (.Get "selected") (.Get 1) -}}
+{{- $selected = or (eq $selected "true") (eq $selected "selected") -}}
+{{- $id := printf "tab-%s-%02v" .Parent.Params.id .Ordinal -}}
+{{- $tab := dict "label" $label "selected" $selected "ordinal" .Ordinal "content" (.Inner | markdownify) -}}
+{{- .Parent.Scratch.SetInMap "tabs" $id $tab -}}

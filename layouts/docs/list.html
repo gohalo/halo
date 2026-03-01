@@ -1,0 +1,9 @@
+{{ define "main" }}
+    {{ if (and (eq .Section "docs") (not .Parent.Parent)) }}
+        <!-- Docs 根页面 - 不显示侧边栏，只显示文档列表 -->
+        {{ partial "list.html" . }}
+    {{ else }}
+        <!-- 非根页面 - 显示带侧边栏的布局 -->
+        {{ partial "docs/layout.html" . }}
+    {{ end }}
+{{ end }}

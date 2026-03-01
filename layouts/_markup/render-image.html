@@ -1,0 +1,41 @@
+<!-- ![this is text](your/uri) "here is title" -->
+{{ if .Title }}
+<figure>
+    {{ partial "simple-image" . }}
+    {{- with .Title }}<figcaption class="text-center text-xs text-gray-600 dark:text-gray-400 my-2">{{ . }}</figcaption>{{ end -}}
+</figure>
+{{ else }}
+    {{ partial "simple-image" . }}
+{{ end }}
+
+{{ define "partials/simple-image" }}
+{{- $floatClass := "mx-auto block" -}}
+<img
+    {{ with .PlainText }}
+        alt="{{ . }}"
+    {{ end}}
+    {{ if .Title }}
+        title="{{ .Title }}"
+    {{ else if .PlainText }}
+        title="{{ .PlainText }}"
+    {{ end}}
+    {{ with (urls.Parse (replace .Destination "%" "%25")) }}
+        src="{{ .Path | safeURL }}"
+        {{ with .Query }}
+            {{ with .width }} width={{ index . 0 }} {{ end }}
+            {{ with .height }} height={{ index . 0 }} {{ end }}
+            {{ with .float }}
+                {{- $value := index . 0 -}}
+                {{- if eq $value "left" -}}
+                    {{- $floatClass = "float-left mr-4 mb-2" -}}
+                {{- else if eq $value "right" -}}
+                    {{- $floatClass = "float-right ml-4 mb-2" -}}
+                {{- else if eq $value "none" -}}
+                    {{- $floatClass = "block" -}}
+                {{- end -}}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    class="{{ $floatClass }} max-w-full h-auto py-2"
+/>
+{{ end }}

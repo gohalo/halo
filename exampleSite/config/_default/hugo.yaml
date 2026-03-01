@@ -1,0 +1,202 @@
+title: 'New Hugo Site'
+# languageCode: 'en-US'
+theme: 'halo'
+
+# Multilingual
+defaultContentLanguage: 'cn'
+# true: 多语言都添加 cn en 路径；false: 默认语言会复制到默认路径
+defaultContentLanguageInSubdir: true
+
+# disableKinds = ['taxonomy', 'term']
+taxonomies:
+  tag: 'tags'
+
+minify:
+  tdewolff:
+    html:
+      keepWhitespace: false
+
+build:
+  buildStats:
+    enable: true
+  cachebusters:
+  - source: 'assets/notwatching/hugo_stats\.json'
+    target: css
+  - source: '(postcss|tailwind)\.config\.js'
+    target: css
+
+module:
+  hugoVersion:
+    min: '0.146.0'
+    extended: true
+  # imports:
+  #   path: github.com/gohalo/halo
+  mounts:
+  - source: static
+    target: static
+  - source: assets
+    target: assets
+  - disableWatch: true
+    source: hugo_stats.json
+    target: assets/notwatching/hugo_stats.json
+  - source: themes/halo/node_modules/katex/dist
+    target: static/katex
+  - source: themes/halo/node_modules/mermaid/dist
+    target: static/mermaid
+  - source: themes/halo/node_modules/reveal.js
+    target: static/reveal
+
+  # [[module.mounts]]
+  #   source = "node_modules/flexsearch"
+  #   target = "assets/js/vendor/flexsearch"
+  #
+
+# [menus]
+#   [[menus.main]]
+#     name = 'Home'
+#     pageRef = '/'
+#     weight = 10
+#
+#   [[menus.main]]
+#     name = 'Posts'
+#     pageRef = '/posts'
+#     weight = 20
+#
+#   [[menus.main]]
+#     name = 'Tags'
+#     pageRef = '/tags'
+#     weight = 30
+#
+
+
+
+# theme = "halo"
+# baseurl = "https://gohalo.github.io/"
+#
+# enableRobotsTXT = true
+#
+# [permalinks]
+#   blog = "/blog/:filename/"
+#
+# [outputFormats.Reveal]
+#   baseName = "index"
+#   mediaType = "text/html"
+#   isHTML = true
+#
+# [minify.tdewolff.html]
+#   keepWhitespace = false
+#
+# [module]
+#   [module.hugoVersion]
+#     extended = true
+#     min = "0.80.0"
+#   [[module.mounts]]
+#     source = "assets"
+#     target = "assets"
+#   [[module.mounts]]
+#     source = "static"
+#     target = "static"
+#   [[module.mounts]]
+#     source = "layouts"
+#     target = "layouts"
+#   [[module.mounts]]
+#     source = "node_modules/bootstrap/dist"
+#     target = "static/bootstrap"
+#   [[module.mounts]]
+#     source = "node_modules/font-awesome"
+#     target = "static/font-awesome"
+#   [[module.mounts]]
+#     source = "node_modules/reveal.js"
+#     target = "static/reveal"
+#   [[module.mounts]]
+#     source = "node_modules/katex/dist"
+#     target = "static/katex"
+#
+#   [[module.mounts]]
+#     source = "node_modules/flexsearch"
+#     target = "assets/js/vendor/flexsearch"
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+
+    #
+# #canonifyURLs = false
+# #disableAliases = true
+# #disableHugoGeneratorInject = true
+# #enableEmoji = true
+# #enableGitInfo = false
+# #paginate = 7
+# #rssLimit = 10
+# #
+# #
+# #
+# ## add redirects/headers
+# #[outputs]
+# #home = ["HTML", "RSS", "REDIRECTS", "HEADERS", "REVEAL"]
+# #section = ["HTML", "RSS", "SITEMAP"]
+# #
+# ## remove .{ext} from text/netlify
+# #[mediaTypes."text/netlify"]
+# #suffixes = [""]
+# #delimiter = ""
+# #
+# ## add output format for netlify _redirects
+# #[outputFormats.REDIRECTS]
+# #mediaType = "text/netlify"
+# #baseName = "_redirects"
+# #isPlainText = true
+# #notAlternative = true
+# #
+# ## add output format for netlify _headers
+# #[outputFormats.HEADERS]
+# #mediaType = "text/netlify"
+# #baseName = "_headers"
+# #isPlainText = true
+# #notAlternative = true
+# #
+# ## add output format for section sitemap.xml
+# #[outputFormats.SITEMAP]
+# #mediaType = "application/xml"
+# #baseName = "sitemap"
+# #isHTML = false
+# #isPlainText = true
+# #noUgly = true
+# #rel  = "sitemap"
+# #
+# #[caches]
+# #  [caches.getjson]
+# #    dir = ":cacheDir/:project"
+# #    maxAge = "10s"
+# #
+# #[sitemap]
+# #  changefreq = "weekly"
+# #  filename = "sitemap.xml"
+# #  priority = 0.5
+# #
+# #
+# #[related]
+# #  threshold = 80
+# #  includeNewer = true
+# #  toLower = false
+# #    [[related.indices]]
+# #    name = "categories"
+# #    weight = 100
+# #    [[related.indices]]
+# #    name = "tags"
+# #    weight = 80
+# #    [[related.indices]]
+# #    name = "date"
+# #    weight = 10
+# #

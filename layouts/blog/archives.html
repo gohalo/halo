@@ -1,0 +1,22 @@
+{{ define "main" }}
+<div class="max-w-5xl mx-auto content">
+    {{ $blogs := where .Site.Pages "Section" "blog" }}
+    {{ range $blogs.GroupByDate "2006" "desc" }}
+        {{ if (eq .Key "0001") }}
+            {{ continue }}
+        {{ end }}
+        <h1>{{ .Key }}</h1>
+        <ul>
+        {{ range .Pages.ByDate.Reverse }}
+            {{ if (ne .Kind "page") }}
+                {{ continue }}
+            {{ end }}
+            <li>
+                <span class="inline-block min-w-[6rem]">{{ .Date.Format "2006-01-02" }}</span>
+                <a href="{{ .RelPermalink }}">{{ .Title }} {{ if .Draft }} Draft{{ end }}</a>
+            </li>
+        {{ end }}
+        </ul>
+    {{ end }}
+</div>
+{{ end }}

@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@source "hugo_stats.json";
+@import "basic.css";
+@import "nav.css";
+@import "syntax-dark.css";
+@import "syntax-light.css";
+@import "code.css";

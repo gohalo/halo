@@ -1,0 +1,26 @@
+menu:
+  logo: "/images/logo.svg"
+  title: "Halo"
+  search:
+    enable: true
+    display: "md"
+  theme:
+    default: "auto" # light dark auto
+    display: "always"
+  language:
+    enable: true
+    display: "md"
+  github:
+    url: "https://github.com/username/repo"
+    display: "lg"
+  about:
+    path: "/about/"
+    display: "lg"
+  forum:
+    url: "https://github.com/gohalo/gohalo/discussions"
+    display: "always"
+
+layout: # support 'full' 'wide' 'standard'
+  width: "full"
+
+example: http://github.com/example

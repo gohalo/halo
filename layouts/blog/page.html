@@ -1,0 +1,64 @@
+{{ define "main" }}
+<div class="flex gap-3">
+    <!-- 主内容区 -->
+    <article class="flex-1 min-w-0 py-8">
+        <header class="mb-8 text-center">
+            <div class="text-4xl font-bold mb-4">{{ .Title }}</div>
+            <div class="flex items-center justify-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                <div class="flex items-center gap-1.5">
+                    {{ partial "icon/clock.html" }}
+                    <time datetime="{{ .Date | time.Format "2006-01-02T15:04:05-07:00" }}">{{ .Date | time.Format (i18n "date_format") }}</time>
+                </div>
+                {{ with .Params.tags }}
+                <div class="flex items-center gap-1.5">
+                    {{ partial "icon/tag.html" }}
+                    <div class="flex flex-wrap gap-1.5">
+                        {{ range . }}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-sky-100 dark:bg-sky-900">{{ . }}</span>
+                        {{ end }}
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+        </header>
+
+        <div class="content">{{ .Content }}</div>
+
+    <!-- 上一篇/下一篇导航 -->
+    <nav class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <div class="flex justify-between">
+        {{ with .PrevInSection }}
+          <a href="{{ .RelPermalink }}" class="flex items-center text-blue-600 dark:text-blue-400 hover:underline">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <div>
+              <div class="text-xs text-gray-600 dark:text-gray-400">{{ i18n "blog_previous" }}</div>
+              <div>{{ .LinkTitle }}</div>
+            </div>
+          </a>
+        {{ else }}
+          <div></div>
+        {{ end }}
+
+        {{ with .NextInSection }}
+          <a href="{{ .RelPermalink }}" class="flex items-center text-blue-600 dark:text-blue-400 hover:underline text-right">
+            <div>
+              <div class="text-xs text-gray-600 dark:text-gray-400">{{ i18n "blog_next" }}</div>
+              <div>{{ .LinkTitle }}</div>
+            </div>
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        {{ end }}
+      </div>
+    </nav>
+    </article>
+
+    <!-- 右侧目录侧边栏 -->
+    <aside class="hidden xl:block w-64 flex-shrink-0 sticky top-16 pt-2 self-start max-h-[calc(100vh-4rem)] overflow-y-auto">
+        {{ partial "toc.html" . }}
+    </aside>
+</div>
+{{ end }}

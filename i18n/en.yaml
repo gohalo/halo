@@ -1,0 +1,105 @@
+# Navigation
+- id: nav_about
+  translation: "About"
+
+- id: nav_search
+  translation: "Search"
+
+- id: nav_language
+  translation: "Language"
+
+- id: nav_github
+  translation: "GitHub"
+
+- id: nav_theme_toggle
+  translation: "Toggle Theme"
+
+# Tooltip hints
+- id: tooltip_search
+  translation: "Search content"
+
+- id: tooltip_theme_light
+  translation: "Switch to dark mode"
+
+- id: tooltip_theme_dark
+  translation: "Switch to light mode"
+
+- id: tooltip_language
+  translation: "Switch language"
+
+- id: tooltip_github
+  translation: "Visit GitHub repository"
+
+- id: tooltip_about
+  translation: "About us"
+
+# Search related
+- id: search_placeholder
+  translation: "Search..."
+
+- id: search_prompt
+  translation: "Enter keywords to start searching..."
+
+- id: search_searching
+  translation: "Searching..."
+
+- id: search_results_for
+  translation: "Search results:"
+
+- id: search_no_results
+  translation: "No results found"
+
+- id: search_dev_notice
+  translation: "Search functionality is under development..."
+
+# Common
+- id: close
+  translation: "Close"
+
+- id: home
+  translation: "Home"
+
+- id: back
+  translation: "Back"
+
+- id: help
+  translation: "Help"
+
+# Footer
+- id: copyright
+  translation: "Copyright"
+
+- id: all_rights_reserved
+  translation: "All Rights Reserved"
+
+# Date format
+- id: date_format
+  translation: "January 2, 2006"
+
+# Blog page
+- id: blog_previous
+  translation: "Previous"
+
+- id: blog_next
+  translation: "Next"
+
+# TOC
+- id: toc_title
+  translation: "On This Page"
+
+- id: get_started
+  translation: "Get Started"
+
+# Resume
+- id: resume_experience
+  translation: "Experience"
+- id: resume_education
+  translation: "Education"
+- id: resume_skill
+  translation: "Skill"
+- id: resume_intention
+  translation: "Intention"
+- id: resume_others
+  translation: "Others"
+- id: present
+  translation: "Present"

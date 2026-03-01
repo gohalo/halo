@@ -1,0 +1,47 @@
+name: "张三"
+tagline: "高级软件工程师"
+location: "北京市海淀区"
+email: "zhangsan@example.com"
+phone: "+86 138 0000 0000"
+website: "https://zhangsan.com"
+github: "github.com/zhangsan"
+linkedin: "linkedin.com/in/zhangsan"
+photo: "/images/hello-world.jpg"
+
+work_experience:
+  - company: "某知名互联网公司"
+    role: "高级后端开发工程师"
+    start_date: "2020-01"
+    end_date: "至今"
+    description:
+      - "负责核心业务系统的架构设计与开发，支撑日均千万级请求。"
+      - "优化数据库查询性能，将核心接口响应时间降低 50%。"
+      - "带领 5 人团队完成微服务拆分，提升系统可扩展性。"
+  - company: "某初创科技公司"
+    role: "全栈开发工程师"
+    start_date: "2018-06"
+    end_date: "2019-12"
+    description:
+      - "独立负责公司官网及后台管理系统的开发与维护。"
+      - "使用 Vue.js 和 Node.js 构建高性能的前后端应用。"
+
+education:
+  - institution: "北京大学"
+    degree: "计算机科学与技术学士"
+    start_date: "2014-09"
+    end_date: "2018-06"
+
+skills:
+  - "Go / Java / Python"
+  - "MySQL / Redis / MongoDB"
+  - "Docker / Kubernetes"
+  - "Vue.js / React"
+
+job_intention:
+  - "资深后端开发"
+  - "架构师"
+
+others:
+  - "英语：CET-6"
+  - "获得 2019 年度优秀员工奖"
+  - "开源项目贡献者"

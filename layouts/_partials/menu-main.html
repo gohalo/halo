@@ -1,0 +1,50 @@
+{{- $page := .page }}
+{{- range .menu }}
+    {{- $active := false }}
+    {{- if $page.IsMenuCurrent "main" . }}
+        {{- $active = true }}
+    {{- else if and ($page.HasMenuCurrent "main" .) (not $page.Layout) }}
+        {{- $active = true }} {{/* Layout for blog tags and archives pages */}}
+    {{- end }}
+
+    {{- $enabled := .Params.enabled | default true }}
+    {{ if (and (isset .Params "section") (ne .Params.section  $page.Section)) }}
+        {{ continue }}
+    {{ end }}
+
+    {{- if .Children }}
+        <!-- 带下拉菜单的项目 -->
+        <div class="relative group">
+        {{- if $enabled }}
+            <button class="nav-item flex items-center {{ if $active }}nav-item-active{{ end }}">
+                {{ .Name }}
+                {{ partial "icon/arrow-down.html" }}
+            </button>
+            <div class="nav-dropdown-menu">
+            {{- range .Children }}
+                {{ if (and (isset .Params "section") (ne .Params.section  $page.Section)) }}
+                    {{ continue }}
+                {{ end }}
+                {{- if (and (isset .Params "enabled") (not .Params.enabled )) }}
+                    <span class="nav-dropdown-item-disabled">{{ .Name }}</span>
+                {{ else }}
+                    <a href="{{ .URL }}" class="nav-dropdown-item">{{ .Name }}</a>
+                {{- end }}
+            {{- end }}
+            </div>
+        {{- else }}
+            <span class="nav-item-disabled">
+                {{ .Name }}
+                {{ partial "icon/arrow-down.html" }}
+            </span>
+        {{- end }}
+        </div>
+    {{- else }}
+        <!-- 普通菜单项 -->
+        {{ if $enabled }}
+            <a href="{{ .URL }}" class="nav-item {{ if $active }}nav-item-active{{ end }}">{{ .Name }}</a>
+        {{ else }}
+            <span class="nav-item-disabled">{{ .Name }}</span>
+        {{ end }}
+    {{- end }}
+{{- end }}

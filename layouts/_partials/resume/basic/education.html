@@ -1,0 +1,11 @@
+<h1 class="text-3xl my-2 font-bold border-l-4 pl-2 uppercase">{{ i18n (printf "resume_%s" .name) }}</h1>
+{{ range .details }}
+<div class="flex items-stretch">
+    <div class="min-w-[10rem]">
+        <span>{{ .date_from }}~{{ if (isset . "date_to") }}{{ .date_to }}{{ else }}{{ i18n "present" }}{{ end }}</span>
+    </div>
+    <div class="">
+        <span>{{ .name }} ({{ .degree }})</span><br><span>{{ .major }}</span>
+    </div>
+</div>
+{{ end }}

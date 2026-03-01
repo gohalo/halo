@@ -1,0 +1,121 @@
+{{- $page := . -}}
+<nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-100">
+  <div class="mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- 左侧：Title 和 Logo -->
+      <div class="flex items-center space-x-1">
+        {{ with site.Params.menu.logo }}
+            {{ if os.FileExists (printf "/static%s" .) }}
+            <a href="{{ "/" | relLangURL }}" class="flex-shrink-0">
+              <img src="{{ . }}" alt="{{ site.Title }}" class="h-8 w-auto">
+            </a>
+            {{ end }}
+        {{ end }}
+        {{- with site.Params.menu.title }}
+        <a href="/" class="text-xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          {{ . }}
+        </a>
+        {{- end }}
+
+        <!-- 主菜单 -->
+        {{- with index site.Menus "main" }}
+        <div class="hidden md:flex items-center space-x-1 ml-8">
+           {{ partial "menu-main.html" (dict "menu" . "page" $page) }}
+        </div>
+        {{- end }}
+      </div>
+
+      <!-- 右侧：搜索、Dark/Light切换、语言选择、GitHub、关于 -->
+      <div class="flex items-center space-x-2">
+        {{- if eq .Section "docs" -}}
+            {{ partial "docs/version.html" . }}
+        {{- end -}}
+        {{ partial "menu-icon.html" $page }}
+
+        <!-- 移动端菜单按钮 -->
+        <button type="button" class="icon-button md:hidden" aria-label="Open menu" id="mobile-menu-button">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 移动端菜单 -->
+  <div class="hidden md:hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700">
+      {{- with index site.Menus "main" }}
+        {{- range . }}
+          {{- $enabled := true }}
+          {{- if isset .Params "enabled" }}
+            {{- $enabled = .Params.enabled }}
+          {{- end }}
+
+          {{- $showMenu := true }}
+          {{- if isset .Params "section" }}
+            {{- $requiredSection := .Params.section }}
+            {{- $currentSection := $page.Section }}
+            {{- if ne $requiredSection $currentSection }}
+              {{- $showMenu = false }}
+            {{- end }}
+          {{- end }}
+
+          {{- if $showMenu }}
+
+          {{- if .Children }}
+            <div class="space-y-1">
+              {{- if $enabled }}
+              <div class="px-3 py-2 text-sm font-medium text-gray-900 dark:text-white">
+                {{ .Name }}
+              </div>
+              {{- else }}
+              <div class="px-3 py-2 text-sm font-medium text-gray-400 dark:text-gray-600">
+                {{ .Name }}
+              </div>
+              {{- end }}
+              {{- range .Children }}
+                {{- $childEnabled := true }}
+                {{- if isset .Params "enabled" }}
+                  {{- $childEnabled = .Params.enabled }}
+                {{- end }}
+
+                {{- $showChildMenu := true }}
+                {{- if isset .Params "section" }}
+                  {{- $requiredSection := .Params.section }}
+                  {{- $currentSection := $page.Section }}
+                  {{- if ne $requiredSection $currentSection }}
+                    {{- $showChildMenu = false }}
+                  {{- end }}
+                {{- end }}
+
+                {{- if $showChildMenu }}
+                  {{- if $childEnabled }}
+                  <a href="{{ .URL }}" class="block pl-6 pr-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors">
+                    {{ .Name }}
+                  </a>
+                  {{- else }}
+                  <span class="block pl-6 pr-3 py-2 text-sm text-gray-400 dark:text-gray-600 cursor-not-allowed">
+                    {{ .Name }}
+                  </span>
+                  {{- end }}
+                {{- end }}
+              {{- end }}
+            </div>
+          {{- else }}
+            {{- if $enabled }}
+            <a href="{{ .URL }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors">
+              {{ .Name }}
+            </a>
+            {{- else }}
+            <span class="block px-3 py-2 rounded-md text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
+              {{ .Name }}
+            </span>
+            {{- end }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    </div>
+  </div>
+</nav>

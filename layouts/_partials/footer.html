@@ -1,0 +1,56 @@
+<div class="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+  <div class="mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+      {{ i18n "copyright" }} {{ now.Year }}. {{ i18n "all_rights_reserved" }}
+    </p>
+  </div>
+</div>
+
+{{- if and (isset .Params "math") (eq .Params.math true) }}
+  <script src="{{ "katex/katex.min.js" | relURL }}"></script>
+  <script src="{{ "katex/contrib/auto-render.min.js" | relURL }}" onload="renderMathInElement(document.body);" defer></script>
+{{ end -}}
+
+{{- if and (isset .Params "mermaid") (eq .Params.mermaid true) }}
+  <script src="{{ "mermaid/mermaid.min.js" | relURL }}"></script>
+  <script>
+    // 存储原始 mermaid 代码
+    const mermaidCode = new Map();
+
+    // 初始化 mermaid
+    const isDark = document.documentElement.classList.contains('dark');
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: isDark ? 'dark' : 'default'
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // 保存原始代码
+      document.querySelectorAll('pre.mermaid').forEach((el, i) => {
+        el.id = 'mermaid-' + i;
+        mermaidCode.set(el.id, el.textContent.trim());
+      });
+
+      // 监听主题切换
+      const themeToggle = document.getElementById('theme-toggle');
+      if (themeToggle) {
+        themeToggle.addEventListener('click', async function() {
+          setTimeout(async () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'default' });
+
+            for (const el of document.querySelectorAll('pre.mermaid')) {
+              el.textContent = mermaidCode.get(el.id);
+              el.removeAttribute('data-processed');
+              try {
+                await mermaid.run({ nodes: [el] });
+              } catch (e) {
+                console.error('Mermaid render error:', e);
+              }
+            }
+          }, 50);
+        });
+      }
+    });
+  </script>
+{{ end -}}

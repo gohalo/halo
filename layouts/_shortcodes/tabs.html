@@ -1,0 +1,69 @@
+{{- /* 生成唯一 ID */ -}}
+{{- $id := .Get "id" -}}
+{{- if not $id -}}
+  {{- /* 如果没有提供 id，生成唯一标识 */ -}}
+  {{- $tabsCount := .Page.Scratch.Get "tabs-count" | default 0 -}}
+  {{- .Page.Scratch.Set "tabs-count" (add $tabsCount 1) -}}
+  {{- $id = printf "tabs-%s-%d" (.Page.File.UniqueID | default "page") $tabsCount -}}
+{{- end -}}
+
+{{- $dummy := .Inner -}}{{/* 执行 .Inner 来触发子 shortcode，但不输出结果 */}}
+{{- $tabsMap := $.Scratch.Get "tabs" -}}
+
+{{- /* 将 map 转换为 slice 并按 ordinal 排序 */ -}}
+{{- $tabs := slice -}}
+{{- range $tabId, $tab := $tabsMap -}}
+  {{- $tabs = $tabs | append (merge $tab (dict "id" $tabId)) -}}
+{{- end -}}
+{{- $tabs = sort $tabs "ordinal" -}}
+
+{{- /* 检查是否有任何 tab 被设置为 selected */ -}}
+{{- $hasSelected := false -}}
+{{- range $tabs -}}
+  {{- if .selected -}}
+    {{- $hasSelected = true -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* 如果没有选中的，选中第一个（ordinal 最小的） */ -}}
+{{- if not $hasSelected -}}
+  {{- $updatedTabs := slice -}}
+  {{- range $index, $tab := $tabs -}}
+    {{- if eq $index 0 -}}
+      {{- $updatedTabs = $updatedTabs | append (merge $tab (dict "selected" true)) -}}
+    {{- else -}}
+      {{- $updatedTabs = $updatedTabs | append $tab -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $tabs = $updatedTabs -}}
+{{- end -}}
+
+<div class="tabs-container my-2" data-tabs-id="{{ $id }}">
+  <div class="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto" role="tablist">
+    {{- range $tabs }}
+    <button
+      class="tab-button px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-gray-100{{ if .selected }} tab-active{{ end }}"
+      id="{{ .id }}-tab"
+      data-tab-target="{{ .id }}"
+      type="button"
+      role="tab"
+      aria-controls="{{ .id }}"
+      aria-selected="{{ if .selected }}true{{ else }}false{{ end }}"
+      onclick="switchTab('{{ $id }}', '{{ .id }}')">
+      {{ .label }}
+    </button>
+    {{- end }}
+  </div>
+
+  <div class="tab-content-container relative">
+    {{- range $tabs }}
+    <div
+      class="tab-pane absolute inset-x-0 top-0 {{ if not .selected }} invisible{{ end }}"
+      id="{{ .id }}"
+      role="tabpanel"
+      aria-labelledby="{{ .id }}-tab">
+      {{ .content | safeHTML }}
+    </div>
+    {{- end }}
+  </div>
+</div>

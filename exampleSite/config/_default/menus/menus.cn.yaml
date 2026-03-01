@@ -1,0 +1,52 @@
+main:
+- name: '项目'
+  weight: 10
+  pageRef: '/project/'
+  identifier: 'project'
+- name: 'Halo'
+  weight: 30
+  pageRef: '/project/halo/'
+  identifier: 'project-halo'
+  parent: 'project'
+- name: 'BootServer'
+  weight: 31
+  pageRef: '/project/bootserver/'
+  identifier: 'project-bootserver'
+  parent: 'project'
+  params:
+    enabled: false
+- name: '博客'
+  pageRef: '/blog/'
+  weight: 20
+- name: '归档'
+  pageRef: '/blog/archives/'
+  weight: 20
+  params:
+    section: 'blog'
+- name: '标签'
+  pageRef: '/blog/tags/'
+  weight: 20
+  params:
+    section: 'blog'
+- name: '幻灯片'
+  pageRef: '/slide/'
+  weight: 30
+  params:
+    enabled: true
+- name: '文档'
+  pageRef: '/docs/'
+  weight: 40
+- name: '常用命令'
+  pageRef: '/cheatsheet/'
+  weight: 50
+
+# [[footer]]
+#   name = "隐私声明"
+#   url = "/privacy-policy/"
+#   weight = 10
+#
+# [[social]]
+#   name = "GitHub"
+#   pre = "<i class=\"fa fa-github-alt\" aria-hidden=\"true\"></i>"
+#   url = "https://github.com/gohalo"
+#   weight = 10

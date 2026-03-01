@@ -1,0 +1,50 @@
+{{ $theme := .Params.theme | default "basic"  }}
+<!DOCTYPE html>
+<html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
+    <head>
+        {{ partial "head/css.html" . }}
+    </head>
+    <body class="bg-gray-100 leading-normal tracking-normal print:bg-white">
+        <div class="resume max-w-7xl mx-auto p-8 bg-white shadow-lg my-4 rounded-lg print:shadow-none print:p-0 print:my-0">
+            {{ with (index .Site.Data.resume (printf "%s.%s" .Params.data .Lang)) }}
+                {{ $partpath := printf "resume/%s/summary.html" $theme }}
+                {{ if templates.Exists (printf "_partials/%s" $partpath) }}
+                    {{ partial $partpath .summary }}
+                {{ else }}
+                    {{ partial "resume/basic/summary.html" .summary }}
+                {{ end }}
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="md:col-span-2">
+                    {{ range .details }}
+                        {{ if and (isset . "sidebar") .sidebar }}
+                            {{ continue }}
+                        {{ end }}
+
+                        {{ $partpath := printf "resume/%s/%s.html" $theme .name }}
+                        {{ if templates.Exists (printf "_partials/%s" $partpath) }}
+                            {{ partial $partpath . }}
+                        {{ else }}
+                            {{ partial "resume/basic/default.html" . }}
+                        {{ end }}
+                    {{ end }}
+                    </div>
+                    <div>
+                    {{ range .details }}
+                        {{ if not .sidebar }}
+                            {{ continue }}
+                        {{ end }}
+
+                        {{ $partpath := printf "resume/%s/%s.html" $theme .name }}
+                        {{ if templates.Exists (printf "_partials/%s" $partpath) }}
+                            {{ partial $partpath . }}
+                        {{ else }}
+                            {{ partial "resume/basic/default.html" . }}
+                        {{ end }}
+                    {{ end }}
+                    </div>
+                </div>
+            {{ end }}
+        </div>
+    </body>
+</html>

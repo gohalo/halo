@@ -1,0 +1,11 @@
+en:
+  languageCode: 'en-US'
+  languageName: 'English'
+  contentDir: 'content/en'
+  weight: 10
+
+cn:
+  languageCode: 'zh-CN'
+  languageName: '中文'
+  contentDir: 'content/cn'
+  weight: 20

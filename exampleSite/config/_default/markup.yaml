@@ -1,0 +1,28 @@
+defaultMarkdownHandler: 'goldmark'
+goldmark:
+  renderer:
+    unsafe: true
+  parser:
+    autoHeadingID: true
+    autoHeadingIDType: 'github'
+    wrapStandAloneImageWithinParagraph: false
+  extensions:
+    passthrough:
+      enable: true
+      delimiters:
+        block:  [['$$', '$$']]
+        inline:  [['$', '$']]
+tableOfContents:
+  startLevel: 1
+  endLevel: 3
+  ordered: false
+highlight:
+  style: "solarized"
+  codeFences: true
+  guessSyntax: true
+  noClasses: false
+  lineNumbersInTable: true
+  lineNoStart: 1
+  lineNos: false
+  hl_Lines: ""
+  tabWidth: 4

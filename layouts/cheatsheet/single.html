@@ -1,0 +1,169 @@
+{{ define "main" }}
+{{- $dataFileName := .Params.data_file -}}
+{{- $cheatsheetData := index site.Data.cheatsheet $dataFileName -}}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Breadcrumb -->
+  <nav class="flex mb-8 text-sm text-gray-500 dark:text-gray-400">
+    <a href="{{ "/cheatsheet/" | relLangURL }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Cheatsheet</a>
+    <span class="mx-2">/</span>
+    <span class="text-gray-900 dark:text-white font-medium capitalize">{{ .Title }}</span>
+  </nav>
+
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4 capitalize">{{ .Title }} Cheatsheet</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">{{ .Description }}</p>
+    
+    <!-- Search Input -->
+    <div class="max-w-2xl mx-auto relative">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+      <input type="text" id="cheatsheet-search" 
+             class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-700 rounded-lg leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm transition-all"
+             placeholder="搜索命令、描述或分类...">
+    </div>
+  </div>
+
+  {{ if $cheatsheetData }}
+  <div id="cheatsheet-container" class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+    {{ range $cheatsheetData }}
+    <div class="category-card bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col break-inside-avoid mb-6" data-category="{{ .category | lower }}">
+      <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+          {{ .category }}
+          {{ if .description }}
+          <span class="ml-2 text-xs font-normal text-gray-500 dark:text-gray-400 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full">{{ .description }}</span>
+          {{ end }}
+        </h2>
+      </div>
+      
+      <div class="p-4 space-y-4 flex-1">
+        {{ range .commands }}
+        <div class="command-item group relative pl-3 border-l-2 border-transparent hover:border-blue-500 transition-colors"
+             data-name="{{ .name | lower }}" 
+             data-desc="{{ .description | lower }}" 
+             data-usage="{{ .usage | lower }}">
+          <div class="flex justify-between items-center mb-1">
+            <h3 class="font-mono font-medium text-blue-600 dark:text-blue-400 text-sm">{{ .name }}</h3>
+            <button class="copy-btn opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700" 
+                    data-clipboard-text="{{ .usage }}" 
+                    title="复制命令">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+              </svg>
+            </button>
+          </div>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">{{ .description }}</p>
+          <div class="bg-gray-50 dark:bg-gray-900 rounded px-2 py-1.5 font-mono text-xs text-gray-800 dark:text-gray-200 overflow-x-auto whitespace-nowrap border border-gray-100 dark:border-gray-700 group-hover:border-blue-200 dark:group-hover:border-blue-900/50 transition-colors">
+            {{ .usage }}
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+  
+  <div id="no-results" class="hidden text-center py-12">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">没有找到匹配的命令</h3>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">请尝试更换关键词搜索。</p>
+  </div>
+  {{ else }}
+  <div class="text-center py-12">
+    <p class="text-red-500">Data file "{{ $dataFileName }}" not found in site.Data.cheatsheet</p>
+  </div>
+  {{ end }}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('cheatsheet-search');
+  const container = document.getElementById('cheatsheet-container');
+  const noResults = document.getElementById('no-results');
+  const categoryCards = document.querySelectorAll('.category-card');
+  const commandItems = document.querySelectorAll('.command-item');
+  
+  if (searchInput) {
+    // 搜索功能
+    searchInput.addEventListener('input', function(e) {
+      const term = e.target.value.toLowerCase().trim();
+      let hasResults = false;
+      
+      if (term === '') {
+        // 清空搜索时显示所有
+        categoryCards.forEach(card => card.classList.remove('hidden'));
+        commandItems.forEach(item => item.classList.remove('hidden'));
+        noResults.classList.add('hidden');
+        return;
+      }
+      
+      categoryCards.forEach(card => {
+        let hasVisibleItems = false;
+        const items = card.querySelectorAll('.command-item');
+        const categoryName = card.dataset.category;
+        
+        // 如果搜索词匹配分类名，则显示该分类下所有项目
+        const categoryMatch = categoryName.includes(term);
+        
+        items.forEach(item => {
+          const name = item.dataset.name;
+          const desc = item.dataset.desc;
+          const usage = item.dataset.usage;
+          
+          if (categoryMatch || name.includes(term) || desc.includes(term) || usage.includes(term)) {
+            item.classList.remove('hidden');
+            hasVisibleItems = true;
+            hasResults = true;
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+        
+        if (hasVisibleItems) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+      
+      if (hasResults) {
+        noResults.classList.add('hidden');
+      } else {
+        noResults.classList.remove('hidden');
+      }
+    });
+  }
+  
+  // 复制功能
+  const copyBtns = document.querySelectorAll('.copy-btn');
+  copyBtns.forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const text = this.dataset.clipboardText;
+      try {
+        await navigator.clipboard.writeText(text);
+        
+        // 视觉反馈
+        const originalIcon = this.innerHTML;
+        this.innerHTML = `
+          <svg class="h-4 w-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        `;
+        
+        setTimeout(() => {
+          this.innerHTML = originalIcon;
+        }, 1500);
+      } catch (err) {
+        console.error('Failed to copy!', err);
+      }
+    });
+  });
+});
+</script>
+{{ end }}

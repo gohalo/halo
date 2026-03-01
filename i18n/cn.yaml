@@ -1,0 +1,105 @@
+# 导航栏
+- id: nav_about
+  translation: "关于"
+
+- id: nav_search
+  translation: "搜索"
+
+- id: nav_language
+  translation: "语言"
+
+- id: nav_github
+  translation: "GitHub"
+
+- id: nav_theme_toggle
+  translation: "切换主题"
+
+# Tooltip 提示
+- id: tooltip_search
+  translation: "搜索内容"
+
+- id: tooltip_theme_light
+  translation: "切换到深色模式"
+
+- id: tooltip_theme_dark
+  translation: "切换到浅色模式"
+
+- id: tooltip_language
+  translation: "切换语言"
+
+- id: tooltip_github
+  translation: "访问 GitHub 仓库"
+
+- id: tooltip_about
+  translation: "关于我们"
+
+# 搜索相关
+- id: search_placeholder
+  translation: "搜索..."
+
+- id: search_prompt
+  translation: "输入关键词开始搜索..."
+
+- id: search_searching
+  translation: "搜索中..."
+
+- id: search_results_for
+  translation: "搜索结果："
+
+- id: search_no_results
+  translation: "未找到相关内容"
+
+- id: search_dev_notice
+  translation: "搜索功能开发中，待集成搜索引擎..."
+
+# 通用
+- id: close
+  translation: "关闭"
+
+- id: home
+  translation: "首页"
+
+- id: back
+  translation: "返回"
+
+- id: help
+  translation: "帮助"
+
+# 页脚
+- id: copyright
+  translation: "版权所有"
+
+- id: all_rights_reserved
+  translation: "保留所有权利"
+
+# 日期格式
+- id: date_format
+  translation: "2006年01月02日"
+
+# Blog 页面
+- id: blog_previous
+  translation: "上一篇"
+
+- id: blog_next
+  translation: "下一篇"
+
+# TOC 目录
+- id: toc_title
+  translation: "本页目录"
+
+- id: get_started
+  translation: "开始阅读"
+
+# 简历相关
+- id: resume_experience
+  translation: "工作经历"
+- id: resume_education
+  translation: "教育背景"
+- id: resume_skill
+  translation: "专业技能"
+- id: resume_intention
+  translation: "工作意向"
+- id: resume_others
+  translation: "其它"
+- id: present
+  translation: "当前"

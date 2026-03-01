@@ -1,0 +1,54 @@
+{{ $versions := slice }}
+{{ $version := "" }}
+
+{{ $fields := split .File.Dir "/" }}
+{{ $volume := index $fields 1 }}
+
+{{ range (index .Site.Menus .Section) }}
+    {{ if (ne $volume .Identifier) }}
+      {{ continue }}
+    {{ end }}
+
+    {{/* default not versioned */}}
+    {{ if or (not (isset .Params "version")) (not .Params.Version) }}
+        {{ continue }}
+    {{ end }}
+    {{ $version = index $fields 2 }}
+
+    {{ range .Children }}
+        {{ if (eq (printf "%s/%s" $volume $version) .Identifier) }}
+            {{ $versions = $versions | append (dict
+                "active" true
+                "url" .Identifier
+                "version" (strings.SliceString .Identifier (add (len $volume) 1))
+            ) }}
+        {{ else }}
+            {{ $versions = $versions | append (dict
+                "active" false
+                "url" .Identifier
+                "version" (strings.SliceString .Identifier (add (len $volume) 1))
+            ) }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+{{ if (lt 0 (len $versions)) }}
+<div class="relative group">
+    <button class="nav-item flex items-center">
+        版本: {{ $version }}
+        {{ partial "icon/arrow-down.html" }}
+    </button>
+
+    <div class="nav-dropdown-menu">
+    {{- range $versions }}
+        {{ if .active }}
+            <span class="block px-4 py-2 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 cursor-default">
+                {{ .version }}
+            </span>
+        {{ else }}
+            <a href="{{ urls.RelLangURL (printf "/docs/%s" .url) }}" class="nav-dropdown-item">{{ .version }}</a>
+        {{ end }}
+    {{- end }}
+    </div>
+</div>
+{{ end }}

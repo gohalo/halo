@@ -1,0 +1,7 @@
+{{ if .Page.Params.mermaid -}}
+<pre class="flex justify-center my-2 mermaid">
+  {{ .Inner }}
+</pre>
+{{ else -}}
+  {{ errorf "Failed to process mermaid shortcode: %s. Set mermaid to true in page front matter." .Position }}
+{{ end -}}

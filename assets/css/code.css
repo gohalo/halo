@@ -1,0 +1,60 @@
+code {
+    @apply px-1 bg-gray-200 dark:bg-gray-600 text-wrap rounded-sm;
+}
+
+.highlight {
+    @apply my-2 relative max-w-full text-sm;
+    code {
+        @apply whitespace-pre px-0 text-nowrap;
+    }
+    > .chroma {
+        @apply py-1 rounded-md max-w-full overflow-x-auto;
+        table { /* 有行号的代码块使用 table 布局 */
+            pre {
+                @apply p-0;
+            }
+            td:first-child { /* lineno */
+                @apply ml-2;
+            }
+            td:last-child { /* code */
+                @apply p-0;
+            }
+        }
+        .hl {
+            @apply block w-full;
+        }
+    }
+
+    /* 没有行号的代码块 */
+    > pre {
+        @apply px-2 rounded-md max-w-full overflow-x-auto;
+    }
+
+    /* 工具栏固定在视口右上角 */
+    .code-toolbar {
+        @apply top-1 right-1 absolute z-10 flex items-center gap-2;
+        @apply opacity-0 transition-all duration-200;
+    }
+
+    /* 鼠标悬停时显示工具栏 */
+    &:hover .code-toolbar {
+        @apply opacity-100;
+    }
+
+    /* 语言标签样式 */
+    .code-language-label {
+        @apply h-6 min-w-6 px-2 rounded-md flex items-center justify-center;
+        @apply text-xs text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700;
+    }
+
+    /* 复制按钮样式 */
+    .copy-code-button {
+        @apply h-6 w-6 px-1 rounded-md flex items-center justify-center cursor-pointer;
+        @apply text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600;
+    }
+
+    /* 复制成功时的样式 */
+    .copy-code-button.copied {
+        @apply bg-green-300 text-white;
+    }
+}

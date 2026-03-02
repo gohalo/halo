@@ -1,19 +1,31 @@
+{{ $page_kind := "all" }}
+{{ with .Params.pages }}
+    {{ $page_kind = .kind | default "all" }}
+{{ end }}
+
+{{ $params := .Params }}
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     {{ range .Pages }}
-    <a href="{{ .RelPermalink }}" class="group block p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-lg transition-all">
-        <div class="flex items-start justify-between mb-3">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {{ .LinkTitle }}
-            </h3>
-            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-        </div>
-        {{ if .Description }}
-            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ .Description }}</p>
-        {{ else if .Summary }}
-            <div class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ .Summary }}</div>
+        {{ if not (.Params.show | default true) }}
+            {{ continue }}
         {{ end }}
-    </a>
+        {{ if and (ne $page_kind "all") (ne $page_kind .Kind) }}
+            {{ continue }}
+        {{ end }}
+        <a href="{{ .RelPermalink }}" class="group block p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-lg transition-all">
+            <div class="flex items-start justify-between mb-3">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {{ .LinkTitle }}
+                </h3>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+            {{ if .Description }}
+                <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ .Description }}</p>
+            {{ else if and .Summary (lt (len .Summary) 150) }}
+                <div class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ .Summary }}</div>
+            {{ end }}
+        </a>
     {{ end }}
 </div>

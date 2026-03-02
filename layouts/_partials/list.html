@@ -1,11 +1,15 @@
 <div class="max-w-5xl mx-auto py-8">
-    <header class="text-center">
-        <h1 class="text-4xl font-bold mb-4">{{ .Title }}</h1>
+    <header>
+        <h1 class="text-center text-4xl font-bold mb-4">{{ .Title }}</h1>
         {{ with .Content }}
             <div class="content max-w-none mx-auto mb-8">{{ . }}</div>
         {{ end }}
     </header>
-    {{ if (.Params.pages | default true) }}
+    {{ $with_pages := true}}
+    {{ with .Params.pages }}
+        {{ $with_pages = .enabled | default true }}
+    {{ end }}
+    {{ if $with_pages }}
         {{ partial "component/pages.html" . }}
     {{ end }}
 </div>

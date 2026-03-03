@@ -377,6 +377,24 @@ func hello() {
 {{< /tab >}}
 {{< /tabs >}}
 
+## Steps
+
+用于展示步骤流程。
+
+{{< steps >}}
+{{< step "第一步：安装环境" >}}
+首先需要安装 Go 语言环境和 Hugo 工具。
+{{< /step >}}
+
+{{< step "第二步：创建项目" >}}
+使用 `hugo new site` 命令创建一个新的 Hugo 站点。
+{{< /step >}}
+
+{{< step "第三步：运行服务" >}}
+执行 `hugo server` 启动本地开发服务器。
+{{< /step >}}
+{{< /steps >}}
+
 # Others
 
 示例代码仓库 [test/file.txt]({{< param "example" >}}/test/file.txt) 。

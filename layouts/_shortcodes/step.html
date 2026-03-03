@@ -1,0 +1,5 @@
+<div class="step">
+    <div class="step-number"></div>
+    <div class="step-title">{{ .Get 0 | default (.Get "title") | default "Step" }}</div>
+    <div>{{ .Inner | markdownify }}</div>
+</div>

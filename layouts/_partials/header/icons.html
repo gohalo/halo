@@ -1,0 +1,24 @@
+{{ $page := . }}
+{{ range $key, $icon := .Site.Params.menu.icons }}
+    {{ if ($icon.disable | default false) }}
+        {{ continue }}
+    {{ end }}
+
+    {{/* check if this section in the exclude configuration */}}
+    {{ if in $icon.section.exclude $page.Section }}
+        {{ continue }}
+    {{ end }}
+
+    {{/* check if include configuration exists first */}}
+    {{ if ne (index $icon "section" "include") nil }}
+        {{ if not (in $icon.section.include $page.Section) }}
+            {{ continue }}
+        {{ end }}
+    {{ end }}
+
+    {{ $partpath := printf "header/icons/%s.html" $icon.name }}
+    {{ if not (templates.Exists (printf "_partials/%s" $partpath)) }}
+        {{ continue }}
+    {{ end }}
+    {{ partial $partpath (dict "page" $page "icon" $icon) }}
+{{ end }}

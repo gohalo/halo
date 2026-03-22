@@ -1,0 +1,36 @@
+{{/* partial "component/icon.html" "activity" */}}
+{{/* partial "component/icon.html" (dict "name" "user" "class" "text-gray-500" "width" "10") */}}
+{{/* NOTE: both class="w-5 h-5" and width/height could set, but class has higher priority, w-5=20px */}}
+{{/* Search: https://lucide.dev/icons/ */}}
+
+{{ if reflect.IsMap . }}
+    {{ $icon := resources.Get (printf "icons/lucide/%s.svg" .name) }}
+    {{ if $icon }}
+        {{ $content := $icon.Content }}
+
+        {{ $width := .width }}
+        {{ $height := .height }}
+        {{ if and $width (not $height) }}
+            {{ $height = $width }}
+        {{ else if and $height (not $width) }}
+            {{ $width = $height }}
+        {{ end }}
+
+        {{ if .class }}
+            {{ $target := printf "lucide-%s" .name }}
+            {{ $content = replace $content $target (printf "%s %s" $target .class) }}
+        {{ end }}
+
+        {{ if $width }}
+            {{ $content = replace $content "width=\"24\"" (printf "width=\"%v\"" $width) }}
+        {{ end }}
+        {{ if $height }}
+            {{ $content = replace $content "height=\"24\"" (printf "height=\"%v\"" $height) }}
+        {{ end }}
+        {{ $content | safeHTML }}
+    {{ end }}
+{{ else }}
+    {{ with resources.Get (printf "icons/lucide/%s.svg" .) }}
+        {{ .Content | safeHTML }}
+    {{ end }}
+{{ end }}

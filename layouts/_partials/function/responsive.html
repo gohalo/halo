@@ -1,0 +1,10 @@
+{{/* $responsive := partial "function/responsive.html" "always" */}}
+
+{{ $display := dict
+    "always" ""
+    "never" " hidden"
+    "md" " hidden md:flex"
+    "lg" " hidden lg:flex"
+}}
+{{/* default always */}}
+{{ return (index $display . | default "") }}

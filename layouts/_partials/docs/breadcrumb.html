@@ -1,11 +1,16 @@
 <nav aria-label="breadcrumb" class="breadcrumb text-sm mt-2">
-	<ol>
-		{{ range .Ancestors.Reverse }}
+	<ol class="flex items-center flex-wrap">
+		<li class="inline-flex items-center">
+			<a href="{{ .FirstSection.RelPermalink }}">
+				{{ partial "component/icon.html" (dict "name" "home" "width" "18") }}
+			</a>
+		</li>
+		{{ range after 2 .Ancestors.Reverse }}
 		<li class="inline">
 			<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
 		</li>
 		{{ end }}
-		<li class="inline text-blue-600 dark:text-blue-400">
+		<li class="inline text-primary">
 			<a aria-current="page" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
 		</li>
 	</ol>

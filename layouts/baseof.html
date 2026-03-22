@@ -1,24 +1,15 @@
-{{ $container := dict 
-    "full" "max-w-full"
-    "wide" "max-w-7xl" 
-    "standard" "max-w-5xl"
-}}
-{{- $width := "max-w-7xl" -}}
-{{- if (and site.Params.layout site.Params.layout.width) -}}
-    {{- $width = index $container site.Params.layout.width | default "max-w-7xl" -}}
-{{- end -}}
-
+{{ $layout := partial "function/layout.html" . }}
 <!DOCTYPE html>
 <html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
     <head>
         {{ partial "head.html" . }}
     </head>
-    <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col {{ $width }} mx-auto">
+    <body class="{{ $layout.site }} min-h-screen flex flex-col mx-auto">
         <header class="flex-none sticky top-0 z-100">
             {{ partial "header.html" . }}
         </header>
-        <main class="flex-1 pt-0">
-            <div class="mx-auto px-4 sm:px-6 lg:px-8">
+        <main class="flex-1">
+            <div class="{{ $layout.page }} mx-auto px-4 sm:px-6 lg:px-8">
                 {{ block "main" . }}{{ end }}
             </div>
         </main>

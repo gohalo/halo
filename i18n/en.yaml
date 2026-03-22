@@ -1,15 +1,9 @@
 # Navigation
-- id: nav_about
-  translation: "About"
-
 - id: nav_search
   translation: "Search"
 
 - id: nav_language
   translation: "Language"
-
-- id: nav_github
-  translation: "GitHub"
 
 - id: nav_theme_toggle
   translation: "Toggle Theme"
@@ -27,10 +21,18 @@
 - id: tooltip_language
   translation: "Switch language"
 
-- id: tooltip_github
-  translation: "Visit GitHub repository"
+- id: nav_icon_label_unknown
+  translation: "Unknown"
+- id: nav_icon_tip_unknown
+  translation: "Unknown"
 
-- id: tooltip_about
+- id: nav_icon_label_github
+  translation: "GitHub"
+- id: nav_icon_tip_github
+  translation: "Visit GitHub repository"
+- id: nav_icon_label_about
+  translation: "About"
+- id: nav_icon_tip_about
   translation: "About us"
 
 # Search related
@@ -89,6 +91,10 @@
 
 - id: get_started
   translation: "Get Started"
+
+# Document
+- id: version
+  translation: "Version"
 
 # Resume
 - id: resume_experience

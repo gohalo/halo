@@ -1,3 +1,21 @@
-{{ define "main" }}
-    {{ partial "docs/layout.html" . }}
-{{ end }}
+{{ $layout := partial "function/layout.html" . }}
+<!DOCTYPE html>
+<html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
+    <head>
+        {{ partial "head.html" . }}
+    </head>
+    <body class="{{ $layout.site }} min-h-screen flex flex-col mx-auto">
+        <header class="flex-none sticky top-0 z-100">
+            {{ partial "docs/header.html" . }}
+        </header>
+        <main class="flex-1">
+            <div class="{{ $layout.page }} mx-auto px-4 sm:px-6 lg:px-8">
+                {{ partial "docs/layout.html" . }}
+            </div>
+        </main>
+        <footer class="flex-none">
+            {{ partial "footer.html" . }}
+        </footer>
+        {{ partial "float-buttons.html" . }}
+    </body>
+</html>

@@ -1,0 +1,12 @@
+{{/* get the root menu */}}
+{{ $page := . }}
+{{ $result := "" }}
+
+{{ range (index .Site.Menus .Section) }}
+    {{ if or ($page.IsMenuCurrent .Menu .) ($page.HasMenuCurrent .Menu .) }}
+        {{ $result = . }}
+        {{ break }}
+    {{ end }}
+{{ end }}
+{{ return $result }}
+

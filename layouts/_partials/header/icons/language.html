@@ -1,0 +1,41 @@
+<!-- 语言选择 -->
+{{ if hugo.IsMultilingual }}
+{{ $page := .page }}
+{{ $responsive := partial "function/responsive.html" .icon.responsive }}
+<div class="relative {{ $responsive }}">
+    <button type="button" class="nav-icon group flex items-center" aria-label="{{ i18n "nav_language" }}" id="language-button">
+        {{ partial "component/icon.html" (dict "name" "languages" "width" "20") }}
+        <span class="nav-tip">{{ i18n "tooltip_language" }}</span>
+    </button>
+
+    <div id="language-menu" class="language-menu hidden">
+        <div class="py-1">
+            {{ range site.Languages }}
+                {{ $target := .Lang }}
+
+                {{/* default navigate to home */}}
+                {{ $url := printf "/%s/" $target }}
+                {{ if $page.IsTranslated }}
+                    {{ range $page.Translations }}
+                        {{ if eq .Language.Lang $target }}
+                            {{- $url = .RelPermalink }}
+                        {{ end }}
+                    {{ end }}
+                {{ end }}
+
+                {{ if eq $page.Language.Lang .Lang }}
+                    <!-- 当前语言：高亮显示且不可点击 -->
+                    <span class="block px-4 py-2 text-sm font-semibold text-primary cursor-default">
+                        {{ .LanguageName }}
+                    </span>
+                {{ else }}
+                    <!-- 其他语言：可点击 -->
+                    <a href="{{ $url }}" class="block px-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                        {{ .LanguageName }}
+                    </a>
+                {{ end }}
+            {{ end }}
+        </div>
+    </div>
+</div>
+{{ end }}

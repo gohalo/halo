@@ -1,0 +1,22 @@
+{{/* $url := partial "function/url.html" (dict "page" . "target" "about")  ==== /cn/docs/about */}}
+{{/* $url := partial "function/url.html" (dict "page" . "target" "/about/")  ==== /cn/about/   */}}
+{{/* $url := partial "function/url.html" (dict "page" . "target" "https://hello.com")  */}}
+
+{{ $url := "" }}
+{{ $page := .page }}
+{{ with .target }}
+    {{ if or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://") (strings.HasPrefix . "//") }}
+        {{ $url = . }}
+    {{ else if strings.HasPrefix . "/" }}
+        {{ with site.GetPage . }}
+            {{ $url = .RelPermalink }}
+        {{ end }}
+    {{ else }}
+        {{/* NOTE: the following with search above */}}
+        {{/* with .page.Page.GetPage . */}}
+        {{ with site.GetPage (path.Join $page.Page.File.Dir .) }}
+            {{ $url = .RelPermalink }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+{{ return $url }}

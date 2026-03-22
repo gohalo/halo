@@ -1,10 +1,19 @@
+.nav-icon {
+    @apply relative p-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors;
+}
+.nav-icon-button {
+    @apply relative py-2 px-4 rounded-xl transition-colors;
+}
+
+
+
 .nav-item {
     @apply px-3 py-2 rounded-md text-sm font-medium;
-    @apply text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors;
+    @apply text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors;
 }
 
 .nav-item-active {
-    @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white;
+    @apply bg-accent text-accent-foreground;
 }
 
 .nav-item-disabled {
@@ -13,11 +22,11 @@
 }
 
 .nav-dropdown-menu {
-    @apply absolute mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black/5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-100;
+    @apply absolute mt-2 w-48 rounded-md shadow-lg bg-card ring-1 ring-black/5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-100;
 }
 
 .nav-dropdown-item {
-    @apply block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors;
+    @apply block px-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors;
 }
 
 .nav-dropdown-item-disabled {
@@ -28,18 +37,14 @@
     @apply absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 text-xs text-white bg-gray-900 dark:bg-gray-700 rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-100;
 }
 
-.icon-button {
-    @apply relative p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors;
-}
-
 .language-menu {
-    @apply absolute right-0 top-full mt-2 w-40 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black/5 transition-all duration-200 z-100;
+    @apply absolute right-0 top-full mt-2 w-40 rounded-md shadow-lg bg-card ring-1 ring-black/5 transition-all duration-200 z-100;
 }
 
 .search-box {
-    @apply absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 z-100;
+    @apply absolute right-0 top-full mt-2 w-80 bg-card rounded-lg shadow-lg border border-border p-4 z-100;
 }
 
 .search-input {
-    @apply w-full px-4 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+    @apply w-full px-4 py-2 pr-10 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent;
 }

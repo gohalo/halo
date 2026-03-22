@@ -1,0 +1,21 @@
+/*
+.content {
+    h1 { ... }
+}
+
+可直接 paste https://ui.shadcn.com/themes 的输出覆盖主题色，例：绿色主题
+:root {
+    --primary:              #10b981;
+    --primary-foreground:   white;
+    --secondary:            #d1fae5;
+    --secondary-foreground: #064e3b;
+    --ring:                 #10b981;
+}
+.dark {
+    --primary:              #34d399;
+    --primary-foreground:   #111827;
+    --secondary:            #064e3b;
+    --secondary-foreground: #d1fae5;
+    --ring:                 #34d399;
+}
+*/

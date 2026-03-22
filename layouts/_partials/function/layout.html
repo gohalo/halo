@@ -1,0 +1,20 @@
+{{ $container := dict
+    "full" "max-w-full"
+    "wide" "max-w-7xl"
+    "standard" "max-w-5xl"
+}}
+
+{{ $site_width := "max-w-7xl" }}
+{{ with site.Params.layout.width }}
+    {{ $site_width = index $container . | default "max-w-7xl" }}
+{{ end }}
+
+{{ $page_width := "" }}
+{{ with .Params.width }}
+    {{ $page_width = index $container . | default $site_width }}
+{{ end }}
+
+{{/* Site-level width: applied to body, controls navbar */}}
+{{/* Page-level content width: only affects main content */}}
+{{ $result := dict "site" $site_width "page" $page_width }}
+{{ return $result }}

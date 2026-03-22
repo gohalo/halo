@@ -1,24 +1,38 @@
 menu:
   logo: "/images/logo.svg"
   title: "Halo"
-  search:
-    enable: true
-    display: "md"
-  theme:
+  align: "center" # left center
+  icons: # align to right
+  - name: "theme"
     default: "auto" # light dark auto
-    display: "always"
-  language:
-    enable: true
-    display: "md"
-  github:
-    url: "https://github.com/username/repo"
-    display: "lg"
-  about:
-    path: "/about/"
-    display: "lg"
-  forum:
-    url: "https://github.com/gohalo/gohalo/discussions"
-    display: "always"
+    responsive: "always"
+  - name: "language"
+    responsive: "md"
+  - name: "link"
+    responsive: "lg"
+    icon: "github"
+    blank: true
+    translate: "github"
+    target: "https://github.com/username/repo"
+    section:
+      exclude: ["docs"]
+  - name: "link"
+    responsive: "lg"
+    icon: "user"        # lucide icons
+    blank: false        # open with new tab, default false
+    translate: "about"  # translation, nav_icon_label_xxx nav_icon_tip_xxx
+    target: "/about/"   # http://example.com about
+    section:
+      exclude: ["docs"]
+  - name: "button"
+    responsive: "lg"
+    icon: "user"        # lucide icons
+    highlight: true     # 高亮显示
+    blank: false        # open with new tab, default false
+    translate: "about"  # translation, nav_icon_label_xxx nav_icon_tip_xxx
+    target: "/about/"   # http://example.com about
+    section:
+      include: ["docs"]
 
 layout: # support 'full' 'wide' 'standard'
   width: "full"

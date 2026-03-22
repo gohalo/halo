@@ -1,0 +1,1709 @@
+{{ define "main" }}
+{{ $headerHeight := "h-28" }}
+{{ $tabbingHeight := "h-12" }}
+
+<div class="-mx-4 sm:-mx-6 lg:-mx-8 h-[calc(100vh-9rem)] flex flex-col overflow-hidden">
+<div class="px-4 sm:px-6 lg:px-8 flex-none">{{ partial "docs/tabs.html" . }}</div>
+<div class="flex flex-1 overflow-hidden" id="openapi-app">
+    <!-- Sidebar -->
+    <aside class="w-72 shrink-0 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+        <!-- Sidebar Header -->
+        <div class="{{ $headerHeight }} p-4 border-b border-gray-200 dark:border-gray-700 flex flex-col justify-center">
+            <div class="flex items-center justify-between mb-2">
+                <h1 class="text-lg font-bold text-gray-900 dark:text-gray-100 truncate flex-1" id="api-title">Loading...</h1>
+            </div>
+            <div class="mt-1 flex items-center justify-between">
+                <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded text-xs font-mono" id="api-version">...</span>
+                <button onclick="toggleDescription()" class="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Details</button>
+            </div>
+        </div>
+
+        <!-- Sidebar Mode Tabs -->
+        <div class="{{ $tabbingHeight }} flex border-b border-gray-200 dark:border-gray-700">
+            <button id="mode-tab-endpoints" onclick="switchSidebarMode('endpoints')" class="sidebar-mode-tab active">Endpoints</button>
+            <button id="mode-tab-schemas" onclick="switchSidebarMode('schemas')" class="sidebar-mode-tab">Schemas</button>
+        </div>
+
+        <!-- Sidebar Search -->
+        <div class="px-2 flex items-center border-b border-gray-200 dark:border-gray-700">
+            <div class="relative w-full">
+                <svg class="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" id="sidebar-search" placeholder="Filter..." class="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+            </div>
+        </div>
+
+        <!-- Sidebar Content: API Groups -->
+        <div class="flex-1 overflow-y-auto p-2 space-y-1" id="api-groups">
+            <!-- Groups injected here -->
+        </div>
+
+        <!-- Sidebar Content: Schemas -->
+        <div class="hidden flex-1 overflow-y-auto p-2 space-y-1" id="api-schemas">
+            <!-- Schemas injected here -->
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <button onclick="document.getElementById('file-input').click()" class="btn-secondary" title="Import File">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Import File
+            </button>
+            <input type="file" id="file-input" class="hidden" accept=".json,.yaml,.yml">
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-white dark:bg-gray-900 relative">
+        <!-- Description Modal -->
+        <div id="desc-modal" class="hidden flex absolute inset-0 z-50 bg-black/50 items-center justify-center p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">API Details</h3>
+                    <button onclick="toggleDescription()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">&times;</button>
+                </div>
+                <div class="p-4 overflow-y-auto flex flex-col gap-4">
+                    <div class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0" id="api-description"></div>
+                    <dl id="api-meta" class="hidden border-t border-gray-200 dark:border-gray-700 pt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+                        <dt id="api-terms-label" class="hidden font-medium text-gray-500 dark:text-gray-400 self-start pt-0.5">Terms of Service</dt>
+                        <dd id="api-terms-value" class="hidden"><a id="api-terms-link" href="#" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline break-all"></a></dd>
+                        <dt id="api-contact-label" class="hidden font-medium text-gray-500 dark:text-gray-400 self-start pt-0.5">Contact</dt>
+                        <dd id="api-contact-value" class="hidden text-gray-700 dark:text-gray-300"></dd>
+                        <dt id="api-license-label" class="hidden font-medium text-gray-500 dark:text-gray-400 self-start pt-0.5">License</dt>
+                        <dd id="api-license-value" class="hidden text-gray-700 dark:text-gray-300"></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top: API Info -->
+        <div id="endpoint-top-bar" class="{{ $headerHeight }} flex-none p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm z-10 relative flex flex-col justify-center">
+            <div class="flex items-center space-x-2 w-full max-w-4xl mb-2">
+                 <!-- Request Bar -->
+                 <div class="flex-1 flex items-center border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-gray-50 dark:bg-gray-800 overflow-hidden h-9">
+                    <!-- Method -->
+                    <span id="current-method-badge" class="method-badge method-other">GET</span>
+                    <!-- Server Select (Compact) -->
+                    <select id="server-select" class="max-w-[150px] bg-transparent border-none text-xs text-gray-600 dark:text-gray-300 focus:ring-0 truncate px-2 border-r border-gray-300 dark:border-gray-600 outline-none h-full">
+                    </select>
+                    <!-- Path -->
+                    <div class="flex-1 px-3 flex items-center text-sm font-mono text-gray-700 dark:text-gray-300 truncate select-all h-full" id="current-path-display">/path</div>
+                 </div>
+                 <!-- Send Button -->
+                 <button onclick="sendRequest()" id="send-btn" class="inline-flex items-center px-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap h-9">
+                    Send
+                </button>
+            </div>
+
+            <!-- Description & Summary -->
+            <div class="mt-2 relative pr-8" id="desc-wrapper">
+                <div class="text-sm text-gray-500 dark:text-gray-400 line-clamp-1 *:m-0" id="current-desc-short"></div>
+                <button onclick="toggleEndpointDesc()" id="details-btn" class="hidden absolute top-0 right-0 p-0.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+            </div>
+
+            <div id="endpoint-desc-container" class="hidden absolute top-32 left-0 right-0 bottom-0 bg-white dark:bg-gray-900 z-20 border-b border-gray-200 dark:border-gray-700 p-4 shadow-lg overflow-y-auto" style="height: calc(100vh - 12rem);">
+                <div id="current-desc-full" class="prose dark:prose-invert text-sm max-w-none pb-20"></div>
+            </div>
+        </div>
+
+        <!-- Main Content Pane -->
+        <div id="main-content-pane" class="flex-1 flex flex-col min-w-0 overflow-hidden bg-white dark:bg-gray-900">
+            <!-- Tabs Header -->
+            <div class="{{ $tabbingHeight }} border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                <nav class="flex -mb-px px-4 h-full" aria-label="Tabs">
+                    <button onclick="switchMainTab('docs')" id="main-tab-docs" class="main-tab active">Documentation</button>
+                    <button onclick="switchMainTab('request')" id="main-tab-request" class="main-tab">Request</button>
+                    <button onclick="switchMainTab('response')" id="main-tab-response" class="main-tab relative">
+                        Response
+                        <span id="response-indicator" class="hidden absolute top-3 right-2 w-2 h-2 bg-green-500 rounded-full"></span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tabs Content -->
+            <div class="flex-1 overflow-hidden relative">
+                <!-- Documentation Tab -->
+                <div id="main-content-docs" class="absolute inset-0 overflow-y-auto p-4 block space-y-4">
+                    <!-- Operation Info -->
+                    <div id="doc-operation-info" class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 font-mono bg-gray-50 dark:bg-gray-800 p-2 rounded border border-gray-200 dark:border-gray-700">
+                        <span class="font-bold text-gray-700 dark:text-gray-300">Operation ID:</span>
+                        <span id="doc-operation-id" class="select-all"></span>
+                    </div>
+
+                    <!-- Parameters Section -->
+                    <details class="api-section hidden" id="doc-params-section" open>
+                        <summary>
+                            <h4>Parameters</h4>
+                            <div class="chevron"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                        </summary>
+                        <div class="section-body">
+                            <div id="doc-params-viewer" class="text-sm font-mono overflow-x-auto">
+                                <p class="text-gray-500 italic">No parameters</p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Request Body Section -->
+                    <details class="api-section hidden" id="doc-req-body-section" open>
+                        <summary>
+                            <h4>Request Body</h4>
+                            <div class="chevron"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                        </summary>
+                        <div class="section-body">
+                            <div id="req-body-schema-viewer" class="text-sm font-mono overflow-x-auto"></div>
+                        </div>
+                    </details>
+
+                    <!-- Responses Section -->
+                    <details class="api-section hidden" id="doc-resp-section" open>
+                        <summary>
+                            <h4>Responses</h4>
+                            <div class="chevron"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                        </summary>
+                        <div class="section-body">
+                            <div id="resp-schema-viewer" class="text-sm font-mono space-y-4 overflow-x-auto"></div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Request Tab -->
+                <div id="main-content-request" class="absolute inset-0 overflow-y-auto flex flex-col hidden">
+                    <!-- Console Tabs -->
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                        <div class="flex space-x-1 bg-gray-200 dark:bg-gray-700 p-1 rounded-lg w-full max-w-md">
+                            <button onclick="switchConsoleTab('params')" id="con-tab-params" class="console-tab active">Params</button>
+                            <button onclick="switchConsoleTab('headers')" id="con-tab-headers" class="console-tab">Headers</button>
+                            <button onclick="switchConsoleTab('body')" id="con-tab-body" class="console-tab">Body</button>
+                        </div>
+                    </div>
+
+                    <!-- Console Input Area -->
+                    <div class="flex-1 overflow-y-auto p-4 relative">
+                        <div id="console-params" class="space-y-3 max-w-3xl"></div>
+                        <div id="console-headers" class="space-y-3 hidden max-w-3xl"></div>
+                        <div id="console-body" class="flex flex-col gap-4 hidden">
+                            <div id="console-body-fields" class="space-y-3 max-w-3xl hidden"></div>
+                            <div class="flex flex-col gap-2">
+                                <div class="flex justify-end">
+                                    <button onclick="prettifyBody()" class="text-xs text-blue-500 hover:text-blue-700 border border-blue-500 rounded px-2 py-0.5">Prettify JSON</button>
+                                </div>
+                                <textarea id="request-body-input" class="w-full p-4 font-mono text-sm border rounded-md dark:bg-gray-800 dark:border-gray-700 dark:text-white resize-none focus:ring-indigo-500 focus:border-indigo-500" rows="10" placeholder="{ ... }"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Response Tab -->
+                <div id="main-content-response" class="absolute inset-0 overflow-hidden flex flex-col bg-gray-900 text-gray-300 font-mono text-sm hidden">
+                    <div class="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Response</span>
+                            <span id="response-status" class="text-xs font-bold hidden px-2 py-0.5 rounded"></span>
+                            <span id="response-time" class="text-xs text-gray-500 hidden"></span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="toggleResponseView()" id="resp-toggle-btn" class="text-xs text-gray-400 hover:text-white mr-2 hidden border border-gray-600 rounded px-2 py-1">View: Raw</button>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-auto p-4" id="response-container">
+                        <div id="response-raw" class="whitespace-pre-wrap break-all"></div>
+                        <div id="response-tree" class="hidden"></div>
+                        <div id="response-placeholder" class="text-gray-500 italic flex items-center justify-center h-full">
+                            <div class="text-center">
+                                <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <p>Click "Send" to execute the request</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schema Detail Panel -->
+        <div id="schema-detail-panel" class="hidden flex-1 flex flex-col overflow-hidden">
+            <div class="flex-none h-32 p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex flex-col justify-center">
+                <div class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Schema</div>
+                <h2 id="schema-detail-name" class="text-lg font-bold text-gray-900 dark:text-gray-100 font-mono truncate"></h2>
+                <p id="schema-detail-meta" class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-mono"></p>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4">
+                <div id="schema-detail-content"><p class="text-sm text-gray-400 dark:text-gray-500 italic">Select a schema to view details</p></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<style>
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+
+    /* Sidebar group arrow */
+    #api-groups details:not([open]) > summary > div > svg { transform: rotate(-90deg); }
+    #api-groups details[open] > summary > div > svg { transform: rotate(0deg); }
+
+    /* Schema tree lines */
+    .schema-tree { position: relative; padding-left: 1.5rem; }
+    .schema-node { position: relative; padding-bottom: 1.25rem; }
+    .schema-node::before {
+        content: ""; position: absolute;
+        left: -1rem; top: 0.75rem; width: 0.875rem; height: 1px;
+        background-color: #e5e7eb;
+    }
+    .dark .schema-node::before { background-color: #374151; }
+    .schema-node:not(:last-child)::after {
+        content: ""; position: absolute;
+        left: -1rem; top: 0.75rem; bottom: -0.75rem; width: 1px;
+        background-color: #e5e7eb;
+    }
+    .dark .schema-node:not(:last-child)::after { background-color: #374151; }
+
+    /* Connect expandable parent to first child */
+    .schema-node-children { position: relative; }
+    .schema-node-children::before {
+        content: ""; position: absolute;
+        left: 0.5rem; top: 0; height: 0.75rem; width: 1px;
+        background-color: #e5e7eb;
+    }
+    .dark .schema-node-children::before { background-color: #374151; }
+
+    /* Schema caret: right-pointing when collapsed, down-pointing when expanded */
+    .schema-caret { display: inline-flex; align-items: center; }
+    .schema-caret svg { transition: transform 0.2s; transform: rotate(0deg); }
+    .schema-caret.open svg { transform: rotate(90deg); }
+
+    /* Schema divider: hidden by default, show on header hover */
+    .schema-divider { opacity: 0; transition: opacity 0.15s; }
+    .schema-node-header:hover .schema-divider { opacity: 1; }
+
+    /* oneOf/anyOf choice tabs */
+    .schema-choice-tab {
+        padding: 0.125rem 0.625rem; border-radius: 0.25rem;
+        font-size: 0.6875rem; font-weight: 500; color: #6b7280;
+        border: 1px solid #e5e7eb; transition: all 0.15s; line-height: 1.6;
+    }
+    .schema-choice-tab:hover { background-color: #f9fafb; color: #374151; }
+    .dark .schema-choice-tab { color: #9ca3af; border-color: #374151; }
+    .dark .schema-choice-tab:hover { background-color: #1f2937; color: #d1d5db; }
+    .schema-choice-tab.active { background-color: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+    .dark .schema-choice-tab.active { background-color: rgba(30,58,138,0.3); color: #60a5fa; border-color: #1d4ed8; }
+
+    /* Response code tabs */
+    .resp-tab { cursor: pointer; padding: 0.25rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; color: #6b7280; transition: all 0.2s; }
+    .resp-tab:hover { color: #374151; background-color: #f3f4f6; }
+    .dark .resp-tab:hover { color: #d1d5db; background-color: #1f2937; }
+    .resp-tab.active { background-color: #10b981; color: white; }
+    .dark .resp-tab.active { background-color: #059669; }
+
+    /* Section cards */
+    .api-section { border: 1px solid #e5e7eb; border-radius: 0.5rem; background-color: white; }
+    .dark .api-section { border-color: #374151; background-color: #1f2937; }
+    .api-section > summary { display: flex; align-items: center; justify-content: space-between; padding: 1rem; cursor: pointer; user-select: none; }
+    .api-section > summary h4 { font-weight: 700; color: #111827; }
+    .dark .api-section > summary h4 { color: #f3f4f6; }
+    .api-section > summary .chevron { margin-left: 0.5rem; flex-shrink: 0; }
+    .api-section > summary .chevron svg { width: 1.25rem; height: 1.25rem; color: #6b7280; transition: transform 0.2s; }
+    .api-section[open] > summary .chevron svg { transform: rotate(180deg); }
+    .api-section > .section-body { padding: 1rem; border-top: 1px solid #f3f4f6; }
+    .dark .api-section > .section-body { border-top-color: #374151; }
+
+    /* Sidebar mode tabs */
+    .sidebar-mode-tab { flex: 1; padding: 0.5rem; font-size: 0.75rem; font-weight: 500; color: #6b7280; border-bottom: 2px solid transparent; transition: color 0.15s; }
+    .sidebar-mode-tab:hover { color: #374151; background-color: #f9fafb; }
+    .dark .sidebar-mode-tab { color: #9ca3af; }
+    .dark .sidebar-mode-tab:hover { color: #d1d5db; background-color: #111827; }
+    .sidebar-mode-tab.active { color: #4f46e5; border-bottom-color: #6366f1; }
+    .dark .sidebar-mode-tab.active { color: #818cf8; border-bottom-color: #818cf8; }
+
+    /* Main nav tabs */
+    .main-tab { height: 100%; padding: 0 1rem; display: inline-flex; align-items: center; border-bottom: 2px solid transparent; font-weight: 500; font-size: 0.875rem; color: #6b7280; }
+    .main-tab:hover { color: #374151; border-bottom-color: #d1d5db; }
+    .dark .main-tab { color: #9ca3af; }
+    .dark .main-tab:hover { color: #d1d5db; }
+    .main-tab.active { color: #4f46e5; border-bottom-color: #6366f1; }
+    .dark .main-tab.active { color: #818cf8; }
+
+    /* Console sub-tabs */
+    .console-tab { flex: 1; padding: 0.375rem 0; font-size: 0.875rem; font-weight: 500; border-radius: 0.375rem; color: #6b7280; }
+    .console-tab:hover { color: #374151; }
+    .dark .console-tab { color: #9ca3af; }
+    .dark .console-tab:hover { color: #e5e7eb; }
+    .console-tab.active { background-color: white; box-shadow: 0 1px 2px rgba(0,0,0,.05); color: #111827; }
+    .dark .console-tab.active { background-color: #4b5563; color: white; }
+
+    /* Method colors (used on badges and main bar) */
+    .method-get    { background-color: #dbeafe; color: #1e40af; }
+    .method-post   { background-color: #dcfce7; color: #166534; }
+    .method-put    { background-color: #ffedd5; color: #9a3412; }
+    .method-delete { background-color: #fee2e2; color: #991b1b; }
+    .method-patch  { background-color: #f3e8ff; color: #6b21a8; }
+    .method-other  { background-color: #f3f4f6; color: #1f2937; }
+    .dark .method-get    { background-color: #1e3a8a; color: #93c5fd; }
+    .dark .method-post   { background-color: #14532d; color: #86efac; }
+    .dark .method-put    { background-color: #7c2d12; color: #fed7aa; }
+    .dark .method-delete { background-color: #7f1d1d; color: #fca5a5; }
+    .dark .method-patch  { background-color: #581c87; color: #d8b4fe; }
+    .dark .method-other  { background-color: #374151; color: #d1d5db; }
+
+    /* Main method badge */
+    .method-badge { padding: 0 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; border-right: 1px solid #d1d5db; min-width: 5rem; height: 100%; }
+    .dark .method-badge { border-right-color: #4b5563; }
+
+    /* Sidebar endpoint buttons */
+    .ep-btn { width: 100%; text-align: left; padding: 0.375rem 0.5rem; border-radius: 0.375rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem; color: #374151; outline: none; }
+    .ep-btn:hover { background-color: #f3f4f6; }
+    .dark .ep-btn { color: #d1d5db; }
+    .dark .ep-btn:hover { background-color: #1f2937; }
+    .ep-btn.active { background-color: #4f46e5; color: white; font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .ep-btn.active:hover { background-color: #4338ca; }
+
+    /* Method text-only labels (sidebar) */
+    .ml-get    { color: #1d4ed8; }
+    .ml-post   { color: #15803d; }
+    .ml-put    { color: #c2410c; }
+    .ml-delete { color: #b91c1c; }
+    .ml-patch  { color: #7e22ce; }
+    .ml-other  { color: #6b7280; }
+    .dark .ml-get    { color: #93c5fd; }
+    .dark .ml-post   { color: #86efac; }
+    .dark .ml-put    { color: #fed7aa; }
+    .dark .ml-delete { color: #fca5a5; }
+    .dark .ml-patch  { color: #d8b4fe; }
+    .dark .ml-other  { color: #9ca3af; }
+    .ep-btn.active .ml-get,
+    .ep-btn.active .ml-post,
+    .ep-btn.active .ml-put,
+    .ep-btn.active .ml-delete,
+    .ep-btn.active .ml-patch,
+    .ep-btn.active .ml-other { color: inherit; }
+
+    /* Import button */
+    .btn-secondary { width: 100%; display: flex; align-items: center; justify-content: center; padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 0.375rem; box-shadow: 0 1px 2px rgba(0,0,0,.05); font-size: 0.875rem; font-weight: 500; color: #374151; background-color: white; }
+    .btn-secondary:hover { background-color: #f9fafb; }
+    .dark .btn-secondary { border-color: #4b5563; color: #d1d5db; background-color: #1f2937; }
+    .dark .btn-secondary:hover { background-color: #374151; }
+
+    /* Response status badge */
+    .resp-status { display: block; font-size: 0.75rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 0.25rem; border: 1px solid; }
+    .resp-status.ok  { color: #22c55e; border-color: #22c55e; }
+    .resp-status.err { color: #ef4444; border-color: #ef4444; }
+
+    /* Response view toggle */
+    .resp-toggle { font-size: 0.75rem; color: #9ca3af; margin-right: 0.5rem; cursor: pointer; border: 1px solid #4b5563; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
+    .resp-toggle:hover { color: white; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+(function() {
+    const state = {
+        spec: null,
+        currentPath: null,
+        currentMethod: null,
+        currentOperation: null,
+        servers: [],
+        selectedServer: '',
+        lastResponseJson: null,
+        sidebarMode: 'endpoints',
+        currentSchema: null
+    };
+
+    const els = {
+        title:               document.getElementById('api-title'),
+        version:             document.getElementById('api-version'),
+        desc:                document.getElementById('api-description'),
+        groups:              document.getElementById('api-groups'),
+        searchInput:         document.getElementById('sidebar-search'),
+        methodBadge:         document.getElementById('current-method-badge'),
+        pathDisplay:         document.getElementById('current-path-display'),
+        descShort:           document.getElementById('current-desc-short'),
+        descFull:            document.getElementById('current-desc-full'),
+        docOperationInfo:    document.getElementById('doc-operation-info'),
+        docOperationId:      document.getElementById('doc-operation-id'),
+        docParamsViewer:     document.getElementById('doc-params-viewer'),
+        serverSelect:        document.getElementById('server-select'),
+        consoleParams:       document.getElementById('console-params'),
+        consoleHeaders:      document.getElementById('console-headers'),
+        consoleBody:         document.getElementById('console-body'),
+        reqBodyInput:        document.getElementById('request-body-input'),
+        respRaw:             document.getElementById('response-raw'),
+        respTree:            document.getElementById('response-tree'),
+        respPlaceholder:     document.getElementById('response-placeholder'),
+        respStatus:          document.getElementById('response-status'),
+        respTime:            document.getElementById('response-time'),
+        respToggleBtn:       document.getElementById('resp-toggle-btn'),
+        reqBodySchemaViewer: document.getElementById('req-body-schema-viewer'),
+        respSchemaViewer:    document.getElementById('resp-schema-viewer')
+    };
+
+    // --- Text Formatting ---
+    function formatText(str) {
+        if (!str) return '';
+        const escaped = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return escaped.split(/\n{2,}/)
+            .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+            .join('');
+    }
+
+    // --- Spec Parsing ---
+    function parseSpec(text) {
+        try {
+            return JSON.parse(text);
+        } catch (_) {
+            if (window.jsyaml) return jsyaml.load(text);
+            throw new Error('YAML parser not loaded');
+        }
+    }
+
+    // --- $ref Resolution ---
+    function resolveRef(schema, _visited = new Set()) {
+        if (!schema || !schema['$ref']) return schema;
+        const ref = schema['$ref'];
+        if (_visited.has(ref)) return schema; // circular ref guard
+        _visited.add(ref);
+        const parts = ref.replace(/^#\//, '').split('/').map(p => p.replace(/~1/g, '/').replace(/~0/g, '~'));
+        let node = state.spec;
+        for (const p of parts) node = node && node[p];
+        return node ? resolveRef(node, _visited) : schema;
+    }
+
+    // --- Reset Console ---
+    function resetConsole() {
+        state.currentPath = null;
+        state.currentMethod = null;
+        els.reqBodyInput.value = '';
+        els.respRaw.innerHTML = '';
+        els.respTree.innerHTML = '';
+        els.respPlaceholder.style.display = 'block';
+        els.respStatus.className = 'hidden';
+        els.methodBadge.textContent = 'METHOD';
+        els.methodBadge.className = 'method-badge method-other';
+        els.pathDisplay.textContent = '/path';
+        els.descShort.textContent = '';
+        els.consoleParams.innerHTML = '';
+        els.reqBodySchemaViewer.innerHTML = '';
+        els.respSchemaViewer.innerHTML = '';
+    }
+
+    // --- Apply Spec ---
+    function applySpec(text) {
+        state.spec = parseSpec(text);
+        state.currentSchema = null;
+        const first = renderSidebar();
+        renderSchemas();
+        renderServers();
+        if (state.sidebarMode === 'endpoints') {
+            if (first) selectEndpoint(first.path, first.method, first.op);
+            else resetConsole();
+        } else {
+            document.getElementById('schema-detail-content').innerHTML = '<p class="text-sm text-gray-400 dark:text-gray-500 italic">Select a schema to view details</p>';
+            document.getElementById('schema-detail-name').textContent = '';
+            document.getElementById('schema-detail-meta').textContent = '';
+        }
+    }
+
+    // --- Render Schemas (sidebar list) ---
+    function renderSchemas() {
+        const schemas = (state.spec.components && state.spec.components.schemas) || {};
+        const container = document.getElementById('api-schemas');
+        container.innerHTML = '';
+        const entries = Object.entries(schemas).sort(([a], [b]) => a.localeCompare(b));
+        if (entries.length === 0) {
+            container.innerHTML = '<div class="text-sm text-gray-400 dark:text-gray-500 italic p-2">No schemas defined</div>';
+            return;
+        }
+        entries.forEach(([name, schema]) => {
+            const resolved = resolveRef(schema);
+            const type = resolved.type || (resolved.allOf ? 'allOf' : resolved.oneOf ? 'oneOf' : resolved.anyOf ? 'anyOf' : 'object');
+            const btn = document.createElement('button');
+            btn.className = 'ep-btn';
+            btn.dataset.schemaName = name;
+            btn.onclick = () => selectSchema(name, resolved);
+
+            const text = document.createElement('span');
+            text.className = 'truncate flex-1 font-mono';
+            text.textContent = name;
+
+            const typeLabel = document.createElement('span');
+            typeLabel.className = 'flex-shrink-0 text-[9px] font-bold uppercase ml-other';
+            typeLabel.textContent = type;
+
+            btn.appendChild(text);
+            btn.appendChild(typeLabel);
+            container.appendChild(btn);
+        });
+    }
+
+    // --- Select Schema ---
+    function selectSchema(name, schema) {
+        state.currentSchema = name;
+        document.querySelectorAll('#api-schemas button').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.schemaName === name);
+        });
+
+        const type = schema.type || (schema.allOf ? 'allOf' : schema.oneOf ? 'oneOf' : schema.anyOf ? 'anyOf' : 'object');
+        document.getElementById('schema-detail-name').textContent = name;
+        document.getElementById('schema-detail-meta').textContent = type + (schema.format ? `<${schema.format}>` : '');
+
+        const content = document.getElementById('schema-detail-content');
+        content.innerHTML = '';
+        if (schema.description) {
+            const desc = document.createElement('div');
+            desc.className = 'text-sm text-gray-600 dark:text-gray-400 mb-6 prose dark:prose-invert max-w-none';
+            desc.innerHTML = marked.parse(schema.description);
+            content.appendChild(desc);
+        }
+        content.appendChild(renderJSONSchema(schema));
+    }
+
+    // --- Initialization ---
+    async function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const url = urlParams.get('spec') || {{ with .Params.openapi }}{{ if or (hasPrefix . "http") (hasPrefix . "/") }}"{{ . }}"{{ else }}{{ with $.Resources.GetMatch . }}"{{ .RelPermalink }}"{{ else }}"{{ path.Join (path.Dir ($.RelPermalink | strings.TrimRight "/")) . }}"{{ end }}{{ end }}{{ else }}""{{ end }};
+
+        if (!url) {
+            alert('No OpenAPI URL specified');
+            return;
+        }
+
+        try {
+            const res = await fetch(url);
+            if (!res.ok) {
+                throw new Error(`Failed to fetch spec: ${res.statusText}`);
+            }
+            applySpec(await res.text());
+        } catch (e) {
+            console.error(e);
+            els.title.textContent = 'Error loading spec';
+            els.desc.textContent = e.message;
+        }
+
+        els.searchInput.addEventListener('input', (e) => filterSidebar(e.target.value));
+    }
+
+    // --- Rendering ---
+    function renderSidebar() {
+        const info = state.spec.info || {};
+        els.title.textContent = info.title || 'API Docs';
+        els.version.textContent = info.version || 'unknown';
+        els.desc.innerHTML = formatText(info.description) || '<p class="text-gray-400 dark:text-gray-500 italic">No description</p>';
+
+        // Populate meta fields in Details modal
+        const meta = document.getElementById('api-meta');
+        let metaVisible = false;
+
+        const termsLabel = document.getElementById('api-terms-label');
+        const termsValue = document.getElementById('api-terms-value');
+        const termsLink  = document.getElementById('api-terms-link');
+        if (info.termsOfService) {
+            termsLink.href = info.termsOfService;
+            termsLink.textContent = info.termsOfService;
+            termsLabel.classList.remove('hidden');
+            termsValue.classList.remove('hidden');
+            metaVisible = true;
+        } else {
+            termsLabel.classList.add('hidden');
+            termsValue.classList.add('hidden');
+        }
+
+        const contactLabel = document.getElementById('api-contact-label');
+        const contactValue = document.getElementById('api-contact-value');
+        const ICON_STYLE = 'width:12px;height:12px;flex-shrink:0;color:#9ca3af';
+        if (info.contact && (info.contact.name || info.contact.url || info.contact.email)) {
+            const parts = [];
+            if (info.contact.name)
+                parts.push(`<span style="display:flex;align-items:center;gap:6px">
+                    <svg style="${ICON_STYLE}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <span>${info.contact.name}</span>
+                </span>`);
+            if (info.contact.url)
+                parts.push(`<span style="display:flex;align-items:center;gap:6px">
+                    <svg style="${ICON_STYLE}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                    <a href="${info.contact.url}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline truncate">${info.contact.url}</a>
+                </span>`);
+            if (info.contact.email)
+                parts.push(`<span style="display:flex;align-items:center;gap:6px">
+                    <svg style="${ICON_STYLE}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <a href="mailto:${info.contact.email}" class="text-blue-600 dark:text-blue-400 hover:underline">${info.contact.email}</a>
+                </span>`);
+            contactValue.innerHTML = `<span style="display:flex;flex-direction:column;gap:4px">${parts.join('')}</span>`;
+            contactLabel.classList.remove('hidden');
+            contactValue.classList.remove('hidden');
+            metaVisible = true;
+        } else {
+            contactLabel.classList.add('hidden');
+            contactValue.classList.add('hidden');
+        }
+
+        const licenseLabel = document.getElementById('api-license-label');
+        const licenseValue = document.getElementById('api-license-value');
+        if (info.license && info.license.name) {
+            licenseValue.innerHTML = info.license.url
+                ? `<a href="${info.license.url}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">${info.license.name}</a>`
+                : `<span>${info.license.name}</span>`;
+            licenseLabel.classList.remove('hidden');
+            licenseValue.classList.remove('hidden');
+            metaVisible = true;
+        } else {
+            licenseLabel.classList.add('hidden');
+            licenseValue.classList.add('hidden');
+        }
+
+        meta.classList.toggle('hidden', !metaVisible);
+
+        const groups = {};
+        (state.spec.tags || []).forEach(t => { groups[t.name] = []; });
+        if (!groups['Default']) groups['Default'] = [];
+
+        for (const [path, methods] of Object.entries(state.spec.paths)) {
+            for (const [method, op] of Object.entries(methods)) {
+                if (!['get','post','put','delete','patch','head','options'].includes(method)) continue;
+                const tag = (op.tags && op.tags.length > 0) ? op.tags[0] : 'Default';
+                if (!groups[tag]) groups[tag] = [];
+                groups[tag].push({ path, method, op });
+            }
+        }
+
+        els.groups.innerHTML = '';
+        let firstEndpoint = null;
+
+        for (const [tag, endpoints] of Object.entries(groups)) {
+            if (endpoints.length === 0) continue;
+            if (!firstEndpoint) firstEndpoint = endpoints[0];
+
+            const details = document.createElement('details');
+            details.open = true;
+            details.className = 'group';
+
+            const summary = document.createElement('summary');
+            summary.className = 'flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md list-none select-none';
+
+            const titleSpan = document.createElement('span');
+            titleSpan.textContent = tag;
+            titleSpan.className = 'truncate mr-2';
+
+            const icon = document.createElement('div');
+            icon.className = 'flex-shrink-0 ml-2';
+            icon.innerHTML = `<svg class="w-4 h-4 text-gray-900 dark:text-gray-100 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
+
+            summary.appendChild(titleSpan);
+            summary.appendChild(icon);
+
+            const list = document.createElement('ul');
+            list.className = 'mt-1 space-y-1 pl-2';
+
+            endpoints.forEach(ep => {
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.className = 'ep-btn';
+                btn.dataset.endpointId = `${ep.method}-${ep.path}`;
+                btn.onclick = () => selectEndpoint(ep.path, ep.method, ep.op);
+
+                const text = document.createElement('span');
+                text.className = 'truncate flex-1';
+                text.textContent = ep.op.summary || ep.path;
+
+                const badge = document.createElement('span');
+                const m = ep.method.toLowerCase();
+                const mlClass = ['get','post','put','delete','patch'].includes(m) ? `ml-${m}` : 'ml-other';
+                badge.className = `flex-shrink-0 text-[9px] font-bold uppercase ${mlClass}`;
+                badge.textContent = ep.method;
+
+                btn.appendChild(text);
+                btn.appendChild(badge);
+                li.appendChild(btn);
+                list.appendChild(li);
+            });
+
+            details.appendChild(summary);
+            details.appendChild(list);
+            els.groups.appendChild(details);
+        }
+        return firstEndpoint;
+    }
+
+    function renderServers() {
+        els.serverSelect.innerHTML = '';
+        state.servers = state.spec.servers || [{ url: window.location.origin }];
+        state.servers.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.url;
+            opt.textContent = s.description ? `${s.url} - ${s.description}` : s.url;
+            els.serverSelect.appendChild(opt);
+        });
+        state.selectedServer = state.servers[0].url;
+        els.serverSelect.onchange = (e) => { state.selectedServer = e.target.value; };
+    }
+
+    function selectEndpoint(path, method, op) {
+        const targetId = `${method}-${path}`;
+
+        let activeBtn = null;
+        document.querySelectorAll('#api-groups li > button').forEach(btn => {
+            const isActive = btn.dataset.endpointId === targetId;
+            btn.classList.toggle('active', isActive);
+            if (isActive) activeBtn = btn;
+        });
+        if (activeBtn) activeBtn.scrollIntoView({ block: 'nearest' });
+
+        state.currentPath = path;
+        state.currentMethod = method;
+        state.currentOperation = op;
+
+        els.methodBadge.textContent = method;
+        els.methodBadge.className = `method-badge ${getMethodColor(method)}`;
+        els.pathDisplay.textContent = path;
+
+        const desc = op.description || '';
+        const descHtml = desc ? marked.parse(desc) : '';
+        els.descShort.innerHTML = descHtml;
+        els.descFull.innerHTML = descHtml;
+
+        const detailsBtn = document.getElementById('details-btn');
+        const descWrapper = document.getElementById('desc-wrapper');
+        detailsBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>';
+
+        if (desc.length > 120 || desc.split('\n').length > 1) {
+            detailsBtn.classList.remove('hidden');
+            els.descShort.classList.add('line-clamp-1');
+            descWrapper.classList.add('pr-8');
+        } else {
+            detailsBtn.classList.add('hidden');
+            els.descShort.classList.remove('line-clamp-1');
+            descWrapper.classList.remove('pr-8');
+        }
+
+        document.getElementById('endpoint-desc-container').classList.add('hidden');
+
+        els.reqBodyInput.value = '';
+        els.respRaw.innerHTML = '';
+        els.respTree.innerHTML = '';
+        els.respPlaceholder.style.display = 'block';
+        els.respStatus.className = 'hidden';
+        els.respTime.className = 'hidden';
+        els.respToggleBtn.className = 'hidden';
+        state.lastResponseJson = null;
+        document.getElementById('response-indicator').classList.add('hidden');
+
+        switchMainTab('docs');
+        renderDocs(op);
+        renderConsole(op);
+    }
+
+    function renderDocs(op) {
+        if (op.operationId) {
+            els.docOperationInfo.classList.remove('hidden');
+            els.docOperationId.textContent = op.operationId;
+        } else {
+            els.docOperationInfo.classList.add('hidden');
+        }
+
+        // Parameters
+        els.docParamsViewer.innerHTML = '';
+        const paramsSection = document.getElementById('doc-params-section');
+        if (op.parameters && op.parameters.length > 0) {
+            paramsSection.classList.remove('hidden');
+            const table = document.createElement('table');
+            table.className = 'min-w-full divide-y divide-gray-200 dark:divide-gray-700';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">In</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Style</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Required</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700"></tbody>
+            `;
+            const tbody = table.querySelector('tbody');
+            op.parameters.forEach(p => {
+                const schema = resolveRef(p.schema);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">${p.name}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 uppercase">${p.in}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${(schema && schema.type) || 'string'}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${p.style || '-'}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        ${p.required ? '<span class="text-red-600 font-bold">Yes</span>' : 'No'}
+                    </td>
+                    <td class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">${p.description || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            els.docParamsViewer.appendChild(table);
+        } else {
+            paramsSection.classList.add('hidden');
+        }
+
+        // Request Body
+        const reqBodySection = document.getElementById('doc-req-body-section');
+        els.reqBodySchemaViewer.innerHTML = '';
+        const reqContent = op.requestBody && op.requestBody.content;
+        const reqContentTypes = reqContent ? Object.keys(reqContent) : [];
+        if (reqContentTypes.length > 0) {
+            reqBodySection.classList.remove('hidden');
+
+            // Content-type tab selector
+            if (reqContentTypes.length > 1) {
+                const ctWrap = document.createElement('div');
+                ctWrap.className = 'flex items-center gap-1 mb-4';
+                reqContentTypes.forEach((ct, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = `schema-choice-tab${i === 0 ? ' active' : ''}`;
+                    btn.textContent = ct;
+                    btn.addEventListener('click', () => {
+                        ctWrap.querySelectorAll('.schema-choice-tab').forEach(b =>
+                            b.classList.toggle('active', b.textContent === ct));
+                        renderReqBodySchema(ct);
+                    });
+                    ctWrap.appendChild(btn);
+                });
+                els.reqBodySchemaViewer.appendChild(ctWrap);
+            }
+
+            const schemaArea = document.createElement('div');
+            els.reqBodySchemaViewer.appendChild(schemaArea);
+
+            function renderReqBodySchema(ct) {
+                schemaArea.innerHTML = '';
+                const mediaObj = reqContent[ct];
+                if (mediaObj && mediaObj.schema) {
+                    schemaArea.appendChild(renderJSONSchema(resolveRef(mediaObj.schema)));
+                }
+            }
+            renderReqBodySchema(reqContentTypes[0]);
+        } else {
+            reqBodySection.classList.add('hidden');
+        }
+
+        // Responses
+        const respSection = document.getElementById('doc-resp-section');
+        els.respSchemaViewer.innerHTML = '';
+        if (op.responses && Object.keys(op.responses).length > 0) {
+            respSection.classList.remove('hidden');
+            
+            // Response Tabs Header
+            const tabsHeader = document.createElement('div');
+            tabsHeader.className = 'flex items-center gap-4 mb-4 border-b border-gray-100 dark:border-gray-700 pb-2';
+            
+            const tabsContainer = document.createElement('div');
+            tabsContainer.className = 'flex items-center gap-2';
+            
+            const contentContainer = document.createElement('div');
+            contentContainer.className = 'mt-4';
+
+            const codes = Object.keys(op.responses).sort();
+            codes.forEach((code, index) => {
+                const resp = op.responses[code];
+                const tab = document.createElement('button');
+                tab.className = `resp-tab ${index === 0 ? 'active' : ''}`;
+                tab.textContent = code;
+                tab.onclick = () => {
+                    tabsContainer.querySelectorAll('.resp-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    renderResponseContent(contentContainer, code, resp);
+                };
+                tabsContainer.appendChild(tab);
+                
+                if (index === 0) renderResponseContent(contentContainer, code, resp);
+            });
+            
+            tabsHeader.appendChild(tabsContainer);
+            els.respSchemaViewer.appendChild(tabsHeader);
+            els.respSchemaViewer.appendChild(contentContainer);
+        } else {
+            respSection.classList.add('hidden');
+        }
+    }
+
+    function renderResponseContent(container, code, resp) {
+        container.innerHTML = '';
+
+        // Response Description
+        if (resp.description) {
+            const desc = document.createElement('div');
+            desc.className = 'text-sm text-gray-600 dark:text-gray-400 mb-6 prose dark:prose-invert max-w-none';
+            desc.innerHTML = marked.parse(resp.description);
+            container.appendChild(desc);
+        }
+
+        const contentTypes = Object.keys((resp.content) || {});
+        if (contentTypes.length === 0) {
+            const noContent = document.createElement('div');
+            noContent.className = 'text-sm text-gray-500 italic mt-4';
+            noContent.textContent = 'No response body';
+            container.appendChild(noContent);
+            return;
+        }
+
+        // Body header row
+        const bodyHeader = document.createElement('div');
+        bodyHeader.className = 'flex items-center justify-between mb-4 mt-8';
+
+        const title = document.createElement('h4');
+        title.className = 'text-xl font-bold text-gray-900 dark:text-gray-100';
+        title.textContent = 'Body';
+        bodyHeader.appendChild(title);
+
+        // Content-type selector (tabs if multiple)
+        const ctWrap = document.createElement('div');
+        ctWrap.className = 'flex items-center gap-1';
+
+        const schemaArea = document.createElement('div');
+        schemaArea.className = 'mt-2';
+
+        let activeType = contentTypes[0];
+
+        function renderSchemaForType(ct) {
+            schemaArea.innerHTML = '';
+            const mediaObj = resp.content[ct];
+            if (mediaObj && mediaObj.schema) {
+                schemaArea.appendChild(renderJSONSchema(resolveRef(mediaObj.schema)));
+            } else {
+                const empty = document.createElement('div');
+                empty.className = 'text-sm text-gray-500 italic';
+                empty.textContent = 'No schema defined';
+                schemaArea.appendChild(empty);
+            }
+        }
+
+        contentTypes.forEach(ct => {
+            const btn = document.createElement('button');
+            btn.className = `schema-choice-tab${ct === activeType ? ' active' : ''}`;
+            btn.textContent = ct;
+            btn.addEventListener('click', () => {
+                activeType = ct;
+                ctWrap.querySelectorAll('.schema-choice-tab').forEach(b =>
+                    b.classList.toggle('active', b.textContent === ct));
+                renderSchemaForType(ct);
+            });
+            ctWrap.appendChild(btn);
+        });
+
+        bodyHeader.appendChild(ctWrap);
+        container.appendChild(bodyHeader);
+        container.appendChild(schemaArea);
+        renderSchemaForType(activeType);
+    }
+
+    function renderConsole(op) {
+        els.consoleParams.innerHTML = '';
+        const params = op.parameters || [];
+        if (params.length === 0) {
+            els.consoleParams.innerHTML = '<div class="text-gray-400 text-sm italic p-2">No parameters</div>';
+        } else {
+            params.forEach(p => {
+                const group = document.createElement('div');
+                group.className = 'flex flex-col';
+
+                const label = document.createElement('label');
+                label.className = 'text-xs font-medium text-gray-600 dark:text-gray-400 mb-1';
+                label.innerHTML = `<span class="uppercase border px-1 rounded bg-gray-100 dark:bg-gray-800 mr-1">${p.in}</span> ${p.name} ${p.required ? '<span class="text-red-500">*</span>' : ''}`;
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white';
+                input.dataset.paramIn = p.in;
+                input.dataset.paramName = p.name;
+                input.placeholder = p.description || '';
+
+                group.appendChild(label);
+                group.appendChild(input);
+                els.consoleParams.appendChild(group);
+            });
+        }
+        els.consoleHeaders.innerHTML = '<div class="text-gray-400 text-sm italic p-2">Standard headers applied.</div>';
+
+        // Request body fields
+        const bodyFieldsEl = document.getElementById('console-body-fields');
+        bodyFieldsEl.innerHTML = '';
+        bodyFieldsEl.classList.add('hidden');
+
+        const reqContent = op.requestBody && op.requestBody.content;
+        if (reqContent) {
+            const ct = Object.keys(reqContent).find(t => t.includes('json')) || Object.keys(reqContent)[0];
+            const mediaObj = reqContent[ct];
+            const schema = mediaObj && mediaObj.schema && resolveRef(mediaObj.schema);
+            const properties = schema && schema.properties;
+
+            if (properties && Object.keys(properties).length > 0) {
+                const required = schema.required || [];
+                bodyFieldsEl.classList.remove('hidden');
+
+                Object.entries(properties).forEach(([name, prop]) => {
+                    const resolved = resolveRef(prop);
+                    const isRequired = required.includes(name);
+
+                    const group = document.createElement('div');
+                    group.className = 'flex flex-col';
+
+                    const label = document.createElement('label');
+                    label.className = 'text-xs font-medium text-gray-600 dark:text-gray-400 mb-1';
+                    label.innerHTML = `${name} <span class="text-gray-400 font-mono">${resolved.type || ''}</span>${isRequired ? ' <span class="text-red-500">*</span>' : ''}`;
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white';
+                    input.dataset.fieldName = name;
+                    input.dataset.fieldType = resolved.type || 'string';
+                    input.placeholder = resolved.description || (resolved.example != null ? String(resolved.example) : '');
+
+                    input.addEventListener('input', () => {
+                        const obj = {};
+                        bodyFieldsEl.querySelectorAll('input[data-field-name]').forEach(el => {
+                            if (!el.value) return;
+                            const t = el.dataset.fieldType;
+                            obj[el.dataset.fieldName] = (t === 'integer' || t === 'number') ? Number(el.value)
+                                : t === 'boolean' ? el.value === 'true'
+                                : el.value;
+                        });
+                        els.reqBodyInput.value = JSON.stringify(obj, null, 2);
+                    });
+
+                    group.appendChild(label);
+                    group.appendChild(input);
+                    bodyFieldsEl.appendChild(group);
+                });
+            }
+        }
+    }
+
+    // --- Schema / Value Renderers ---
+    function renderJSONSchema(schema, level = 0) {
+        schema = resolveRef(schema);
+        if (!schema) return document.createTextNode('');
+
+        const container = document.createElement('div');
+
+        // Root description at the very top (only at level 0)
+        if (level === 0 && schema.description) {
+            const rootDesc = document.createElement('div');
+            rootDesc.className = 'text-sm text-gray-600 dark:text-gray-400 mb-6 prose dark:prose-invert max-w-none';
+            rootDesc.innerHTML = marked.parse(schema.description);
+            container.appendChild(rootDesc);
+        }
+
+        if (schema.allOf) {
+            // Merge all allOf schemas into one property list
+            const merged = { type: 'object', properties: {}, required: [] };
+            schema.allOf.forEach(sub => {
+                const resolved = resolveRef(sub);
+                if (resolved.properties) Object.assign(merged.properties, resolved.properties);
+                if (resolved.required) merged.required.push(...resolved.required);
+            });
+            if (Object.keys(merged.properties).length > 0) {
+                return renderJSONSchema(merged, level);
+            }
+        } else if (schema.oneOf || schema.anyOf) {
+            const variants = schema.oneOf || schema.anyOf;
+            const keyword = schema.oneOf ? 'oneOf' : 'anyOf';
+
+            // Tab selector UI — one visible panel at a time
+            const choicesWrap = document.createElement('div');
+            choicesWrap.className = 'mt-1';
+
+            const tabBar = document.createElement('div');
+            tabBar.className = 'flex flex-wrap gap-1 mb-3';
+
+            const panels = [];
+            variants.forEach((sub, i) => {
+                const resolved = resolveRef(sub);
+
+                const tab = document.createElement('button');
+                tab.className = `schema-choice-tab${i === 0 ? ' active' : ''}`;
+                tab.textContent = resolved.title || `${keyword} ${i + 1}`;
+                tab.dataset.choice = String(i);
+                tabBar.appendChild(tab);
+
+                const panel = document.createElement('div');
+                panel.className = `schema-choice-panel${i === 0 ? '' : ' hidden'}`;
+                panel.dataset.choice = String(i);
+                panel.appendChild(renderJSONSchema(resolved, level + 1));
+                panels.push(panel);
+            });
+
+            tabBar.addEventListener('click', e => {
+                const btn = e.target.closest('.schema-choice-tab');
+                if (!btn) return;
+                const choice = btn.dataset.choice;
+                tabBar.querySelectorAll('.schema-choice-tab').forEach(t =>
+                    t.classList.toggle('active', t.dataset.choice === choice));
+                panels.forEach(p =>
+                    p.classList.toggle('hidden', p.dataset.choice !== choice));
+            });
+
+            choicesWrap.appendChild(tabBar);
+            panels.forEach(p => choicesWrap.appendChild(p));
+            container.appendChild(choicesWrap);
+            return container;
+        }
+
+        const treeContainer = document.createElement('div');
+        treeContainer.className = 'schema-tree';
+
+        if (schema.type === 'object' && schema.properties) {
+            const requiredFields = schema.required || [];
+            const sortedProperties = Object.entries(schema.properties).sort(([nameA], [nameB]) => {
+                const reqA = requiredFields.includes(nameA);
+                const reqB = requiredFields.includes(nameB);
+                if (reqA && !reqB) return -1;
+                if (!reqA && reqB) return 1;
+                return nameA.localeCompare(nameB);
+            });
+            for (const [name, prop] of sortedProperties) {
+                treeContainer.appendChild(renderSchemaNode(name, prop, requiredFields.includes(name), level + 1));
+            }
+            // additionalProperties
+            const ap = schema.additionalProperties;
+            if (ap === false) {
+                const apNode = document.createElement('div');
+                apNode.className = 'schema-node group';
+                const apHeader = document.createElement('div');
+                apHeader.className = 'schema-node-header flex items-center gap-1.5 py-0.5 min-w-0';
+                const apName = document.createElement('span');
+                apName.className = 'text-sm text-gray-400 dark:text-gray-500 italic flex-none';
+                apName.textContent = '[no additional properties]';
+                apHeader.appendChild(apName);
+                apNode.appendChild(apHeader);
+                treeContainer.appendChild(apNode);
+            } else if (ap && typeof ap === 'object') {
+                const apResolved = resolveRef(ap);
+                const apNode = document.createElement('div');
+                apNode.className = 'schema-node group';
+                const apHeader = document.createElement('div');
+                apHeader.className = 'schema-node-header flex items-center gap-1.5 py-0.5 min-w-0';
+                const apName = document.createElement('span');
+                apName.className = 'font-semibold text-gray-900 dark:text-gray-100 font-mono text-sm flex-none';
+                apName.textContent = '[key]';
+                apHeader.appendChild(apName);
+                const apType = document.createElement('span');
+                apType.className = 'text-sm text-gray-400 dark:text-gray-500 font-mono flex-none';
+                apType.textContent = getSchemaTypeText(apResolved, ap);
+                apHeader.appendChild(apType);
+                const apLabel = document.createElement('span');
+                apLabel.className = 'text-xs text-gray-400 dark:text-gray-500 flex-none';
+                apLabel.textContent = 'additional property';
+                apHeader.appendChild(apLabel);
+                apNode.appendChild(apHeader);
+                treeContainer.appendChild(apNode);
+            }
+            container.appendChild(treeContainer);
+        } else if (schema.type === 'array' && schema.items) {
+            const items = resolveRef(schema.items);
+
+            const arrayNode = document.createElement('div');
+            arrayNode.className = 'schema-node group';
+
+            const arrayHeader = document.createElement('div');
+            arrayHeader.className = 'schema-node-header flex items-center gap-1.5 py-0.5 min-w-0';
+            arrayHeader.style.cursor = 'pointer';
+
+            const caretWrap = document.createElement('span');
+            caretWrap.className = 'schema-caret open flex-none text-gray-400 dark:text-gray-500';
+            caretWrap.innerHTML = `<svg style="width:0.75rem;height:0.75rem" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>`;
+            arrayHeader.appendChild(caretWrap);
+
+            const arrayLabel = document.createElement('span');
+            arrayLabel.className = 'text-sm text-gray-400 dark:text-gray-500 font-mono flex-none';
+            arrayLabel.textContent = `array of ${getSchemaTypeText(items, schema.items)}`;
+            arrayHeader.appendChild(arrayLabel);
+
+            arrayNode.appendChild(arrayHeader);
+
+            const children = document.createElement('div');
+            children.className = 'schema-node-children';
+            children.appendChild(renderJSONSchema(items, level));
+            arrayNode.appendChild(children);
+
+            arrayHeader.addEventListener('click', () => {
+                const nowExpanded = children.classList.toggle('hidden') === false;
+                caretWrap.classList.toggle('open', nowExpanded);
+            });
+
+            treeContainer.appendChild(arrayNode);
+            container.appendChild(treeContainer);
+        } else if (level === 0) {
+            treeContainer.appendChild(renderSchemaNode('', schema, false, 1));
+            container.appendChild(treeContainer);
+        }
+
+        return container;
+    }
+
+    function renderSchemaNode(name, prop, isRequired, level) {
+        const resolved = resolveRef(prop);
+        const node = document.createElement('div');
+        node.className = 'schema-node group';
+
+        const hasChildren =
+            (resolved.type === 'object' && resolved.properties && Object.keys(resolved.properties).length > 0) ||
+            (resolved.type === 'array' && resolved.items) ||
+            resolved.allOf || resolved.oneOf || resolved.anyOf;
+
+        // Header row
+        const header = document.createElement('div');
+        header.className = 'schema-node-header flex items-center gap-1.5 py-0.5 min-w-0';
+        if (hasChildren) header.style.cursor = 'pointer';
+
+        // Caret for expandable nodes
+        const caretWrap = document.createElement('span');
+        caretWrap.className = 'schema-caret flex-none text-gray-400 dark:text-gray-500';
+        if (hasChildren) {
+            caretWrap.innerHTML = `<svg style="width:0.75rem;height:0.75rem" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>`;
+            header.appendChild(caretWrap);
+        }
+
+        // Property name
+        if (name) {
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'font-semibold text-gray-900 dark:text-gray-100 font-mono text-sm flex-none';
+            if (resolved.title) {
+                nameSpan.textContent = resolved.title;
+                const subName = document.createElement('span');
+                subName.className = 'font-normal text-gray-400 dark:text-gray-500 ml-1';
+                subName.textContent = `(${name})`;
+                nameSpan.appendChild(subName);
+            } else {
+                nameSpan.textContent = name;
+            }
+            header.appendChild(nameSpan);
+        }
+
+        // Type
+        const typeSpan = document.createElement('span');
+        typeSpan.className = 'text-sm text-gray-400 dark:text-gray-500 font-mono flex-none';
+        typeSpan.textContent = getSchemaTypeText(resolved, prop);
+        header.appendChild(typeSpan);
+
+        // $ref source annotation (clickable link to schema panel)
+        if (prop && prop.$ref && prop.$ref.startsWith('#/components/schemas/')) {
+            const refName = prop.$ref.split('/').pop();
+            const refLink = document.createElement('button');
+            refLink.className = 'text-xs text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-mono flex-none';
+            refLink.textContent = `→ ${refName}`;
+            refLink.title = `View schema: ${refName}`;
+            refLink.addEventListener('click', e => {
+                e.stopPropagation();
+                const schema = state.spec?.components?.schemas?.[refName];
+                if (schema) {
+                    switchSidebarMode('schemas');
+                    selectSchema(refName, schema);
+                }
+            });
+            header.appendChild(refLink);
+        }
+
+        // Property count hint for collapsible objects
+        if (resolved.type === 'object' && resolved.properties) {
+            const count = Object.keys(resolved.properties).length;
+            const countSpan = document.createElement('span');
+            countSpan.className = 'text-xs text-gray-400 dark:text-gray-500 flex-none';
+            countSpan.textContent = `(${count} ${count === 1 ? 'property' : 'properties'})`;
+            header.appendChild(countSpan);
+        }
+
+        // Flex-1 divider
+        const divider = document.createElement('div');
+        divider.className = 'schema-divider flex-1 h-px bg-gray-200 dark:bg-gray-700 min-w-2 mx-1';
+        header.appendChild(divider);
+
+        // Right-side indicators
+        if (resolved.deprecated) {
+            const dep = document.createElement('span');
+            dep.className = 'text-xs text-amber-500 dark:text-amber-400 font-medium flex-none';
+            dep.textContent = 'deprecated';
+            header.appendChild(dep);
+        }
+        if (resolved.readOnly && !resolved.writeOnly) {
+            const ro = document.createElement('span');
+            ro.className = 'text-xs text-gray-400 dark:text-gray-500 flex-none';
+            ro.textContent = 'read-only';
+            header.appendChild(ro);
+        } else if (resolved.writeOnly && !resolved.readOnly) {
+            const wo = document.createElement('span');
+            wo.className = 'text-xs text-gray-400 dark:text-gray-500 flex-none';
+            wo.textContent = 'write-only';
+            header.appendChild(wo);
+        }
+        if (isRequired) {
+            const req = document.createElement('span');
+            req.className = 'text-xs text-orange-500 dark:text-orange-400 font-medium flex-none';
+            req.textContent = 'required';
+            header.appendChild(req);
+        }
+
+        node.appendChild(header);
+
+        // Description (always visible)
+        if (resolved.description) {
+            const desc = document.createElement('div');
+            desc.className = 'text-sm text-gray-500 dark:text-gray-400 mt-0.5 mb-1 prose dark:prose-invert max-w-none *:m-0';
+            desc.innerHTML = marked.parse(resolved.description);
+            node.appendChild(desc);
+        }
+
+        // Validation badges (always visible)
+        const badges = document.createElement('div');
+        badges.className = 'flex flex-wrap gap-1.5 mt-1';
+        if (resolved.minimum !== undefined) badges.appendChild(createBadge(`>= ${resolved.minimum}`));
+        if (resolved.maximum !== undefined) badges.appendChild(createBadge(`<= ${resolved.maximum}`));
+        if (typeof resolved.exclusiveMinimum === 'number') badges.appendChild(createBadge(`> ${resolved.exclusiveMinimum}`));
+        if (typeof resolved.exclusiveMaximum === 'number') badges.appendChild(createBadge(`< ${resolved.exclusiveMaximum}`));
+        if (resolved.minLength !== undefined) badges.appendChild(createBadge(`>= ${resolved.minLength} chars`));
+        if (resolved.maxLength !== undefined) badges.appendChild(createBadge(`<= ${resolved.maxLength} chars`));
+        if (resolved.minItems !== undefined) badges.appendChild(createBadge(`>= ${resolved.minItems} items`));
+        if (resolved.maxItems !== undefined) badges.appendChild(createBadge(`<= ${resolved.maxItems} items`));
+        if (resolved.pattern) badges.appendChild(createBadge(`/${resolved.pattern}/`));
+        if (resolved.default !== undefined) {
+            const defLabel = document.createElement('span');
+            defLabel.className = 'text-[10px] text-gray-400 font-mono flex items-center';
+            defLabel.textContent = 'default:';
+            badges.appendChild(defLabel);
+            badges.appendChild(createBadge(JSON.stringify(resolved.default)));
+        }
+        if (resolved.const !== undefined) {
+            badges.appendChild(createBadge(
+                JSON.stringify(resolved.const),
+                'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800'
+            ));
+        }
+        if (resolved.enum) {
+            badges.appendChild(createBadge(
+                resolved.enum.map(v => JSON.stringify(v)).join(' | '),
+                'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800'
+            ));
+        }
+        if (resolved.multipleOf !== undefined) badges.appendChild(createBadge(`× ${resolved.multipleOf}`));
+        if (resolved.uniqueItems) badges.appendChild(createBadge('unique'));
+        if (resolved.examples && resolved.examples.length > 0) {
+            const exLabel = document.createElement('span');
+            exLabel.className = 'text-[10px] text-gray-400 font-mono flex items-center';
+            exLabel.textContent = 'example:';
+            badges.appendChild(exLabel);
+            badges.appendChild(createBadge(JSON.stringify(resolved.examples[0])));
+        }
+        if (badges.hasChildNodes()) node.appendChild(badges);
+
+        // Children (collapsible)
+        if (hasChildren) {
+            const children = document.createElement('div');
+            children.className = 'schema-node-children';
+            children.appendChild(renderJSONSchema(resolved, level));
+
+            const isExpanded = level <= 1;
+            if (!isExpanded) {
+                children.classList.add('hidden');
+            } else {
+                caretWrap.classList.add('open');
+            }
+
+            node.appendChild(children);
+
+            header.addEventListener('click', () => {
+                const nowExpanded = children.classList.toggle('hidden') === false;
+                caretWrap.classList.toggle('open', nowExpanded);
+            });
+        }
+
+        return node;
+    }
+
+    function createBadge(text, extraClasses = 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700') {
+        const badge = document.createElement('span');
+        badge.className = `px-1.5 py-0.5 rounded text-[10px] font-mono ${extraClasses}`;
+        badge.textContent = text;
+        return badge;
+    }
+
+    function getSchemaTypeText(resolved, original) {
+        // Show $ref name before resolution
+        if (original && original.$ref) {
+            return original.$ref.split('/').pop();
+        }
+        // Boolean schema
+        if (typeof resolved === 'boolean') {
+            return resolved ? 'any' : 'never';
+        }
+        // Composition keywords without an explicit type
+        if (!resolved.type) {
+            if (resolved.oneOf) return 'oneOf';
+            if (resolved.anyOf) return 'anyOf';
+            if (resolved.allOf) return 'allOf';
+            return resolved.format ? `<${resolved.format}>` : 'any';
+        }
+        // Support OpenAPI 3.1 array-of-types
+        const types = Array.isArray(resolved.type) ? resolved.type : [resolved.type];
+        const result = types.map((t, i) =>
+            resolved.format && i === 0 ? `${t}<${resolved.format}>` : t
+        ).join(' or ');
+        return resolved.nullable ? result + ' | null' : result;
+    }
+
+    function renderJSONValue(value, level = 0) {
+        if (value === null) return document.createTextNode('null');
+
+        if (typeof value === 'object') {
+            const isArray = Array.isArray(value);
+            const keys = Object.keys(value);
+            if (keys.length === 0) return document.createTextNode(isArray ? '[]' : '{}');
+
+            const startChar = isArray ? '[' : '{';
+            const endChar = isArray ? ']' : '}';
+
+            const details = document.createElement('details');
+            details.open = level < 2;
+            details.className = 'pl-2';
+
+            const summary = document.createElement('summary');
+            summary.className = 'cursor-pointer hover:text-indigo-600 outline-none list-none font-mono text-sm';
+            summary.innerHTML = `<span class="text-gray-500">${startChar}</span> ${isArray ? keys.length + ' items' : keys.length + ' keys'}`;
+
+            const content = document.createElement('div');
+            content.className = 'pl-4 border-l border-gray-200 dark:border-gray-700 ml-1';
+
+            keys.forEach(key => {
+                const row = document.createElement('div');
+                row.className = 'py-0.5';
+                if (!isArray) {
+                    const keySpan = document.createElement('span');
+                    keySpan.className = 'text-purple-600 dark:text-purple-400 font-semibold mr-1';
+                    keySpan.textContent = `"${key}":`;
+                    row.appendChild(keySpan);
+                }
+                const val = value[key];
+                if (typeof val === 'object' && val !== null) {
+                    row.appendChild(renderJSONValue(val, level + 1));
+                } else {
+                    const valSpan = document.createElement('span');
+                    if (typeof val === 'string') {
+                        valSpan.className = 'text-green-600 dark:text-green-400';
+                        valSpan.textContent = `"${val}"`;
+                    } else if (typeof val === 'number') {
+                        valSpan.className = 'text-blue-600 dark:text-blue-400';
+                        valSpan.textContent = val;
+                    } else if (typeof val === 'boolean') {
+                        valSpan.className = 'text-yellow-600 dark:text-yellow-400';
+                        valSpan.textContent = val;
+                    } else {
+                        valSpan.textContent = String(val);
+                    }
+                    row.appendChild(valSpan);
+                }
+                content.appendChild(row);
+            });
+
+            details.appendChild(summary);
+            details.appendChild(content);
+            details.insertAdjacentHTML('beforeend', `<div class="pl-2 text-gray-500">${endChar}</div>`);
+
+            const wrapper = document.createElement('div');
+            wrapper.appendChild(details);
+            return wrapper;
+        }
+
+        return document.createTextNode(String(value));
+    }
+
+    // --- Helpers ---
+    function getMethodColor(method) {
+        const known = ['get', 'post', 'put', 'delete', 'patch'];
+        return `method-${known.includes(method.toLowerCase()) ? method.toLowerCase() : 'other'}`;
+    }
+
+    // --- Actions ---
+    window.toggleDescription = () => document.getElementById('desc-modal').classList.toggle('hidden');
+
+    window.toggleEndpointDesc = () => {
+        const el = document.getElementById('endpoint-desc-container');
+        const btn = document.getElementById('details-btn');
+        const hidden = el.classList.contains('hidden');
+        el.classList.toggle('hidden', !hidden);
+        btn.innerHTML = hidden
+            ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>'
+            : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>';
+    };
+
+    window.switchMainTab = (tab) => {
+        ['docs', 'request', 'response'].forEach(t => {
+            document.getElementById(`main-tab-${t}`).classList.toggle('active', t === tab);
+            document.getElementById(`main-content-${t}`).classList.toggle('hidden', t !== tab);
+            if (t === tab && t === 'response') {
+                document.getElementById('response-indicator').classList.add('hidden');
+            }
+        });
+    };
+
+    window.switchConsoleTab = (tab) => {
+        ['params', 'headers', 'body'].forEach(t => {
+            document.getElementById(`con-tab-${t}`).classList.toggle('active', t === tab);
+            document.getElementById(`console-${t}`).classList.toggle('hidden', t !== tab);
+        });
+    };
+
+    window.prettifyBody = () => {
+        try {
+            const val = els.reqBodyInput.value.trim();
+            if (val) els.reqBodyInput.value = JSON.stringify(JSON.parse(val), null, 2);
+        } catch (_) {}
+    };
+
+    window.toggleResponseView = () => {
+        const showingRaw = !els.respRaw.classList.contains('hidden');
+        els.respRaw.classList.toggle('hidden', showingRaw);
+        els.respTree.classList.toggle('hidden', !showingRaw);
+        els.respToggleBtn.textContent = showingRaw ? 'View: Raw' : 'View: Tree';
+    };
+
+    window.sendRequest = async () => {
+        if (!state.currentPath) return;
+
+        const btn = document.getElementById('send-btn');
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+
+        const startTime = Date.now();
+        els.respRaw.textContent = '';
+        els.respTree.innerHTML = '';
+        els.respPlaceholder.style.display = 'none';
+        els.respStatus.className = 'hidden';
+
+        try {
+            let url = state.selectedServer + state.currentPath;
+            const queryParams = new URLSearchParams();
+
+            els.consoleParams.querySelectorAll('input').forEach(input => {
+                const val = input.value.trim();
+                if (!val) return;
+                if (input.dataset.paramIn === 'path') {
+                    url = url.replace(`{${input.dataset.paramName}}`, val);
+                } else if (input.dataset.paramIn === 'query') {
+                    queryParams.append(input.dataset.paramName, val);
+                }
+            });
+
+            const qs = queryParams.toString();
+            if (qs) url += `?${qs}`;
+
+            let body = null;
+            if (state.currentMethod !== 'get' && state.currentMethod !== 'head') {
+                const raw = els.reqBodyInput.value.trim();
+                if (raw) {
+                    try {
+                        JSON.parse(raw);
+                        body = raw;
+                    } catch (_) {
+                        alert('Invalid JSON Body');
+                        btn.disabled = false;
+                        btn.textContent = 'Send';
+                        return;
+                    }
+                }
+            }
+
+            const res = await fetch(url, {
+                method: state.currentMethod.toUpperCase(),
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body
+            });
+
+            const duration = Date.now() - startTime;
+
+            els.respStatus.textContent = `${res.status} ${res.statusText}`;
+            els.respStatus.className = `resp-status ${res.ok ? 'ok' : 'err'}`;
+            els.respTime.textContent = `${duration}ms`;
+            els.respTime.className = 'text-xs text-gray-500 block';
+
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const json = await res.json();
+                state.lastResponseJson = json;
+                els.respRaw.textContent = JSON.stringify(json, null, 2);
+                els.respTree.innerHTML = '';
+                els.respTree.appendChild(renderJSONValue(json));
+                els.respToggleBtn.className = 'resp-toggle';
+                els.respToggleBtn.textContent = 'View: Tree';
+                els.respRaw.classList.add('hidden');
+                els.respTree.classList.remove('hidden');
+            } else {
+                els.respRaw.textContent = await res.text();
+                state.lastResponseJson = null;
+                els.respToggleBtn.className = 'hidden';
+                els.respRaw.classList.remove('hidden');
+                els.respTree.classList.add('hidden');
+            }
+
+            document.getElementById('response-indicator').classList.remove('hidden');
+            switchMainTab('response');
+        } catch (e) {
+            els.respRaw.innerHTML = `<span class="text-red-500">Error: ${e.message}</span>`;
+            els.respRaw.classList.remove('hidden');
+            switchMainTab('response');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Send';
+        }
+    };
+
+    // --- Sidebar Mode Switch ---
+    window.switchSidebarMode = (mode) => {
+        state.sidebarMode = mode;
+        document.getElementById('mode-tab-endpoints').classList.toggle('active', mode === 'endpoints');
+        document.getElementById('mode-tab-schemas').classList.toggle('active', mode === 'schemas');
+        document.getElementById('api-groups').classList.toggle('hidden', mode !== 'endpoints');
+        document.getElementById('api-schemas').classList.toggle('hidden', mode !== 'schemas');
+        document.getElementById('endpoint-top-bar').classList.toggle('hidden', mode !== 'endpoints');
+        document.getElementById('main-content-pane').classList.toggle('hidden', mode !== 'endpoints');
+        document.getElementById('schema-detail-panel').classList.toggle('hidden', mode !== 'schemas');
+        els.searchInput.value = '';
+        els.searchInput.placeholder = mode === 'schemas' ? 'Filter schemas...' : 'Filter endpoints...';
+    };
+
+    // --- Sidebar Search ---
+    function filterSidebar(query) {
+        const q = query.trim().toLowerCase();
+        if (state.sidebarMode === 'endpoints') {
+            els.groups.querySelectorAll('details').forEach(details => {
+                let groupVisible = false;
+                details.querySelectorAll('li').forEach(li => {
+                    const btn = li.querySelector('button');
+                    const match = !q || btn.textContent.toLowerCase().includes(q);
+                    li.style.display = match ? '' : 'none';
+                    if (match) groupVisible = true;
+                });
+                details.style.display = groupVisible ? '' : 'none';
+                if (q && groupVisible) details.open = true;
+            });
+        } else {
+            document.querySelectorAll('#api-schemas button').forEach(btn => {
+                btn.style.display = (!q || btn.textContent.toLowerCase().includes(q)) ? '' : 'none';
+            });
+        }
+    }
+
+    // --- File Import ---
+    document.getElementById('file-input').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                applySpec(event.target.result);
+            } catch (err) {
+                alert('Failed to parse file: ' + err.message);
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    });
+
+    init();
+})();
+</script>
+</div><!-- outer full-height wrapper -->
+{{ end }}

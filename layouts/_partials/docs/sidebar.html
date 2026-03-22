@@ -1,40 +1,18 @@
 {{ $page := . }}
-{{ $fields := split .File.Dir "/" }}
-{{ $volume := index $fields 1 }}
-
 <nav class="docs-sidebar px-2 overflow-x-auto text-sm">
-    <div class="font-semibold px-1 pb-2 text-gray-900 dark:text-gray-100 whitespace-nowrap">
+    <div class="font-semibold px-1 pb-2 text-foreground whitespace-nowrap">
         文档导航
     </div>
-    {{ range (index .Site.Menus .Section) }}
-        {{/* filter the first level, volume */}}
-        {{ if (ne $volume .Identifier) }}
-          {{ continue }}
-        {{ end }}
-
-        {{ $level := 1 }}
+    {{ with (partial "function/docs/root-menu.html" .) }}
         {{ $collapsed := .Params.Collapsed | default true }}
-        {{ $versioned := .Params.Version | default false }}
         {{ $categorized := .Params.Category | default false }}
-        {{ $version := "__unknown__" }}
-        {{ $category := "__unknown__" }}
 
-        {{ if $versioned }}
-            {{ $level = add $level 1 }}
-            {{ $version = index $fields $level }}
-        {{ end }}
-        {{ if $categorized }}
-            {{ $level = add $level 1 }}
-            {{ $category = index $fields $level }}
-        {{ end }}
-        {{/* printf "title:%v,version:%v/%s,category:%v/%s" .Title .Params.Version $version .Params.Category $category */}}
-
-        {{ if not $versioned }}
+        {{ if not (.Params.Version | default false) }}
             {{ partial "inline/menu/category.html" (dict "menus" . "page" $page "categorized" $categorized "collapsed" $collapsed) }}
         {{ else }}
             {{ range .Children }}
                 {{/* filter the second level, version */}}
-                {{ if (ne (printf "%s/%s" $volume $version) .Identifier) }}
+                {{ if and (not ($page.IsMenuCurrent .Menu .)) (not ($page.HasMenuCurrent .Menu .)) }}
                     {{ continue }}
                 {{ end }}
                 {{ partial "inline/menu/category.html" (dict "menus" . "page" $page "categorized" $categorized "collapsed" $collapsed) }}
@@ -64,20 +42,28 @@
         {{ end }}
 
         <li class="menu-item whitespace-nowrap">
-            <div class="flex justify-between pl-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
-                <a href="{{ .Page.RelPermalink }}" title="{{ .Title }}" class="truncate flex-1 py-1 {{ if $active }}text-blue-600 dark:text-blue-400{{ else }}text-gray-900 dark:text-gray-100{{ end }}">
+            <div class="flex justify-between pl-1 hover:bg-accent rounded">
+                <a href="{{ .Page.RelPermalink }}" title="{{ .Title }}"
+                    class="truncate flex-1 py-1 flex items-center gap-1.5 {{ if $active }}text-primary{{ else }}text-foreground{{ end }}">
+                    {{ with .Params.icon }}{{ partial "component/icon.html" (dict "name" . "width" "16") }}{{ end }}
                     {{ .Title }}
                 </a>
                 {{ if .Children }}
-                <button class="menu-toggle px-2 rounded-r hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer flex items-center">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 transform {{ if $expand }}rotate-90{{ end }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
+                    <button class="menu-toggle px-2 rounded-r hover:bg-accent cursor-pointer flex items-center">
+                        {{ $class := "w-4 h-4 text-muted-foreground transition-transform duration-200 transform"}}
+                        {{ if $expand }}
+                            {{ $class = "w-4 h-4 text-muted-foreground transition-transform duration-200 transform rotate-90"}}
+                        {{ end }}
+                        {{ partial "component/icon.html" (dict
+                            "name" "chevron-right"
+                            "width" "16"
+                            "class" $class
+                        ) }}
+                    </button>
                 {{ end }}
             </div>
             {{ if .Children }}
-                <ul class="menu-children ml-2 pl-2 border-l border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 {{ if $expand }}expanded{{ end }}">
+                <ul class="menu-children ml-2 pl-2 border-l border-border overflow-hidden transition-all duration-300 {{ if $expand }}expanded{{ end }}">
                     {{ partial "inline/menu/items.html" (dict "menus" .Children "page" $page "collapsed" $collapsed) }}
                 </ul>
             {{ end }}
@@ -93,12 +79,15 @@
     {{ else }}
         {{ $length := sub (len .menus.Children) 1 }}
         {{ range $idx, $item := .menus.Children }}
-            <span class="font-semibold text-gray-800 dark:text-gray-400 px-1 whitespace-nowrap">{{ $item.Title }}</span>
+            <div class="font-semibold text-foreground px-1 my-2 whitespace-nowrap summary flex items-center gap-1.5">
+                {{ with $item.Params.icon }}{{ partial "component/icon.html" (dict "name" . "width" "16") }}{{ end }}
+                {{ $item.Title }}
+            </div>
             <ul>
                 {{ partial "inline/menu/items.html" (dict "menus" $item.Children "page" $page "collapsed" $collapsed) }}
             </ul>
             {{ if ne $idx $length }}
-                <hr class="h-px px-1 my-2 bg-gray-300 dark:bg-gray-700 border-0">
+                <hr class="h-px px-1 my-2 bg-border border-0">
             {{ end }}
         {{ end }}
     {{ end }}

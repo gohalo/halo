@@ -1,78 +1,78 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
-{{- with site.Params.menu.theme.default }}
+{{ with site.Params.menu.theme.default }}
     <meta name="theme-default" content="{{ . }}">
-{{- end }}
+{{ end }}
 
 {{ with (templates.Defer (dict "key" "global")) }}
     {{ partial "head/css.html" . }}
 {{ end }}
 {{ partial "head/js.html" . }}
 <script>
-  // 主题初始化和切换（立即执行，避免闪烁）
-  (function() {
-    const html = document.documentElement;
-    const savedTheme = localStorage.getItem('theme');
-    const defaultTheme = document.querySelector('meta[name="theme-default"]')?.content || 'auto';
+    // 主题初始化和切换（立即执行，避免闪烁）
+    (function() {
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('theme');
+        const defaultTheme = document.querySelector('meta[name="theme-default"]')?.content || 'auto';
 
-    // 立即初始化主题，避免闪烁
-    if (savedTheme) {
-      // 使用保存的主题设置
-      if (savedTheme === 'dark') {
-        html.classList.add('dark');
-      }
-    } else {
-      // 使用默认主题设置
-      if (defaultTheme === 'dark') {
-        html.classList.add('dark');
-      } else if (defaultTheme === 'auto') {
-        // 跟随系统主题
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          html.classList.add('dark');
+        // 立即初始化主题，避免闪烁
+        if (savedTheme) {
+            // 使用保存的主题设置
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+            }
+        } else {
+            // 使用默认主题设置
+            if (defaultTheme === 'dark') {
+                html.classList.add('dark');
+            } else if (defaultTheme === 'auto') {
+                // 跟随系统主题
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    html.classList.add('dark');
+                }
+            }
         }
-      }
-    }
 
-    // DOM 加载完成后，添加主题切换按钮事件监听
-    document.addEventListener('DOMContentLoaded', function() {
-      const themeToggle = document.getElementById('theme-toggle');
+        // DOM 加载完成后，添加主题切换按钮事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('theme-toggle');
 
-      // 主题切换按钮点击事件
-      if (themeToggle) {
-        themeToggle.addEventListener('click', function() {
-          html.classList.toggle('dark');
-          const isDark = html.classList.contains('dark');
-          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            // 主题切换按钮点击事件
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    html.classList.toggle('dark');
+                    const isDark = html.classList.contains('dark');
+                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                });
+            }
+
+            // 监听系统主题变化（仅当用户未手动设置且为 auto 模式时）
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                // 只有在没有手动设置主题且配置为 auto 时才跟随系统
+                if (!localStorage.getItem('theme') && defaultTheme === 'auto') {
+                    if (e.matches) {
+                        html.classList.add('dark');
+                    } else {
+                        html.classList.remove('dark');
+                    }
+                }
+            });
         });
-      }
-
-      // 监听系统主题变化（仅当用户未手动设置且为 auto 模式时）
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-        // 只有在没有手动设置主题且配置为 auto 时才跟随系统
-        if (!localStorage.getItem('theme') && defaultTheme === 'auto') {
-          if (e.matches) {
-            html.classList.add('dark');
-          } else {
-            html.classList.remove('dark');
-          }
-        }
-      });
-    });
-  })();
+    })();
 </script>
 
 {{- if and (isset .Params "math") (eq .Params.math true) }}
 <link rel="stylesheet" href="{{ "katex/katex.min.css" | relURL }}"/>
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     renderMathInElement(document.body, {
-      delimiters: [
-        {left: "$$", right: "$$", display: true},
-        {left: "$", right: "$", display: false}
-      ]
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+        ]
     });
-  });
+});
 </script>
 {{- end -}}
 

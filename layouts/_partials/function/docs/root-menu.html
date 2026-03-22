@@ -1,0 +1,23 @@
+{{/* get the root menu for sidebar to render */}}
+{{ $page := . }}
+{{ $result := "" }}
+
+{{ range (index .Site.Menus .Section) }}
+    {{ if and (not ($page.IsMenuCurrent .Menu .)) (not ($page.HasMenuCurrent .Menu .)) }}
+        {{ continue }}
+    {{ end }}
+
+    {{/* if it's a tabbing root, we need to check its children for the versioned section */}}
+    {{ if (.Params.tabbing | default false) }}
+        {{ range .Children }}
+            {{ if or ($page.IsMenuCurrent .Menu .) ($page.HasMenuCurrent .Menu .) }}
+                {{ $result = . }}
+                {{ break }}
+            {{ end }}
+        {{ end }}
+    {{ else }}
+        {{ $result = . }}
+    {{ end }}
+    {{ if $result }}{{ break }}{{ end }}
+{{ end }}
+{{ return $result }}

@@ -1,0 +1,14 @@
+<!-- 链接跳转 -->
+{{ $icon := .icon }}
+{{ if $icon.target }}
+    {{ $responsive := partial "function/responsive.html" .icon.responsive }}
+    {{ with (partial "function/url.html" (dict "page" .page "target" $icon.target)) }}
+    <a href="{{ . }}" class="nav-icon group{{ $responsive }}"
+        {{ if ($icon.blank | default false) }}target="_blank" rel="noopener noreferrer"{{ end }}
+        aria-label="{{ i18n ( printf "nav_icon_label_%s" ($icon.translate | default "unknown")) }}"
+        >
+        {{ partial "component/icon.html" (dict "name" ($icon.icon | default "dot") "width" "20") }}
+        <span class="nav-tip">{{ i18n ( printf "nav_icon_tip_%s" ($icon.translate | default "unknown")) }}</span>
+    </a>
+    {{ end }}
+{{- end }}

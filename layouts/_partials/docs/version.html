@@ -1,48 +1,33 @@
-{{ $versions := slice }}
-{{ $version := "" }}
+{{ $versions := slice }} {{/* all version */}}
+{{ $version := "" }} {{/* current version */}}
+{{ $page := . }}
 
-{{ $fields := split .File.Dir "/" }}
-{{ $volume := index $fields 1 }}
-
-{{ range (index .Site.Menus .Section) }}
-    {{ if (ne $volume .Identifier) }}
-      {{ continue }}
-    {{ end }}
-
-    {{/* default not versioned */}}
-    {{ if or (not (isset .Params "version")) (not .Params.Version) }}
-        {{ continue }}
-    {{ end }}
-    {{ $version = index $fields 2 }}
-
-    {{ range .Children }}
-        {{ if (eq (printf "%s/%s" $volume $version) .Identifier) }}
-            {{ $versions = $versions | append (dict
-                "active" true
-                "url" .Identifier
-                "version" (strings.SliceString .Identifier (add (len $volume) 1))
-            ) }}
-        {{ else }}
-            {{ $versions = $versions | append (dict
-                "active" false
-                "url" .Identifier
-                "version" (strings.SliceString .Identifier (add (len $volume) 1))
-            ) }}
+{{ $root := partial "function/docs/root-menu.html" . }}
+{{ if $root }}
+    {{ if ($root.Params.version | default false) }}
+        {{ range $root.Children }}
+            {{ $_version := strings.SliceString .Identifier (add (len $root.Identifier) 1) }}
+            {{ $_info := dict "active" false "url" .Identifier "version" $_version }}
+            {{ if or ($page.IsMenuCurrent .Menu .) ($page.HasMenuCurrent .Menu .) }}
+                {{ $version = $_version }}
+                {{ $_info = merge $_info (dict "active" true)}}
+            {{ end }}
+            {{ $versions = $versions | append $_info }}
         {{ end }}
     {{ end }}
-{{ end }}
+{{ end}}
 
 {{ if (lt 0 (len $versions)) }}
 <div class="relative group">
     <button class="nav-item flex items-center">
-        版本: {{ $version }}
-        {{ partial "icon/arrow-down.html" }}
+        {{ i18n "version" }}: {{ $version }}
+        {{ partial "component/icon.html" (dict "name" "chevron-down" "width" "16") }}
     </button>
 
     <div class="nav-dropdown-menu">
     {{- range $versions }}
         {{ if .active }}
-            <span class="block px-4 py-2 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 cursor-default">
+            <span class="block px-4 py-2 text-sm font-semibold text-primary bg-accent cursor-default">
                 {{ .version }}
             </span>
         {{ else }}

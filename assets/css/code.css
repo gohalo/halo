@@ -44,13 +44,13 @@ code {
     /* 语言标签样式 */
     .code-language-label {
         @apply h-6 min-w-6 px-2 rounded-md flex items-center justify-center;
-        @apply text-xs text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700;
+        @apply text-xs text-muted-foreground bg-muted;
     }
 
     /* 复制按钮样式 */
     .copy-code-button {
         @apply h-6 w-6 px-1 rounded-md flex items-center justify-center cursor-pointer;
-        @apply text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600;
+        @apply text-muted-foreground bg-muted hover:bg-accent hover:text-accent-foreground;
     }
 
     /* 复制成功时的样式 */

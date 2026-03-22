@@ -1,0 +1,38 @@
+{{ $page := . }}
+
+{{ with (partial "function/docs/root.html" .) }}
+    {{ if .Params.tabbing }}
+        <div class="border-b border-border -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+            <nav class="-mb-px flex space-x-4 overflow-x-auto" aria-label="Tabs">
+                {{ $left := where .Children "Params.align" "ne" "right" }}
+                {{ $right := where .Children "Params.align" "right" }}
+
+                {{ range $left }}
+                    {{ partial "inline/tab.html" (dict "menu" . "page" $page) }}
+                {{ end }}
+                {{ if gt (len $right) 0 }}
+                    <div class="grow"></div>
+                {{ end }}
+                {{ range $right }}
+                    {{ partial "inline/tab.html" (dict "menu" . "page" $page) }}
+                {{ end }}
+            </nav>
+        </div>
+    {{ end }}
+{{ end }}
+
+{{ define "_partials/inline/tab.html" }}
+    {{ $page := .page }}
+    {{ $menu := .menu }}
+    {{ $class := "py-2 px-1 border-b-2 whitespace-nowrap font-medium text-sm"}}
+    {{ if or ($page.IsMenuCurrent $menu.Menu $menu) ($page.HasMenuCurrent $menu.Menu $menu) }}
+        <a href="{{ $menu.URL }}" class="text-primary border-primary {{ $class }}">
+            {{ $menu.Name }}
+        </a>
+    {{ else }}
+        <a href="{{ $menu.URL }}"
+            class="text-muted-foreground border-transparent hover:text-primary hover:border-primary {{ $class }}">
+            {{ $menu.Name }}
+        </a>
+    {{ end }}
+{{ end }}

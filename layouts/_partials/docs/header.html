@@ -1,0 +1,26 @@
+{{ $height := "h-16" }}
+{{ $border := "border-b border-border" }}
+{{ with (partial "function/docs/root.html" .) }}
+    {{ if .Params.tabbing }}
+        {{ $border = "" }}
+        {{ $height = "mt-2 h-12" }}
+    {{ end }}
+{{ end}}
+
+{{- $page := . -}}
+<nav class="bg-background {{ $border }}">
+    <div class="px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center {{ $height }}">
+            <!-- 左侧：Title 和 Logo -->
+            <div class="flex items-center space-x-1">
+                {{ partial "header/title.html" . }}
+            </div>
+
+            <!-- 右侧：搜索、Dark/Light切换、语言选择、GitHub、关于 -->
+            <div class="flex items-center space-x-2">
+                {{ partial "docs/version.html" . }}
+                {{ partial "header/icons.html" $page }}
+            </div>
+        </div>
+    </div>
+</nav>

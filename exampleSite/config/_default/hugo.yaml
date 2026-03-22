@@ -39,11 +39,13 @@ module:
   - disableWatch: true
     source: hugo_stats.json
     target: assets/notwatching/hugo_stats.json
-  - source: themes/halo/node_modules/katex/dist
+  - source: ../node_modules/lucide-static/icons
+    target: assets/icons/lucide
+  - source: ../node_modules/katex/dist
     target: static/katex
-  - source: themes/halo/node_modules/mermaid/dist
+  - source: ../node_modules/mermaid/dist
     target: static/mermaid
-  - source: themes/halo/node_modules/reveal.js
+  - source: ../node_modules/reveal.js
     target: static/reveal
 
   # [[module.mounts]]

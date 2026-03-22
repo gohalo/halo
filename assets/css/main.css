@@ -1,8 +1,142 @@
 @import "tailwindcss";
+/* @plugin "@tailwindcss/typography"; */
 @custom-variant dark (&:where(.dark, .dark *));
 @source "hugo_stats.json";
+
 @import "basic.css";
 @import "nav.css";
 @import "syntax-dark.css";
 @import "syntax-light.css";
 @import "code.css";
+@import "docs.css";
+
+/* shadcn/ui @theme inline — exposes CSS vars as Tailwind utilities at runtime.
+   Paste any theme from https://ui.shadcn.com/themes into custom.css to retheme. */
+@theme inline {
+    --color-background:           var(--background);
+    --color-foreground:           var(--foreground);
+    --color-primary:              var(--primary);
+    --color-primary-foreground:   var(--primary-foreground);
+    --color-secondary:            var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-card:                 var(--card);
+    --color-card-foreground:      var(--card-foreground);
+    --color-popover:              var(--popover);
+    --color-popover-foreground:   var(--popover-foreground);
+    --color-muted:                var(--muted);
+    --color-muted-foreground:     var(--muted-foreground);
+    --color-accent:               var(--accent);
+    --color-accent-foreground:    var(--accent-foreground);
+    --color-destructive:          var(--destructive);
+    --color-border:               var(--border);
+    --color-input:                var(--input);
+    --color-ring:                 var(--ring);
+    --radius-sm:                  calc(var(--radius) * 0.6);
+    --radius-md:                  calc(var(--radius) * 0.8);
+    --radius-lg:                  var(--radius);
+    --radius-xl:                  calc(var(--radius) * 1.4);
+    --radius-2xl:                 calc(var(--radius) * 1.8);
+    --radius-3xl:                 calc(var(--radius) * 2.2);
+    --radius-4xl:                 calc(var(--radius) * 2.6);
+}
+
+/*
+background / foreground	The default app background and text color.	The page shell, page sections, and default text.
+card / card-foreground	Elevated surfaces and the content inside them.	Card, dashboard panels, settings panels.
+popover / popover-foreground	Floating surfaces and the content inside them.	Popover, DropdownMenu, ContextMenu, and other overlays.
+primary / primary-foreground	High-emphasis actions and brand surfaces.	Default Button, selected states, badges, and active accents.
+secondary / secondary-foreground	Lower-emphasis filled actions and supporting surfaces.	Secondary buttons, secondary badges, and supporting UI.
+muted / muted-foreground	Subtle surfaces and lower-emphasis content.	Descriptions, placeholders, empty states, helper text, and subdued surfaces.
+accent / accent-foreground	Interactive hover, focus, and active surfaces.	Ghost buttons, menu highlight states, hovered rows, and selected items.
+destructive	Destructive actions and error emphasis.	Destructive buttons, invalid states, and destructive menu items.
+border	Default borders and separators.	Cards, menus, tables, separators, and layout dividers.
+input	Form control borders and input surface treatment.	Input, Textarea, Select, and outline-style controls.
+ring	Focus rings and outlines.	Buttons, inputs, checkboxes, menus, and other focusable controls.
+
+chart-1 ... chart-5	The default chart palette.	Charts and chart-driven dashboard blocks.
+sidebar / sidebar-foreground	The base sidebar surface and default sidebar text.	The Sidebar container and its default content.
+sidebar-primary / sidebar-primary-foreground	High-emphasis actions inside the sidebar.	Active items, icon tiles, badges, and sidebar CTAs.
+sidebar-accent / sidebar-accent-foreground	Hover and selected states inside the sidebar.	Sidebar menu hover states, open items, and interactive rows.
+sidebar-border	Sidebar-specific borders and separators.	Sidebar headers, groups, and internal dividers.
+sidebar-ring	Sidebar-specific focus rings.	Focused controls inside the sidebar.
+*/
+
+
+
+
+
+
+
+
+
+
+/* Default theme values. Override in custom.css using :root / .dark. */
+/* https://ui.shadcn.com/docs/theming */
+@layer base {
+    :root {
+        --radius:               0.625rem;
+        --background:           white;
+        --foreground:           #111827;   /* gray-900 */
+        --primary:              #3b82f6;   /* blue-500 */
+        --primary-foreground:   white;
+        --secondary:            #bae6fd;   /* sky-200  */
+        --secondary-foreground: #0c4a6e;   /* sky-900  */
+        --muted:                #f3f4f6;   /* gray-100 */
+        --muted-foreground:     #374151;   /* gray-700 */
+        --popover:              white;
+        --popover-foreground:   #0a0a0a;
+        --accent:               #f3f4f6;   /* gray-100 */
+        --accent-foreground:    #111827;
+        --card:                 #f9fafb;   /* gray-50  */
+        --card-foreground:      #111827;
+        --destructive:          #ef4444;   /* red-500  */
+        --border:               #d1d5db;   /* gray-300 */
+        --input:                #d1d5db;
+        --ring:                 #3b82f6;
+    }
+    .dark {
+        --background:           #111827;   /* gray-900 */
+        --foreground:           #f9fafb;   /* gray-100 */
+        --primary:              #60a5fa;   /* blue-400 */
+        --primary-foreground:   #111827;
+        --secondary:            #1e3a5f;   /* deep blue */
+        --secondary-foreground: #bae6fd;
+        --muted:                #1f2937;   /* gray-800 */
+        --muted-foreground:     #d1d5db;   /* gray-300 */
+        --popover:              #171717;
+        --popover-foreground:   #fafafa;
+        --accent:               #1f2937;   /* gray-800 */
+        --accent-foreground:    #f9fafb;
+        --card:                 #1f2937;   /* gray-800 */
+        --card-foreground:      #f9fafb;
+        --destructive:          #f87171;   /* red-400  */
+        --border:               #4b5563;   /* gray-600 */
+        --input:                #4b5563;
+        --ring:                 #60a5fa;
+    }
+
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* --popover: oklch(0.205 0 0); */
+/* --popover-foreground: oklch(0.985 0 0); */
+/* --chart-1: oklch(0.488 0.243 264.376); */
+/* --chart-2: oklch(0.696 0.17 162.48); */
+/* --chart-3: oklch(0.769 0.188 70.08); */
+/* --chart-4: oklch(0.627 0.265 303.9); */
+/* --chart-5: oklch(0.645 0.246 16.439); */
+/* --sidebar: oklch(0.205 0 0); */
+/* --sidebar-foreground: oklch(0.985 0 0); */
+/* --sidebar-primary: oklch(0.488 0.243 264.376); */
+/* --sidebar-primary-foreground: oklch(0.985 0 0); */
+/* --sidebar-accent: oklch(0.269 0 0); */
+/* --sidebar-accent-foreground: oklch(0.985 0 0); */
+/* --sidebar-border: oklch(1 0 0 / 10%); */
+/* --sidebar-ring: oklch(0.556 0 0); */
+
+@import "custom.css";

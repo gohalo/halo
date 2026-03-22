@@ -1,16 +1,27 @@
 .content {
+    h1, h2, h3 {
+        @apply text-foreground my-2 scroll-mt-18 clear-both;
+    }
     h1 {
-        @apply bg-sky-200 dark:bg-sky-800 text-center font-semibold text-2xl text-gray-700 dark:text-gray-100 p-2 my-2 rounded-md scroll-mt-18 clear-both;
+        @apply bg-secondary text-center font-semibold text-2xl p-2 rounded-md;
     }
     h2 {
-        @apply border-b-2 border-b-sky-200 dark:border-b-sky-600 font-medium text-xl text-gray-900 dark:text-gray-100 my-2 scroll-mt-18 clear-both;
+        @apply border-b-2 border-b-secondary font-medium text-xl;
     }
     h3 {
-        @apply border-l-3 border-l-sky-200 dark:border-l-sky-600 font-medium text-lg text-gray-900 dark:text-gray-100 my-2 pl-1 scroll-mt-18 clear-both;
+        @apply border-l-3 border-l-secondary font-medium text-lg pl-1;
     }
 
+    p {
+        @apply my-2;
+    }
+
+	img { /* default, maybe overide by inline class */
+		@apply max-w-full h-auto py-2 mx-auto block;
+	}
+
     a {
-        @apply text-sky-600;
+        @apply text-primary;
     }
 
     hr {
@@ -18,7 +29,7 @@
     }
 
     blockquote {
-        @apply ml-8 my-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md border-s-6 border-sky-300 dark:border-sky-600 text-gray-700 dark:text-gray-300;
+        @apply ml-8 my-2 p-2 bg-muted rounded-md border-s-6 border-secondary text-muted-foreground;
     }
 
     /* 列表样式 */
@@ -43,18 +54,21 @@
 
     /* 表格样式 */
     table {
-        @apply w-[95%] my-2 mx-auto border-collapse;
+        @apply max-w-[95%] my-2 mx-auto border-collapse;
         thead {
-            @apply bg-gray-100 dark:bg-gray-800;
+            @apply bg-muted;
+        }
+        th, td {
+            @apply px-4 py-1 border border-border;
         }
         th {
-            @apply p-1 font-semibold text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600;
+            @apply font-semibold text-foreground;
         }
         td {
-            @apply p-1 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600;
+            @apply text-muted-foreground;
         }
         tbody tr:hover {
-            @apply bg-gray-50 dark:bg-gray-800/50;
+            @apply bg-accent;
         }
     }
 
@@ -68,19 +82,15 @@
         @apply hidden;
     }
     details {
-        @apply my-2 border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden;
+        @apply my-2 border border-border rounded-lg overflow-hidden;
         summary {
-            @apply px-2 py-2 bg-gray-50 dark:bg-gray-800 cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-2;
+            @apply px-2 py-2 bg-card cursor-pointer select-none hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2;
         }
     }
 
     /* Tabs 组件样式 */
     .tab-button.tab-active {
-        @apply text-blue-600 border-b-blue-600;
-    }
-
-    .dark .tab-button.tab-active {
-        @apply text-blue-400 border-b-blue-400;
+        @apply text-primary border-b-primary;
     }
 }
 
@@ -91,14 +101,14 @@
             @apply list-none ml-4;
         }
         li a {
-            @apply text-gray-900 dark:text-gray-100;
+            @apply text-foreground;
         }
     }
     a:hover {
-        @apply text-sky-600 dark:text-sky-400;
+        @apply text-primary;
     }
     a.active {
-        @apply text-sky-600 dark:text-sky-400 font-semibold;
+        @apply text-primary font-semibold;
     }
 }
 
@@ -110,12 +120,6 @@
     @apply block;
 }
 
-.breadcrumb {
-	li:not(:last-child)::after {
-		content: "»";
-	}
-}
-
 /* Step component */
 .steps {
     counter-reset: step-counter;
@@ -124,10 +128,10 @@
         counter-increment: step-counter;
         @apply relative pl-12 pb-8;
         .step-title {
-            @apply text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2;
+            @apply text-lg font-semibold text-foreground mb-2;
         }
         .step-number {
-            @apply absolute left-0 top-0 w-8 h-8 rounded-full border-2 border-blue-500 bg-white dark:bg-gray-900 flex items-center justify-center font-bold text-blue-600 dark:text-blue-400 z-10;
+            @apply absolute left-0 top-0 w-8 h-8 rounded-full border-2 border-primary bg-background flex items-center justify-center font-bold text-primary z-10;
         }
         .step-number::after {
           content: counter(step-counter);
@@ -141,7 +145,7 @@
     /* Connecting line */
     .step::before {
         content: "";
-        @apply absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700 -translate-x-1/2;
+        @apply absolute left-4 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2;
     }
 
     /* Hide line for the last item */

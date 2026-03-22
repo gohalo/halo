@@ -1,15 +1,9 @@
 # 导航栏
-- id: nav_about
-  translation: "关于"
-
 - id: nav_search
   translation: "搜索"
 
 - id: nav_language
   translation: "语言"
-
-- id: nav_github
-  translation: "GitHub"
 
 - id: nav_theme_toggle
   translation: "切换主题"
@@ -27,10 +21,18 @@
 - id: tooltip_language
   translation: "切换语言"
 
-- id: tooltip_github
-  translation: "访问 GitHub 仓库"
+- id: nav_icon_label_unknown
+  translation: "Unknown"
+- id: nav_icon_tip_unknown
+  translation: "多语言未配置"
 
-- id: tooltip_about
+- id: nav_icon_label_github
+  translation: "GitHub"
+- id: nav_icon_tip_github
+  translation: "访问 GitHub 仓库"
+- id: nav_icon_label_about
+  translation: "关于"
+- id: nav_icon_tip_about
   translation: "关于我们"
 
 # 搜索相关
@@ -89,6 +91,10 @@
 
 - id: get_started
   translation: "开始阅读"
+
+# 文档相关
+- id: version
+  translation: "版本"
 
 # 简历相关
 - id: resume_experience

@@ -1,0 +1,10 @@
+{{ with site.Params.menu.logo }}
+    {{ if os.FileExists (printf "/static%s" .) }}
+    <a href="{{ "/" | relLangURL }}" class="shrink-0 ml-4 mx-1">
+        <img src="{{ . }}" alt="{{ site.Title }}" class="h-8 w-auto">
+    </a>
+    {{ end }}
+{{ end }}
+{{ with site.Params.menu.title }}
+    <a href={{ "/" | relLangURL }} class="text-2xl mx-1 font-bold text-foreground hover:text-primary transition-colors">{{ . }}</a>
+{{ end }}

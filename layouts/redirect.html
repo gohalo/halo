@@ -1,0 +1,24 @@
+{{ $url := "" }}
+{{ with .Params.redirect }}
+    {{ if or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://") (strings.HasPrefix . "//") }}
+        {{ $url = . }}
+    {{ else if strings.HasPrefix . "/" }}
+        {{ $url = . | relLangURL }}
+    {{ else }}
+        {{ $url = printf "%s%s" $.RelPermalink . }}
+    {{ end }}
+{{ end }}
+
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0; url={{ $url }}">
+    <script>window.location.href = "{{ $url }}";</script>
+    <meta name="robots" content="noindex">
+</head>
+<body>
+    <p>Redirecting to <a href="{{ $url }}">{{ $url }}</a>...</p>
+</body>
+</html>

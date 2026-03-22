@@ -18,7 +18,7 @@
         {{- if $enabled }}
             <button class="nav-item flex items-center {{ if $active }}nav-item-active{{ end }}">
                 {{ .Name }}
-                {{ partial "icon/arrow-down.html" }}
+                {{ partial "component/icon.html" (dict "name" "chevron-down" "width" "16") }}
             </button>
             <div class="nav-dropdown-menu">
             {{- range .Children }}
@@ -35,7 +35,7 @@
         {{- else }}
             <span class="nav-item-disabled">
                 {{ .Name }}
-                {{ partial "icon/arrow-down.html" }}
+                {{ partial "component/icon.html" (dict "name" "chevron-down" "width" "16") }}
             </span>
         {{- end }}
         </div>

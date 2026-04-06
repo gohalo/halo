@@ -11,7 +11,7 @@
                 {{ if eq $align "left" }}
                     {{ with index site.Menus "main" }}
                     <div class="hidden md:flex items-center space-x-1 ml-8">
-                        {{ partial "menu-main.html" (dict "menu" . "page" $page) }}
+                        {{ partial "menu.html" (dict "menu" . "page" $page) }}
                     </div>
                     {{ end }}
                 {{ end }}
@@ -21,7 +21,7 @@
             {{ if eq $align "center" }}
                 {{ with index site.Menus "main" }}
                 <div class="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center space-x-1">
-                    {{ partial "menu-main.html" (dict "menu" . "page" $page) }}
+                    {{ partial "menu.html" (dict "menu" . "page" $page) }}
                 </div>
                 {{ end }}
             {{ end }}
@@ -31,7 +31,7 @@
                 {{ partial "header/icons.html" $page }}
 
                 <!-- 移动端菜单按钮 -->
-                <button type="button" class="icon-button md:hidden" aria-label="Open menu" id="mobile-menu-button">
+                <button type="button" class="icon-button md:hidden" aria-label="Open menu" id="main-mobile-menu-button">
                     {{ partial "component/icon.html" (dict "name" "text-align-justify" "width" "20") }}
                 </button>
             </div>
@@ -39,7 +39,7 @@
     </div>
 
     <!-- 移动端菜单 -->
-    <div class="hidden md:hidden" id="mobile-menu">
+    <div class="hidden md:hidden" id="main-mobile-menu">
         <div class="p-1 space-y-1 border-t border-border">
         {{ $class := "py-1 block text-sm rounded-sm" }}
         {{ with index site.Menus "main" }}

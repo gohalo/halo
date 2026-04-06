@@ -1,51 +1,42 @@
-{{- /*
-Renders a menu for the given menu ID.
-
-@context {page} page The current page.
-@context {string} menuID The menu ID.
-
-@example: {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
-*/}}
-
-{{- $page := .page }}
-{{- $menuID := .menuID }}
-
-{{- with index site.Menus $menuID }}
-  <nav>
-    <ul>
-      {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .) }}
-    </ul>
-  </nav>
-{{- end }}
+<ul class="menu-list">
+    {{- partial "inline/menu/walk.html" (dict "page" .page "menu" .menu "is_dropdown" false) }}
+</ul>
 
 {{- define "_partials/inline/menu/walk.html" }}
-  {{- $page := .page }}
-  {{- range .menuEntries }}
-    {{- $attrs := dict "href" .URL }}
-    {{- if $page.IsMenuCurrent .Menu . }}
-      {{- $attrs = merge $attrs (dict "class" "active" "aria-current" "page") }}
-    {{- else if $page.HasMenuCurrent .Menu .}}
-      {{- $attrs = merge $attrs (dict "class" "ancestor" "aria-current" "true") }}
+    {{- $page := .page }}
+    {{- $is_dropdown := .is_dropdown }}
+    {{- range .menu }}
+        {{ if (and (isset .Params "section") (ne .Params.section $page.Section)) }}
+            {{ continue }}
+        {{ end }}
+
+        {{- $active := false }}
+        {{- if $page.IsMenuCurrent "main" . }}
+            {{- $active = true }}
+        {{- else if and ($page.HasMenuCurrent "main" .) (not $page.Layout) }}
+            {{- $active = true }} {{/* Layout for blog tags and archives pages */}}
+        {{- end }}
+
+        <li class="menu-item{{ if .Children }} has-dropdown{{ end }}{{ if $active }} menu-item-active{{ end }}">
+            {{ if (.Params.enabled | default true) }}
+                <a href="{{ .URL }}" class="{{ if $is_dropdown }}dropdown-item dropdown-item-link{{ else }}flex items-center{{ end }}">
+                    {{ .Name }}
+                    {{ if .Children }}
+                        {{ partial "component/icon.html" (dict "name" "chevron-down" "width" "16") }}
+                    {{ end }}
+                </a>
+                {{ with .Children }}
+                    <ul class="menu-dropdown left-0">
+                        {{ partial "inline/menu/walk.html" (dict "page" $page "menu" . "is_dropdown" true) }}
+                    </ul>
+                {{ end }}
+            {{ else }}
+                {{ if $is_dropdown }}
+                    <span class="dropdown-item dropdown-item-disabled">{{ .Name }}</span>
+                {{ else }}
+                    <span class="menu-item-disabled">{{ .Name }}</span>
+                {{ end }}
+            {{ end }}
+        </li>
     {{- end }}
-    {{- $name := .Name }}
-    {{- with .Identifier }}
-      {{- with T . }}
-        {{- $name = . }}
-      {{- end }}
-    {{- end }}
-    <li>
-      <a
-        {{- range $k, $v := $attrs }}
-          {{- with $v }}
-            {{- printf " %s=%q" $k $v | safeHTMLAttr }}
-          {{- end }}
-        {{- end -}}
-      >{{ $name }}</a>
-      {{- with .Children }}
-        <ul>
-          {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .) }}
-        </ul>
-      {{- end }}
-    </li>
-  {{- end }}
 {{- end }}

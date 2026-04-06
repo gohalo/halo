@@ -95,11 +95,3 @@
         @apply text-primary font-semibold;
     }
 }
-
-.menu-children {
-    @apply hidden;
-}
-
-.menu-children.expanded {
-    @apply block;
-}

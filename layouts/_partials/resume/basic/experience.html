@@ -1,28 +1,28 @@
-<h1 class="text-3xl my-2 font-bold border-l-4 pl-2 uppercase">{{ i18n (printf "resume_%s" .name) }}</h1>
+<h1 class="text-3xl my-2 font-bold border-l-4 border-muted-foreground pl-2 uppercase">{{ i18n (printf "resume_%s" .name) }}</h1>
 {{ range .details }}
-    <div class="flex justify-between items-center border-b border-dashed border-gray-400 pb-1 mb-2">
-        <div class="flex items-center gap-2 font-bold text-xl">
+    <div class="flex justify-between items-center border-b border-dashed border-muted-foreground/40 pb-1 mb-2">
+        <div class="flex items-center gap-2 font-bold text-xl text-foreground">
             {{ .company }}
             {{ with .logo }}<img class="h-6 w-auto object-contain" src="{{ . }}" />{{ end }}
         </div>
         {{ if or (isset . "date_to") (isset . "date_from") }}
-            <div class="text-sm text-gray-600 whitespace-nowrap">
+            <div class="text-sm text-muted-foreground whitespace-nowrap">
                 {{ .date_from }} ~ {{ if (isset . "date_to") }} {{ .date_to }} {{ else }} {{ i18n "present" }} {{ end }}
             </div>
         {{ end }}
     </div>
 
     {{ range .description }}
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center text-foreground">
             <div class="font-bold">{{ if (isset . "summary") }} {{ .summary }} {{ else }} {{ .role }} {{ end }}</div>
             {{ if or (isset . "date_to") (isset . "date_from") }}
-                <div class="text-sm text-gray-600 whitespace-nowrap">
+                <div class="text-sm text-muted-foreground whitespace-nowrap">
                     {{ .date_from }} ~ {{ if (isset . "date_to") }} {{ .date_to }} {{ else }} {{ i18n "present" }} {{ end }}
                 </div>
             {{ end }}
         </div>
         {{ range .details }}
-            <p class="indent-8">{{ . | markdownify }}</p>
+            <p class="indent-8 text-muted-foreground">{{ . | markdownify }}</p>
         {{ end }}
     {{ end }}
 {{ end }}

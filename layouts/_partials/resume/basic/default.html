@@ -1,5 +1,5 @@
-<h1 class="text-3xl my-2 font-bold border-l-4 pl-2 uppercase">{{ i18n (printf "resume_%s" .name) }}</h1>
+<h1 class="text-3xl my-2 font-bold border-l-4 border-muted-foreground pl-2 uppercase">{{ i18n (printf "resume_%s" .name) }}</h1>
 {{ range .details }}
-    <div class="text-lg mt-2 font-bold">{{ .name }}</div>
-    <p>{{ .description | markdownify }}</p>
+    <div class="text-lg mt-2 font-bold text-foreground">{{ .name }}</div>
+    <p class="text-muted-foreground">{{ .description | markdownify }}</p>
 {{ end }}

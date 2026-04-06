@@ -2,7 +2,7 @@
 
 {{ with (partial "function/docs/root.html" .) }}
     {{ if .Params.tabbing }}
-        <div class="border-b border-border -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+        <div class="hidden lg:block border-b border-border -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
             <nav class="-mb-px flex space-x-4 overflow-x-auto" aria-label="Tabs">
                 {{ $left := where .Children "Params.align" "ne" "right" }}
                 {{ $right := where .Children "Params.align" "right" }}

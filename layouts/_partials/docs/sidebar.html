@@ -1,8 +1,31 @@
 {{ $page := . }}
-<nav class="docs-sidebar px-2 overflow-x-auto text-sm">
-    <div class="font-semibold px-1 pb-2 text-foreground whitespace-nowrap">
-        文档导航
+
+<nav class="docs-sidebar px-2 border-r border-border overflow-y-auto text-sm flex flex-col flex-1">
+    <div class="hidden lg:flex items-center gap-1 px-1 text-sm font-semibold text-foreground whitespace-nowrap">
+        {{ partial "component/icon.html" (dict "name" "scroll-text" "width" "16") }}
+        {{ i18n "doc_menu_navigation" }}
     </div>
+    <a href="{{ .Section | relLangURL }}" class="lg:hidden flex items-center gap-1 px-1 pt-2">
+        {{ partial "component/icon.html" (dict "name" "home" "width" "16") }}
+        {{ i18n "doc_menu_back_home" }}
+    </a>
+
+    {{ with (partial "function/docs/root.html" .) }}
+        {{ if and (.Params.tabbing | default false) (gt (len .Children) 1) }}
+            <div class="lg:hidden py-2 border-b border-border">
+                <select onchange="window.location.href=this.value" 
+                    class="w-full border border-border rounded-sm px-2 py-1 text-sm cursor-pointer appearance-none">
+                    {{ range $idx, $item := .Children }}
+                        {{ $selected := or ($page.IsMenuCurrent .Menu .) ($page.HasMenuCurrent .Menu .) }}
+                        <option value="{{ .Page.RelPermalink }}" {{ if $selected }}selected{{ end }}>
+                            {{ .Title }}
+                        </option>
+                    {{ end }}
+                </select>
+            </div>
+        {{ end }}
+    {{ end }}
+
     {{ with (partial "function/docs/root-menu.html" .) }}
         {{ $collapsed := .Params.Collapsed | default true }}
         {{ $categorized := .Params.Category | default false }}
@@ -41,7 +64,7 @@
              {{ end }}
         {{ end }}
 
-        <li class="menu-item whitespace-nowrap">
+        <li class="docs-menu-item whitespace-nowrap">
             <div class="flex justify-between pl-1 hover:bg-accent rounded">
                 <a href="{{ .Page.RelPermalink }}" title="{{ .Title }}"
                     class="truncate flex-1 py-1 flex items-center gap-1.5 {{ if $active }}text-primary{{ else }}text-foreground{{ end }}">
@@ -49,7 +72,7 @@
                     {{ .Title }}
                 </a>
                 {{ if .Children }}
-                    <button class="menu-toggle px-2 rounded-r hover:bg-accent cursor-pointer flex items-center">
+                    <button class="docs-menu-toggle px-2 rounded-r hover:bg-accent cursor-pointer flex items-center">
                         {{ $class := "w-4 h-4 text-muted-foreground transition-transform duration-200 transform"}}
                         {{ if $expand }}
                             {{ $class = "w-4 h-4 text-muted-foreground transition-transform duration-200 transform rotate-90"}}
@@ -63,7 +86,7 @@
                 {{ end }}
             </div>
             {{ if .Children }}
-                <ul class="menu-children ml-2 pl-2 border-l border-border overflow-hidden transition-all duration-300 {{ if $expand }}expanded{{ end }}">
+                <ul class="docs-menu-children ml-2 pl-2 border-l border-border overflow-hidden transition-all duration-300 {{ if $expand }}expanded{{ end }}">
                     {{ partial "inline/menu/items.html" (dict "menus" .Children "page" $page "collapsed" $collapsed) }}
                 </ul>
             {{ end }}
@@ -79,16 +102,13 @@
     {{ else }}
         {{ $length := sub (len .menus.Children) 1 }}
         {{ range $idx, $item := .menus.Children }}
-            <div class="font-semibold text-foreground px-1 my-2 whitespace-nowrap summary flex items-center gap-1.5">
+            <div class="font-semibold text-sm text-foreground px-1 my-2 whitespace-nowrap flex items-center gap-1">
                 {{ with $item.Params.icon }}{{ partial "component/icon.html" (dict "name" . "width" "16") }}{{ end }}
                 {{ $item.Title }}
             </div>
             <ul>
                 {{ partial "inline/menu/items.html" (dict "menus" $item.Children "page" $page "collapsed" $collapsed) }}
             </ul>
-            {{ if ne $idx $length }}
-                <hr class="h-px px-1 my-2 bg-border border-0">
-            {{ end }}
         {{ end }}
     {{ end }}
 {{ end }}

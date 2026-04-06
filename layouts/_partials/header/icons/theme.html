@@ -3,7 +3,7 @@
 <button type="button" class="nav-icon group {{ $responsive }}" id="theme-toggle">
     {{ partial "component/icon.html" (dict "name" "sun" "class" "hidden dark:block" "width" "20") }}
     {{ partial "component/icon.html" (dict "name" "moon" "class" "dark:hidden" "width" "20") }}
-    <span class="nav-tip">
+    <span class="icon-tip">
         <span class="dark:hidden">{{ i18n "tooltip_theme_light" }}</span>
         <span class="hidden dark:inline">{{ i18n "tooltip_theme_dark" }}</span>
     </span>

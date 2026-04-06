@@ -10,7 +10,7 @@
             {{ $highlightClass = "text-muted-foreground hover:bg-accent hover:text-accent-foreground"}}
         {{ end }}
 
-        <a href="{{ . }}" class="nav-icon-button group {{ $responsive }} {{ $highlightClass }} flex items-center gap-1.5"
+        <a href="{{ . }}" class="icon-button group {{ $responsive }} {{ $highlightClass }} flex items-center gap-1.5"
             {{ if ($icon.blank | default false) }}target="_blank" rel="noopener noreferrer"{{ end }}
             aria-label="{{ i18n ( printf "nav_icon_label_%s" ($icon.translate | default "unknown")) }}"
             >
@@ -18,7 +18,7 @@
                 {{ partial "component/icon.html" (dict "name" . "width" "20") }}
             {{ end }}
             <span class="text-sm" >{{ i18n ( printf "nav_icon_label_%s" ($icon.translate | default "unknown")) }}</span>
-            <span class="nav-tip">{{ i18n ( printf "nav_icon_tip_%s" ($icon.translate | default "unknown")) }}</span>
+            <span class="icon-tip">{{ i18n ( printf "nav_icon_tip_%s" ($icon.translate | default "unknown")) }}</span>
         </a>
     {{ end }}
 {{- end }}

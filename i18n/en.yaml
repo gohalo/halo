@@ -1,3 +1,37 @@
+# Common
+## Date format
+- id: date_format
+  translation: "January 2, 2006"
+# TOC
+- id: toc_title
+  translation: "On This Page"
+
+# Navigation
+## Icons
+- id: nav_icon_label_unknown
+  translation: "Unknown"
+- id: nav_icon_tip_unknown
+  translation: "Unknown"
+- id: nav_icon_label_github
+  translation: "GitHub"
+- id: nav_icon_tip_github
+  translation: "Visit GitHub repository"
+- id: nav_icon_label_about
+  translation: "About"
+- id: nav_icon_tip_about
+  translation: "About us"
+
+# Documentation
+## Sidebar menu
+- id: doc_menu_navigation
+  translation: "Navigation"
+- id: doc_menu_back_home
+  translation: "Back to home"
+- id: doc_menu_menu
+  translation: "Menu"
+
+
+
 # Navigation
 - id: nav_search
   translation: "Search"
@@ -20,20 +54,6 @@
 
 - id: tooltip_language
   translation: "Switch language"
-
-- id: nav_icon_label_unknown
-  translation: "Unknown"
-- id: nav_icon_tip_unknown
-  translation: "Unknown"
-
-- id: nav_icon_label_github
-  translation: "GitHub"
-- id: nav_icon_tip_github
-  translation: "Visit GitHub repository"
-- id: nav_icon_label_about
-  translation: "About"
-- id: nav_icon_tip_about
-  translation: "About us"
 
 # Search related
 - id: search_placeholder
@@ -74,20 +94,12 @@
 - id: all_rights_reserved
   translation: "All Rights Reserved"
 
-# Date format
-- id: date_format
-  translation: "January 2, 2006"
-
 # Blog page
 - id: blog_previous
   translation: "Previous"
 
 - id: blog_next
   translation: "Next"
-
-# TOC
-- id: toc_title
-  translation: "On This Page"
 
 - id: get_started
   translation: "Get Started"

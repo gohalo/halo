@@ -1,0 +1,47 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const menuButton = document.getElementById('mobile-menu-button');
+    const closeButton = document.getElementById('mobile-menu-close');
+    const sidebar = document.getElementById('docs-sidebar');
+    const overlay = document.getElementById('mobile-sidebar-overlay');
+
+    function openMenu() {
+        sidebar.classList.remove('hidden', '-translate-x-full');
+        sidebar.classList.add('translate-x-0');
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+        sidebar.classList.add('-translate-x-full');
+        sidebar.classList.remove('translate-x-0');
+        overlay.classList.add('hidden');
+        document.body.style.overflow = '';
+
+        setTimeout(() => {
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('hidden');
+            }
+        }, 300);
+    }
+
+    if (menuButton) {
+        menuButton.addEventListener('click', openMenu);
+    }
+
+    if (closeButton) {
+        closeButton.addEventListener('click', closeMenu);
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', closeMenu);
+    }
+
+    // 在大屏幕上自动关闭移动菜单
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+            closeMenu();
+        }
+    });
+});
+</script>

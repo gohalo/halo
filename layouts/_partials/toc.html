@@ -1,7 +1,7 @@
 {{- if .TableOfContents -}}
 {{- with site.Params.menu.forum.url }}
 <div class="mb-4">
-  <a href="{{ . }}" target="_blank" rel="noopener noreferrer" class="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+  <a href="{{ . }}" target="_blank" rel="noopener noreferrer" class="flex items-center text-sm font-medium text-primary hover:text-primary/80">
     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
     </svg>
@@ -9,115 +9,114 @@
   </a>
 </div>
 {{- end }}
-<nav class="toc pl-2 text-sm border-l-1 border-gray-300">
-  <div class="mb-2 font-semibold text-gray-900 dark:text-gray-100">
-    {{ i18n "toc_title" }}
-  </div>
-  <div class="toc-content">
-    {{ .TableOfContents }}
-  </div>
+
+<nav class="toc pl-2 text-sm border-l border-border">
+    <div class="flex items-center gap-1 mb-2 font-semibold text-foreground text-sm">
+        {{ partial "component/icon.html" (dict "name" "table-of-contents" "width" "16") }}
+        {{ i18n "toc_title" }}
+    </div>
+    <div class="toc-content">
+        {{ .TableOfContents }}
+    </div>
 </nav>
 
 <script>
 (function() {
-  'use strict';
+    'use strict';
+    // 等待 DOM 加载完成
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTocHighlight);
+    } else {
+        initTocHighlight();
+    }
 
-  // 等待 DOM 加载完成
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTocHighlight);
-  } else {
-    initTocHighlight();
-  }
+    function initTocHighlight() {
+        const tocLinks = document.querySelectorAll('.toc-content a');
+        if (tocLinks.length === 0) return;
 
-  function initTocHighlight() {
-    const tocLinks = document.querySelectorAll('.toc-content a');
-    if (tocLinks.length === 0) return;
-
-    // 获取所有标题元素
-    const headings = [];
-    tocLinks.forEach(function(link) {
-      const href = link.getAttribute('href');
-      if (href && href.startsWith('#')) {
-        const id = href.substring(1);
-        const heading = document.getElementById(id);
-        if (heading) {
-          headings.push({
-            id: id,
-            element: heading,
-            link: link
-          });
-        }
-      }
-    });
-
-    if (headings.length === 0) return;
-
-    // 高亮函数
-    function highlightToc() {
-      // 获取当前滚动位置
-      const scrollY = window.scrollY || window.pageYOffset;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-
-      // 如果滚动到底部，高亮最后一个标题
-      if (scrollY + windowHeight >= documentHeight - 10) {
+        // 获取所有标题元素
+        const headings = [];
         tocLinks.forEach(function(link) {
-          link.classList.remove('active');
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const id = href.substring(1);
+                const heading = document.getElementById(id);
+                if (heading) {
+                    headings.push({
+                        id: id,
+                        element: heading,
+                        link: link
+                    });
+                }
+            }
         });
-        if (headings.length > 0) {
-          headings[headings.length - 1].link.classList.add('active');
+
+        if (headings.length === 0) return;
+
+        // 高亮函数
+        function highlightToc() {
+            // 获取当前滚动位置
+            const scrollY = window.scrollY || window.pageYOffset;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+
+            // 如果滚动到底部，高亮最后一个标题
+            if (scrollY + windowHeight >= documentHeight - 10) {
+                tocLinks.forEach(function(link) {
+                link.classList.remove('active');
+            });
+            if (headings.length > 0) {
+                headings[headings.length - 1].link.classList.add('active');
+            }
+            return;
         }
-        return;
-      }
 
-      // 找到当前可见的标题（从下往上找第一个在视口上方的标题）
-      let activeHeading = null;
-      const offset = 100; // 偏移量，提前一点高亮
-
-      for (let i = headings.length - 1; i >= 0; i--) {
-        const heading = headings[i];
-        const rect = heading.element.getBoundingClientRect();
-
-        if (rect.top <= offset) {
-          activeHeading = heading;
-          break;
+        // 找到当前可见的标题（从下往上找第一个在视口上方的标题）
+        let activeHeading = null;
+        const offset = 100; // 偏移量，提前一点高亮
+        for (let i = headings.length - 1; i >= 0; i--) {
+            const heading = headings[i];
+            const rect = heading.element.getBoundingClientRect();
+            if (rect.top <= offset) {
+                activeHeading = heading;
+                break;
+            }
         }
-      }
 
-      // 如果没有找到，说明在第一个标题之前，不高亮任何项
-      if (!activeHeading && scrollY < headings[0].element.offsetTop - offset) {
+        // 如果没有找到，说明在第一个标题之前，不高亮任何项
+        if (!activeHeading && scrollY < headings[0].element.offsetTop - offset) {
+            tocLinks.forEach(function(link) {
+                link.classList.remove('active');
+            });
+            return;
+        }
+
+        // 如果还是没找到，使用第一个
+        if (!activeHeading) {
+            activeHeading = headings[0];
+        }
+
+        // 更新高亮状态
         tocLinks.forEach(function(link) {
-          link.classList.remove('active');
+            link.classList.remove('active');
         });
-        return;
-      }
-
-      // 如果还是没找到，使用第一个
-      if (!activeHeading) {
-        activeHeading = headings[0];
-      }
-
-      // 更新高亮状态
-      tocLinks.forEach(function(link) {
-        link.classList.remove('active');
-      });
-      if (activeHeading) {
-        activeHeading.link.classList.add('active');
-      }
+        if (activeHeading) {
+            activeHeading.link.classList.add('active');
+        }
     }
 
     // 监听滚动事件（使用节流优化性能）
     let scrollTimeout;
     window.addEventListener('scroll', function() {
-      if (scrollTimeout) {
-        window.cancelAnimationFrame(scrollTimeout);
-      }
-      scrollTimeout = window.requestAnimationFrame(highlightToc);
+        if (scrollTimeout) {
+            window.cancelAnimationFrame(scrollTimeout);
+        }
+        scrollTimeout = window.requestAnimationFrame(highlightToc);
     }, { passive: true });
 
     // 初始化时执行一次
     highlightToc();
-  }
+}
 })();
 </script>
 {{- end -}}

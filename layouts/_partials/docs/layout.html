@@ -3,36 +3,37 @@
 
 <!-- 移动端菜单按钮 -->
 <div class="lg:hidden mb-4 -mx-4 sm:-mx-6 px-4 sm:px-6">
-  <button id="mobile-menu-button" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-md hover:bg-accent hover:text-accent-foreground">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-    菜单
-  </button>
+    <div class="">
+        {{ partial "docs/breadcrumb.html" (dict "page" . "menu" true "border" true) }}
+    </div>
 </div>
 
-<!-- 移动端侧边栏遮罩 -->
-<div id="mobile-sidebar-overlay" class="hidden lg:hidden fixed inset-0 bg-black/50 z-40"></div>
+<!-- 移动端侧边栏遮罩，单击改区域会自动关闭侧边栏 -->
+<div id="mobile-sidebar-overlay" class="hidden lg:hidden fixed inset-0 bg-black/50 z-110"></div>
 
 <div class="flex mt-2 gap-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
-  <!-- 左侧导航 -->
-  <aside id="docs-sidebar" class="w-64 shrink-0 self-start
-    hidden lg:block lg:sticky lg:top-16 lg:pt-2 lg:max-h-[calc(100vh-4rem)]
-    fixed left-0 top-0 bottom-0 z-50 bg-background lg:bg-transparent
-    transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto">
-    <div class="lg:hidden flex items-center justify-between p-4 border-b border-border">
-      <span class="font-semibold text-foreground">文档导航</span>
-      <button id="mobile-menu-close" class="p-2 text-muted-foreground hover:text-foreground">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-    {{ partial "docs/sidebar.html" . }}
-  </aside>
+    <!-- 左侧导航 -->
+    <aside id="docs-sidebar" class="w-64 shrink-0
+        lg:self-start lg:block lg:sticky lg:top-16 lg:pt-2
+        lg:max-h-[calc(100vh-9rem)] overflow-y-auto
+        fixed left-0 inset-y-0 h-screen z-120 bg-background lg:bg-transparent
+        transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
+        <div class="lg:hidden flex items-center justify-between p-2 border-b border-border">
+            <div class="flex items-center gap-1 text-sm px-1 font-semibold text-foreground">
+                {{ partial "component/icon.html" (dict "name" "scroll-text" "width" "16") }}
+                {{ i18n "doc_menu_navigation" }}
+            </div>
+            <button id="mobile-menu-close" class="lg:hidden text-muted-foreground hover:text-foreground">
+                {{ partial "component/icon.html" (dict "name" "x" "width" "16") }}
+            </button>
+        </div>
+        {{ partial "docs/sidebar.html" . }}
+    </aside>
 
     <article class="flex-1 min-w-0">
-        {{ partial "docs/breadcrumb.html" . }}
+        <div class="hidden lg:block">
+            {{ partial "docs/breadcrumb.html" (dict "page" . "home" true) }}
+        </div>
         <header class="my-8">
             <h1 class="text-4xl font-bold text-center text-foreground">{{ .Title }}</h1>
         </header>
@@ -55,9 +56,9 @@
 
     <!-- 右侧目录侧边栏 -->
     {{ if .TableOfContents }}
-        <aside class="hidden xl:block w-64 shrink-0 sticky top-16 pt-2 self-start max-h-[calc(100vh-4rem)] overflow-y-auto">
+        <aside class="hidden xl:block w-64 shrink-0 sticky top-16 pt-2 self-start max-h-[calc(100vh-9rem)] overflow-y-auto">
             {{ partial "toc.html" . }}
         </aside>
     {{ end }}
 </div>
-{{ partial "docs-mobile-menu.html" . }}
+{{ partial "docs/mobile-menu.html" . }}

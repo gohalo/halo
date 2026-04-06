@@ -4,8 +4,8 @@
     <head>
         {{ partial "head/css.html" . }}
     </head>
-    <body class="bg-gray-100 leading-normal tracking-normal print:bg-white">
-        <div class="resume max-w-7xl mx-auto p-8 bg-white shadow-lg my-4 rounded-lg print:shadow-none print:p-0 print:my-0">
+    <body class="leading-normal tracking-normal print:bg-white">
+        <div class="resume max-w-7xl mx-auto p-8 bg-card text-card-foreground shadow-lg my-4 rounded-lg print:shadow-none print:p-0 print:my-0">
             {{ with (index .Site.Data.resume (printf "%s.%s" .Params.data .Lang)) }}
                 {{ $partpath := printf "resume/%s/summary.html" $theme }}
                 {{ if templates.Exists (printf "_partials/%s" $partpath) }}

@@ -1,10 +1,26 @@
-<nav aria-label="breadcrumb" class="breadcrumb text-sm mt-2">
+{{ $with_home := .home }}
+{{ $with_menu := .menu }}
+{{ $with_border := .border }}
+{{ with .page }}
+<nav aria-label="breadcrumb"
+    class="breadcrumb text-sm py-2{{ if ($with_border | default false ) }} border-b border-border{{ end }}">
 	<ol class="flex items-center flex-wrap">
-		<li class="inline-flex items-center">
-			<a href="{{ .FirstSection.RelPermalink }}">
-				{{ partial "component/icon.html" (dict "name" "home" "width" "18") }}
-			</a>
-		</li>
+        {{ if ($with_home | default false) }}
+            <li class="inline-flex items-center">
+                <a href="{{ .FirstSection.RelPermalink }}">
+                    {{ partial "component/icon.html" (dict "name" "home" "width" "18") }}
+                </a>
+            </li>
+        {{ end }}
+        {{ if ($with_menu | default false) }}
+            <li class="inline-flex items-center">
+                <a id="mobile-menu-button" class="flex items-center gap-1">
+                    {{ partial "component/icon.html" (dict "name" "menu" "width" "18") }}
+                    {{ i18n "doc_menu_menu" }}
+                </a>
+            </li>
+        {{ end }}
+
 		{{ range after 2 .Ancestors.Reverse }}
 		<li class="inline">
 			<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
@@ -15,3 +31,4 @@
 		</li>
 	</ol>
 </nav>
+{{ end }}

@@ -18,22 +18,27 @@
 {{ end}}
 
 {{ if (lt 0 (len $versions)) }}
-<div class="relative group">
-    <button class="nav-item flex items-center">
+<div class="relative has-dropdown">
+    <button class="menu-item flex items-center">
         {{ i18n "version" }}: {{ $version }}
         {{ partial "component/icon.html" (dict "name" "chevron-down" "width" "16") }}
     </button>
 
-    <div class="nav-dropdown-menu">
-    {{- range $versions }}
-        {{ if .active }}
-            <span class="block px-4 py-2 text-sm font-semibold text-primary bg-accent cursor-default">
-                {{ .version }}
-            </span>
-        {{ else }}
-            <a href="{{ urls.RelLangURL (printf "/docs/%s" .url) }}" class="nav-dropdown-item">{{ .version }}</a>
-        {{ end }}
-    {{- end }}
-    </div>
+    <ul class="menu-dropdown left-0">
+        {{- range $versions }}
+            <li class="menu-item">
+                {{ if .active }}
+                    <span class="dropdown-item dropdown-item-active">
+                        {{ .version }}
+                    </span>
+                {{ else }}
+                    {{ $_url := printf "/docs/%s" .url }}
+                    <a href="{{ urls.RelLangURL $_url }}" class="dropdown-item dropdown-item-link">
+                        {{ .version }}
+                    </a>
+                {{ end }}
+            </li>
+        {{- end }}
+    </ul>
 </div>
 {{ end }}

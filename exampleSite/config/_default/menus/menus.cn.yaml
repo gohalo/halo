@@ -32,7 +32,7 @@ main:
   pageRef: '/slide/'
   weight: 30
   params:
-    enabled: true
+    enabled: false
 - name: '文档'
   pageRef: '/docs/'
   weight: 40

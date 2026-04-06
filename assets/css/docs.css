@@ -4,3 +4,12 @@
 		@apply mx-1;
 	}
 }
+
+.docs-sidebar {
+    .docs-menu-children {
+        @apply hidden transition-all duration-300;
+        &.expanded {
+            @apply block;
+        }
+    }
+}

@@ -1,3 +1,36 @@
+# 通用
+## 日期格式
+- id: date_format
+  translation: "2006年01月02日"
+# TOC 目录
+- id: toc_title
+  translation: "本页目录"
+
+# 导航栏
+## Icons
+- id: nav_icon_label_unknown
+  translation: "Unknown"
+- id: nav_icon_tip_unknown
+  translation: "未配置"
+- id: nav_icon_label_github
+  translation: "GitHub"
+- id: nav_icon_tip_github
+  translation: "访问 GitHub 仓库"
+- id: nav_icon_label_about
+  translation: "关于"
+- id: nav_icon_tip_about
+  translation: "关于我们"
+
+# 文档
+## 侧边导航栏
+- id: doc_menu_navigation
+  translation: "文档导航"
+- id: doc_menu_back_home
+  translation: "返回首页"
+- id: doc_menu_menu
+  translation: "菜单"
+
+
 # 导航栏
 - id: nav_search
   translation: "搜索"
@@ -20,20 +53,6 @@
 
 - id: tooltip_language
   translation: "切换语言"
-
-- id: nav_icon_label_unknown
-  translation: "Unknown"
-- id: nav_icon_tip_unknown
-  translation: "多语言未配置"
-
-- id: nav_icon_label_github
-  translation: "GitHub"
-- id: nav_icon_tip_github
-  translation: "访问 GitHub 仓库"
-- id: nav_icon_label_about
-  translation: "关于"
-- id: nav_icon_tip_about
-  translation: "关于我们"
 
 # 搜索相关
 - id: search_placeholder
@@ -74,20 +93,12 @@
 - id: all_rights_reserved
   translation: "保留所有权利"
 
-# 日期格式
-- id: date_format
-  translation: "2006年01月02日"
-
 # Blog 页面
 - id: blog_previous
   translation: "上一篇"
 
 - id: blog_next
   translation: "下一篇"
-
-# TOC 目录
-- id: toc_title
-  translation: "本页目录"
 
 - id: get_started
   translation: "开始阅读"

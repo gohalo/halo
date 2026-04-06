@@ -12,7 +12,7 @@
                 {{ continue }}
             {{ end }}
             <li>
-                <span class="inline-block min-w-[6rem]">{{ .Date.Format "2006-01-02" }}</span>
+                <span class="inline-block min-w-24">{{ .Date.Format "2006-01-02" }}</span>
                 <a href="{{ .RelPermalink }}">{{ .Title }} {{ if .Draft }} Draft{{ end }}</a>
             </li>
         {{ end }}

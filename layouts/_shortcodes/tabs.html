@@ -39,10 +39,10 @@
 {{- end -}}
 
 <div class="tabs-container my-4" data-tabs-id="{{ $id }}">
-  <div class="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto" role="tablist">
+  <div class="flex border-b border-border overflow-x-auto" role="tablist">
     {{- range $tabs }}
     <button
-      class="tab-button px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-gray-100{{ if .selected }} tab-active{{ end }}"
+      class="tab-button px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors border-b-2 border-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground{{ if .selected }} tab-active{{ end }}"
       id="{{ .id }}-tab"
       data-tab-target="{{ .id }}"
       type="button"

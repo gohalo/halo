@@ -242,29 +242,36 @@ document.addEventListener('DOMContentLoaded', function() {
   // 初始化所有 tabs 的高度
   initAllTabs();
 
-  // 返回顶部按钮功能
-  const backToTopButton = document.getElementById('back-to-top');
-  if (backToTopButton) {
-    // 监听滚动事件，显示/隐藏按钮
-    window.addEventListener('scroll', function() {
-      if (window.scrollY > 300) {
-        backToTopButton.classList.remove('hidden');
-      } else {
-        backToTopButton.classList.add('hidden');
-      }
-    });
-  }
+    // 返回顶部按钮功能
+    const backToTopButton = document.getElementById('back-to-top');
+    if (backToTopButton) {
+        // 监听滚动事件，显示/隐藏按钮
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+    }
 
-  // 初始化文档菜单
-  initMenuToggle();
+    // 初始化文档菜单
+    initMenuToggle();
 });
 
-// Tabs 组件功能
-// 切换标签页
+// 返回顶部功能
+window.scrollBackToTop = function() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+};
+
+// Tabs 组件功能，切换标签页
 if (typeof switchTab === 'undefined') {
-  window.switchTab = function(containerId, targetId) {
-    const container = document.querySelector(`[data-tabs-id="${containerId}"]`);
-    if (!container) return;
+    window.switchTab = function(containerId, targetId) {
+        const container = document.querySelector(`[data-tabs-id="${containerId}"]`);
+        if (!container) return;
 
     // 更新按钮状态
     container.querySelectorAll('.tab-button').forEach(btn => {
@@ -324,14 +331,6 @@ function initAllTabs() {
     }
   });
 }
-
-// 返回顶部功能
-window.scrollToTop = function() {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-};
 
 // 文档菜单切换功能
 function initMenuToggle() {

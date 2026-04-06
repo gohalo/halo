@@ -18,7 +18,7 @@
 
 .nav-item-disabled {
     @apply px-3 py-2 rounded-md text-sm font-medium;
-    @apply text-gray-400 dark:text-gray-600 cursor-not-allowed flex items-center;
+    @apply text-muted-foreground/50 cursor-not-allowed flex items-center;
 }
 
 .nav-dropdown-menu {
@@ -30,7 +30,7 @@
 }
 
 .nav-dropdown-item-disabled {
-    @apply block px-4 py-2 text-sm text-gray-400 dark:text-gray-600 cursor-not-allowed;
+    @apply block px-4 py-2 text-sm text-muted-foreground/50 cursor-not-allowed;
 }
 
 .nav-tip {

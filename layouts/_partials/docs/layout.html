@@ -3,7 +3,7 @@
 
 <!-- 移动端菜单按钮 -->
 <div class="lg:hidden mb-4 -mx-4 sm:-mx-6 px-4 sm:px-6">
-  <button id="mobile-menu-button" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
+  <button id="mobile-menu-button" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground bg-background border border-border rounded-md hover:bg-accent hover:text-accent-foreground">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
     </svg>
@@ -12,17 +12,17 @@
 </div>
 
 <!-- 移动端侧边栏遮罩 -->
-<div id="mobile-sidebar-overlay" class="hidden lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+<div id="mobile-sidebar-overlay" class="hidden lg:hidden fixed inset-0 bg-black/50 z-40"></div>
 
 <div class="flex mt-2 gap-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
   <!-- 左侧导航 -->
   <aside id="docs-sidebar" class="w-64 shrink-0 self-start
     hidden lg:block lg:sticky lg:top-16 lg:pt-2 lg:max-h-[calc(100vh-4rem)]
-    fixed left-0 top-0 bottom-0 z-50 bg-white dark:bg-gray-900 lg:bg-transparent
+    fixed left-0 top-0 bottom-0 z-50 bg-background lg:bg-transparent
     transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto">
-    <div class="lg:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-      <span class="font-semibold text-gray-900 dark:text-gray-100">文档导航</span>
-      <button id="mobile-menu-close" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+    <div class="lg:hidden flex items-center justify-between p-4 border-b border-border">
+      <span class="font-semibold text-foreground">文档导航</span>
+      <button id="mobile-menu-close" class="p-2 text-muted-foreground hover:text-foreground">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -34,17 +34,17 @@
     <article class="flex-1 min-w-0">
         {{ partial "docs/breadcrumb.html" . }}
         <header class="my-8">
-            <h1 class="text-4xl font-bold text-center">{{ .Title }}</h1>
+            <h1 class="text-4xl font-bold text-center text-foreground">{{ .Title }}</h1>
         </header>
 
         {{ with .Content }}
-            <div class="content max-w-none">{{ . }}</div>
+            <div class="content max-w-none text-foreground">{{ . }}</div>
         {{ end }}
 
         {{ if .Pages }}
             <!-- 子页面列表 -->
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 my-4">子页面</h2>
+                <h2 class="text-2xl font-bold text-foreground my-4">子页面</h2>
                 {{ partial "component/pages.html" . }}
             </div>
         {{ else }}

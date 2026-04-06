@@ -1,11 +1,5 @@
-<details class="detail-block"{{ if (.Get "open" | default false) }} open{{ end }}>
-  <summary class="flex items-center gap-2">
-    <svg class="detail-arrow w-4 h-4 text-gray-600 dark:text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-    </svg>
-    <span class="font-medium text-gray-900 dark:text-gray-100">{{- .Get 0 | default (.Get "title") | default "Details" -}}</span>
-  </summary>
-  <div class="px-2 py-1 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-    {{ .Inner | markdownify }}
-  </div>
-</details>
+{{ partial "shortcodes/details.html" (dict
+    "inner" .Inner
+    "open" (.Get "open")
+    "title" (.Get 0 | default (.Get "title"))
+) }}

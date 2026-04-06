@@ -1,0 +1,56 @@
+{{ $configs := dict
+    "note" (dict
+        "title" "Note"
+        "color" (dict
+            "bg" "bg-primary/10"
+            "icon" "text-primary"
+            "border" "border-primary/30"
+        )
+        "icon" "lightbulb"
+    )
+    "info" (dict
+        "title" "Info"
+        "color" (dict
+            "bg" "bg-green-50 dark:bg-green-900/20"
+            "icon" "text-green-600 dark:text-green-400"
+            "border" "border-green-300 dark:border-green-700"
+        )
+        "icon" "info"
+    )
+    "warn" (dict
+        "title" "Warning"
+        "color" (dict
+            "bg" "bg-yellow-50 dark:bg-yellow-900/20"
+            "icon" "text-yellow-600 dark:text-yellow-400"
+            "border" "border-yellow-300 dark:border-yellow-700"
+        )
+        "icon" "triangle-alert"
+    )
+    "danger" (dict
+        "title" "Danger"
+        "color" (dict
+            "bg" "bg-destructive/10"
+            "icon" "text-destructive"
+            "border" "border-destructive/30"
+        )
+        "icon" "circle-alert"
+    )
+}}
+
+{{ $info := index $configs (.type | default "note")}}
+<div class="ml-8 my-2 border-l-6 {{ $info.color.border }} {{ $info.color.bg }} rounded-md overflow-hidden">
+    <div class="flex items-start gap-2 p-2">
+        {{ $class := printf "%s shrink-0 mt-0.5" $info.color.icon }}
+        {{ partial "component/icon.html" (dict "name" $info.icon "class" $class "width" "20") }}
+        <div class="flex-1 min-w-0">
+            {{ if .title }}
+                <div class="font-semibold text-foreground mb-1">{{ .title }}</div>
+            {{ else }}
+                <div class="font-semibold text-foreground mb-1">{{ $info.title }}</div>
+            {{ end }}
+            <div class="text-muted-foreground text-sm notice-content">
+                {{ .content | safeHTML }}
+            </div>
+        </div>
+    </div>
+</div>

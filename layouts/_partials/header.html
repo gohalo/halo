@@ -1,6 +1,6 @@
 {{- $page := . -}}
 {{- $align := .Site.Params.menu.align | default "left" -}}
-<nav class="border-b bg-background">
+<nav class="border-b border-border bg-background">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="{{ if eq $align "center" }}relative {{ end }}flex justify-between items-center h-16">
             <div class="flex items-center{{ if eq $align "left" }} space-x-1{{ end }}">
@@ -32,88 +32,71 @@
 
                 <!-- 移动端菜单按钮 -->
                 <button type="button" class="icon-button md:hidden" aria-label="Open menu" id="mobile-menu-button">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
+                    {{ partial "component/icon.html" (dict "name" "text-align-justify" "width" "20") }}
                 </button>
             </div>
         </div>
     </div>
 
-  <!-- 移动端菜单 -->
-  <div class="hidden md:hidden" id="mobile-menu">
-    <div class="px-2 pt-2 pb-3 space-y-1 border-t border-border">
-      {{- with index site.Menus "main" }}
-        {{- range . }}
-          {{- $enabled := true }}
-          {{- if isset .Params "enabled" }}
-            {{- $enabled = .Params.enabled }}
-          {{- end }}
-
-          {{- $showMenu := true }}
-          {{- if isset .Params "section" }}
-            {{- $requiredSection := .Params.section }}
-            {{- $currentSection := $page.Section }}
-            {{- if ne $requiredSection $currentSection }}
-              {{- $showMenu = false }}
-            {{- end }}
-          {{- end }}
-
-          {{- if $showMenu }}
-
-          {{- if .Children }}
-            <div class="space-y-1">
-              {{- if $enabled }}
-              <div class="px-3 py-2 text-sm font-medium text-foreground">
-                {{ .Name }}
-              </div>
-              {{- else }}
-              <div class="px-3 py-2 text-sm font-medium text-gray-400 dark:text-gray-600">
-                {{ .Name }}
-              </div>
-              {{- end }}
-              {{- range .Children }}
-                {{- $childEnabled := true }}
+    <!-- 移动端菜单 -->
+    <div class="hidden md:hidden" id="mobile-menu">
+        <div class="p-1 space-y-1 border-t border-border">
+        {{ $class := "py-1 block text-sm rounded-sm" }}
+        {{ with index site.Menus "main" }}
+            {{ range . }}
+                {{- $enabled := true }}
                 {{- if isset .Params "enabled" }}
-                  {{- $childEnabled = .Params.enabled }}
+                    {{- $enabled = .Params.enabled }}
                 {{- end }}
 
-                {{- $showChildMenu := true }}
-                {{- if isset .Params "section" }}
-                  {{- $requiredSection := .Params.section }}
-                  {{- $currentSection := $page.Section }}
-                  {{- if ne $requiredSection $currentSection }}
-                    {{- $showChildMenu = false }}
-                  {{- end }}
-                {{- end }}
+                {{ if isset .Params "section" }}
+                    {{ if ne .Params.section $page.Section }}
+                        {{ continue }}
+                    {{ end }}
+                {{ end }}
 
-                {{- if $showChildMenu }}
-                  {{- if $childEnabled }}
-                  <a href="{{ .URL }}" class="block pl-6 pr-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                    {{ .Name }}
-                  </a>
-                  {{- else }}
-                  <span class="block pl-6 pr-3 py-2 text-sm text-gray-400 dark:text-gray-600 cursor-not-allowed">
-                    {{ .Name }}
-                  </span>
-                  {{- end }}
-                {{- end }}
-              {{- end }}
-            </div>
-          {{- else }}
-            {{- if $enabled }}
-            <a href="{{ .URL }}" class="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-              {{ .Name }}
-            </a>
-            {{- else }}
-            <span class="block px-3 py-2 rounded-md text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
-              {{ .Name }}
-            </span>
-            {{- end }}
-          {{- end }}
-          {{- end }}
-        {{- end }}
-      {{- end }}
+                {{- if .Children }}
+                    <div class="space-y-1">
+                        {{ if $enabled }}
+                            <div class="{{ $class }} px-3 font-medium text-foreground">
+                                {{ .Name }}
+                            </div>
+                        {{ else }}
+                            <div class="{{ $class }} px-3 font-medium text-muted-foreground/50">
+                                {{ .Name }}
+                            </div>
+                        {{ end }}
+                        {{ range .Children }}
+                            {{ if isset .Params "section" }}
+                                {{ if ne .Params.section $page.Section }}
+                                    {{  continue }}
+                                {{ end }}
+                            {{ end }}
+
+                            {{ if (.Params.enabled | default true) }}
+                                <a href="{{ .URL }}" class="{{ $class }} pl-6 pr-3 text-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                                    {{ .Name }}
+                                </a>
+                            {{ else }}
+                                <span class="{{ $class }} pl-6 pr-3 text-muted-foreground/50 cursor-not-allowed">
+                                    {{ .Name }}
+                                </span>
+                            {{ end }}
+                        {{ end }}
+                    </div>
+                {{ else }}
+                    {{ if $enabled }}
+                        <a href="{{ .URL }}" class="{{ $class }} px-3 font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                            {{ .Name }}
+                        </a>
+                    {{ else }}
+                        <span class="{{ $class }} px-3 font-medium text-muted-foreground/50 cursor-not-allowed">
+                            {{ .Name }}
+                        </span>
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+        {{ end }}
+        </div>
     </div>
-  </div>
 </nav>

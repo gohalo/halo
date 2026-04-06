@@ -1,0 +1,10 @@
+<details class="detail-block"{{ if (.open | default false) }} open{{ end }}>
+    <summary class="flex items-center gap-2">
+        {{ partial "component/icon.html" (dict "name" "chevron-right" "class" "detail-arrow text-muted-foreground transition-transform" "width" "20") }}
+        <span class="font-medium text-foreground">{{ .title | default "Details" }}</span>
+    </summary>
+    <div class="px-4 py-2 bg-background border-t border-border">
+        {{ .inner | markdownify }}
+    </div>
+</details>
+

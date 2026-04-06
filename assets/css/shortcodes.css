@@ -1,0 +1,50 @@
+.content {
+    details.detail-block[open] .detail-arrow {
+        @apply rotate-90;
+    }
+    details.detail-block summary::-webkit-details-marker {
+        @apply hidden;
+    }
+    details.detail-block summary::marker {
+        @apply hidden;
+    }
+    details {
+        @apply my-2 border border-border rounded-md overflow-hidden;
+        summary {
+            @apply px-2 py-2 bg-card cursor-pointer select-none hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2;
+        }
+    }
+
+    .steps {
+        counter-reset: step-counter;
+        @apply my-4;
+        .step {
+            counter-increment: step-counter;
+            @apply relative pl-12 pb-8;
+            .step-title {
+                @apply text-lg font-semibold text-foreground mb-2;
+            }
+            .step-number {
+                @apply absolute left-0 top-0 w-8 h-8 rounded-full border-2 border-primary bg-background flex items-center justify-center font-bold text-primary z-10;
+            }
+            .step-number::after {
+              content: counter(step-counter);
+            }
+        }
+
+        .step:last-of-type {
+            @apply pb-0;
+        }
+
+        /* Connecting line */
+        .step::before {
+            content: "";
+            @apply absolute left-4 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2;
+        }
+
+        /* Hide line for the last item */
+        .step:last-of-type::before {
+            @apply hidden;
+        }
+    }
+}

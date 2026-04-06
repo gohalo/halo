@@ -9,6 +9,7 @@
 @import "syntax-light.css";
 @import "code.css";
 @import "docs.css";
+@import "shortcodes.css";
 
 /* shadcn/ui @theme inline — exposes CSS vars as Tailwind utilities at runtime.
    Paste any theme from https://ui.shadcn.com/themes into custom.css to retheme. */

@@ -1,5 +1,5 @@
 code {
-    @apply px-1 bg-gray-200 dark:bg-gray-600 text-wrap rounded-sm;
+    @apply px-1 bg-muted text-wrap break-all rounded-xs;
 }
 
 .highlight {
@@ -55,6 +55,6 @@ code {
 
     /* 复制成功时的样式 */
     .copy-code-button.copied {
-        @apply bg-green-300 text-white;
+        @apply bg-primary text-background;
     }
 }

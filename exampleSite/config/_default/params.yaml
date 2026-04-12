@@ -34,6 +34,15 @@ menu:
     section:
       include: ["docs"]
 
+toc:
+  enable: true
+  links:
+  - disable: false
+    icon: "messages-square"   # lucide icons
+    blank: true               # open with new tab, default false
+    translate: "forum"        # translation, toc_link_label_xxx
+    target: "http://forum.example.com"
+
 layout: # support 'full' 'wide' 'standard'
   width: "full"
 

@@ -1,10 +1,14 @@
 # 通用
+- id: sub_pages
+  translation: "子页面"
 ## 日期格式
 - id: date_format
   translation: "2006年01月02日"
 # TOC 目录
 - id: toc_title
   translation: "本页目录"
+- id: toc_link_label_unknown
+  translation: "未配置"
 
 # 导航栏
 ## Icons

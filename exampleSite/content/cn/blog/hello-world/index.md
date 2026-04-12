@@ -162,7 +162,7 @@ Andy
 
 ![large picture](images/large-picture.png)
 
-还可以设置高度或者宽度，支持 `%` 方式，如下会渲染为 `<img>` 图片。
+还可以设置高度或者宽度，支持 `%` 方式，如下会渲染为 `<img>` 图片，而且允许配置 Dark 模式下的图片。
 
 ![hello world logo](images/hello-world.jpg?width=20%&height=100px)
 

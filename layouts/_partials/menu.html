@@ -1,11 +1,11 @@
 <ul class="menu-list">
-    {{- partial "inline/menu/walk.html" (dict "page" .page "menu" .menu "is_dropdown" false) }}
+    {{ partial "inline/menu/walk.html" (dict "page" .page "menu" .menu "is_dropdown" false) }}
 </ul>
 
-{{- define "_partials/inline/menu/walk.html" }}
-    {{- $page := .page }}
-    {{- $is_dropdown := .is_dropdown }}
-    {{- range .menu }}
+{{ define "_partials/inline/menu/walk.html" }}
+    {{ $page := .page }}
+    {{ $is_dropdown := .is_dropdown }}
+    {{ range .menu }}
         {{ if (and (isset .Params "section") (ne .Params.section $page.Section)) }}
             {{ continue }}
         {{ end }}
@@ -38,5 +38,5 @@
                 {{ end }}
             {{ end }}
         </li>
-    {{- end }}
-{{- end }}
+    {{ end }}
+{{ end }}

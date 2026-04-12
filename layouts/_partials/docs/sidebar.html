@@ -1,7 +1,7 @@
 {{ $page := . }}
 
 <nav class="docs-sidebar px-2 border-r border-border overflow-y-auto text-sm flex flex-col flex-1">
-    <div class="hidden lg:flex items-center gap-1 px-1 text-sm font-semibold text-foreground whitespace-nowrap">
+    <div class="hidden lg:flex items-center gap-1 px-1 font-semibold text-foreground whitespace-nowrap">
         {{ partial "component/icon.html" (dict "name" "scroll-text" "width" "16") }}
         {{ i18n "doc_menu_navigation" }}
     </div>
@@ -14,7 +14,7 @@
         {{ if and (.Params.tabbing | default false) (gt (len .Children) 1) }}
             <div class="lg:hidden py-2 border-b border-border">
                 <select onchange="window.location.href=this.value" 
-                    class="w-full border border-border rounded-sm px-2 py-1 text-sm cursor-pointer appearance-none">
+                    class="w-full border border-border rounded-sm px-2 py-1 cursor-pointer appearance-none">
                     {{ range $idx, $item := .Children }}
                         {{ $selected := or ($page.IsMenuCurrent .Menu .) ($page.HasMenuCurrent .Menu .) }}
                         <option value="{{ .Page.RelPermalink }}" {{ if $selected }}selected{{ end }}>
@@ -102,13 +102,16 @@
     {{ else }}
         {{ $length := sub (len .menus.Children) 1 }}
         {{ range $idx, $item := .menus.Children }}
-            <div class="font-semibold text-sm text-foreground px-1 my-2 whitespace-nowrap flex items-center gap-1">
+            <div class="font-semibold text-foreground p-1 whitespace-nowrap flex items-center gap-1">
                 {{ with $item.Params.icon }}{{ partial "component/icon.html" (dict "name" . "width" "16") }}{{ end }}
                 {{ $item.Title }}
             </div>
             <ul>
                 {{ partial "inline/menu/items.html" (dict "menus" $item.Children "page" $page "collapsed" $collapsed) }}
             </ul>
+            {{ if ne $length $idx }}
+                <hr class="mt-1">
+            {{ end }}
         {{ end }}
     {{ end }}
 {{ end }}

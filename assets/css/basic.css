@@ -17,7 +17,7 @@
     }
 
 	img { /* default, maybe overide by inline class */
-		@apply max-w-full h-auto py-2 mx-auto block;
+		@apply max-w-full h-auto py-2 mx-auto;
 	}
 
     a {

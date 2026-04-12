@@ -1,41 +1,80 @@
-<!-- ![this is text](your/uri) "here is title" -->
+{{/* ![this is text](your/uri "here is title") */}}
 {{ if .Title }}
 <figure>
-    {{ partial "simple-image" . }}
-    {{- with .Title }}<figcaption class="text-center text-xs text-gray-600 dark:text-gray-400 my-2">{{ . }}</figcaption>{{ end -}}
+    {{ partial "inline/simple-image.html" . }}
+    {{ with .Title }}<figcaption class="text-center text-xs text-muted-foreground my-2">{{ . }}</figcaption>{{ end }}
 </figure>
 {{ else }}
-    {{ partial "simple-image" . }}
+    {{ partial "inline/simple-image.html" . }}
 {{ end }}
 
-{{ define "partials/simple-image" }}
-{{- $floatClass := "mx-auto block" -}}
-<img
-    {{ with .PlainText }}
-        alt="{{ . }}"
-    {{ end}}
-    {{ if .Title }}
-        title="{{ .Title }}"
-    {{ else if .PlainText }}
-        title="{{ .PlainText }}"
-    {{ end}}
-    {{ with (urls.Parse (replace .Destination "%" "%25")) }}
-        src="{{ .Path | safeURL }}"
-        {{ with .Query }}
-            {{ with .width }} width={{ index . 0 }} {{ end }}
-            {{ with .height }} height={{ index . 0 }} {{ end }}
-            {{ with .float }}
-                {{- $value := index . 0 -}}
-                {{- if eq $value "left" -}}
-                    {{- $floatClass = "float-left mr-4 mb-2" -}}
-                {{- else if eq $value "right" -}}
-                    {{- $floatClass = "float-right ml-4 mb-2" -}}
-                {{- else if eq $value "none" -}}
-                    {{- $floatClass = "block" -}}
-                {{- end -}}
-            {{ end }}
+{{ define "_partials/inline/simple-image.html" }}
+    {{ $uri := urls.Parse .Destination }}
+    {{ $dest_path := $uri.Path }}
+    {{ $ext := path.Ext $dest_path }}
+    {{ $base := strings.TrimSuffix $ext $dest_path }}
+    {{ $dark_dest := printf "%s-dark%s" $base $ext }}
+
+    {{/* 尝试查找暗色模式图片资源 */}}
+    {{ $dark_resource := .Page.Resources.GetMatch (strings.TrimPrefix "/" $dark_dest) }}
+    {{ if not $dark_resource }}
+        {{ $dark_resource = resources.Get (strings.TrimPrefix "/" $dark_dest) }}
+    {{ end }}
+
+    {{/* 进一步检查 static 目录（Hugo resources.Get 不会自动搜索 static） */}}
+    {{ $dark_static_path := "" }}
+    {{ if not $dark_resource }}
+        {{ if fileExists (path.Join "static" $dark_dest) }}
+            {{ $dark_static_path = $dark_dest | relURL }}
         {{ end }}
     {{ end }}
-    class="{{ $floatClass }} max-w-full h-auto py-2"
-/>
+
+    {{ if or $dark_resource $dark_static_path }}
+        {{/* 保持原始 Destination 以保留查询参数 */}}
+        {{ partial "inline/render-img.html" (dict "dot" . "src" .Destination "extraClass" "dark:hidden") }}
+
+        {{/* 暗色模式图片也尝试保留原始查询参数 */}}
+        {{ $dark_src := $dark_dest }}
+        {{ if $uri.RawQuery }}
+            {{ $dark_src = printf "%s?%s" $dark_src $uri.RawQuery }}
+        {{ end }}
+        {{ partial "inline/render-img.html" (dict "dot" . "src" $dark_src "extraClass" "hidden dark:block") }}
+    {{ else }}
+        {{/* 默认回退：如果不存在暗色版本，则直接渲染原图，且在 dark 模式下不隐藏 */}}
+        {{ partial "inline/render-img.html" (dict "dot" . "src" .Destination "extraClass" "") }}
+    {{ end }}
+{{ end }}
+
+{{ define "_partials/inline/render-img.html" }}
+    {{ $dot := .dot }}
+    {{ $extraClass := .extraClass }}
+    {{ $floatClass := "mx-auto block" }}
+    <img
+        {{ with $dot.PlainText }}
+            alt="{{ . }}"
+        {{ end}}
+        {{ if $dot.Title }}
+            title="{{ $dot.Title }}"
+        {{ else if $dot.PlainText }}
+            title="{{ $dot.PlainText }}"
+        {{ end}}
+        {{ with (urls.Parse (replace .src "%" "%25")) }}
+            src="{{ .Path | safeURL }}"
+            {{ with .Query }}
+                {{ with .width }} width={{ index . 0 }} {{ end }}
+                {{ with .height }} height={{ index . 0 }} {{ end }}
+                {{ with .float }}
+                    {{ $value := index . 0 }}
+                    {{ if eq $value "left" }}
+                        {{ $floatClass = "float-left mr-4 mb-2" -}}
+                    {{ else if eq $value "right" }}
+                        {{ $floatClass = "float-right ml-4 mb-2" -}}
+                    {{ else if eq $value "none" }}
+                        {{ $floatClass = "block" }}
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+        {{ end }}
+        class="{{ $floatClass }} {{ $extraClass }} max-w-full h-auto py-2"
+    />
 {{ end }}

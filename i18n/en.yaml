@@ -1,10 +1,14 @@
 # Common
+- id: sub_pages
+  translation: "Sub-Pages"
 ## Date format
 - id: date_format
   translation: "January 2, 2006"
 # TOC
 - id: toc_title
   translation: "On This Page"
+- id: toc_link_label_unknown
+  translation: "Unknown"
 
 # Navigation
 ## Icons

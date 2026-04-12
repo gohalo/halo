@@ -14,7 +14,7 @@
                     {{ partial "component/icon.html" (dict "name" "tags" "width" "16") }}
                     <div class="flex flex-wrap gap-1.5">
                         {{ range . }}
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-secondary text-secondary-foreground">{{ . }}</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-secondary text-secondary-foreground">{{ . }}</span>
                         {{ end }}
                     </div>
                 </div>
@@ -25,7 +25,7 @@
         <div class="content">{{ .Content }}</div>
 
         <!-- 上一篇/下一篇导航 -->
-        <nav class="py-2 border-t border-border">
+        <nav class="my-2 py-2 border-t border-border">
             <div class="flex justify-between">
             {{ with .PrevInSection }}
                 <a href="{{ .RelPermalink }}" class="text-primary hover:underline">« {{ .LinkTitle }}</a>
@@ -41,8 +41,10 @@
     </article>
 
     <!-- 右侧目录侧边栏 -->
-    <aside class="hidden xl:block w-64 shrink-0 sticky top-16 pt-2 self-start max-h-[calc(100vh-4rem)] overflow-y-auto">
-        {{ partial "toc.html" . }}
-    </aside>
+    {{ if and (.Site.Params.toc.enable | default true) .TableOfContents }}
+        <aside class="hidden xl:block w-64 shrink-0 sticky top-16 pt-2 self-start max-h-[calc(100vh-4rem)] overflow-y-auto">
+            {{ partial "toc.html" . }}
+        </aside>
+    {{ end }}
 </div>
 {{ end }}

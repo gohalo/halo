@@ -82,7 +82,7 @@ sidebar-ring	Sidebar-specific focus rings.	Focused controls inside the sidebar.
         --primary-foreground:   white;
         --secondary:            #bae6fd;   /* sky-200  */
         --secondary-foreground: #0c4a6e;   /* sky-900  */
-        --muted:                #f3f4f6;   /* gray-100 */
+        --muted:                #e5e7eb;   /* gray-200 */
         --muted-foreground:     #374151;   /* gray-700 */
         --popover:              white;
         --popover-foreground:   #0a0a0a;

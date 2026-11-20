@@ -1,5 +1,8 @@
 {{ $height := "h-16" }}
-{{ $border := "border-b border-border" }}
+{{ $border := "" }}
+{{ if eq .Site.Params.menu.border "border" }}
+    {{ $border = "border-b border-border" }}
+{{ end }}
 {{ with (partial "function/docs/root.html" .) }}
     {{ if .Params.tabbing }}
         {{ $border = "" }}

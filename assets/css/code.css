@@ -1,7 +1,8 @@
 code {
-    @apply px-1 bg-muted text-wrap break-all rounded-xs;
+    @apply py-0.5 px-1 bg-muted text-wrap break-all rounded-sm;
 }
 
+/* code block */
 .highlight {
     @apply my-2 relative max-w-full text-sm;
     code {

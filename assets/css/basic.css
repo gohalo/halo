@@ -1,15 +1,15 @@
 .content {
     h1, h2, h3 {
-        @apply text-foreground my-2 scroll-mt-18 clear-both;
+        @apply text-foreground my-4 scroll-mt-18 clear-both font-semibold;
     }
     h1 {
-        @apply bg-secondary text-center font-semibold text-2xl p-2 rounded-md;
+        @apply text-3xl;
     }
     h2 {
-        @apply border-b-2 border-b-secondary font-medium text-xl;
+        @apply text-xl;
     }
     h3 {
-        @apply border-l-3 border-l-secondary font-medium text-lg pl-1;
+        @apply text-lg;
     }
 
     p {

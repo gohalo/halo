@@ -114,6 +114,52 @@
 - id: version_unselected
   translation: "请选择"
 
+# API 参考
+- id: api_loading
+  translation: "正在加载 OpenAPI 文档..."
+- id: api_no_endpoints
+  translation: "当前 OpenAPI 文档中没有接口。"
+- id: api_no_spec
+  translation: "未配置 OpenAPI 文档，请在页面 front matter 中设置 openapi。"
+- id: api_load_failed
+  translation: "OpenAPI 文档加载失败："
+- id: api_authorizations
+  translation: "授权"
+- id: api_parameters
+  translation: "参数"
+- id: api_request_body
+  translation: "请求体"
+- id: api_responses
+  translation: "响应"
+- id: api_request
+  translation: "请求"
+- id: api_copy_page
+  translation: "复制页面"
+- id: api_copy_request
+  translation: "复制请求"
+- id: api_copy_response
+  translation: "复制响应"
+- id: api_name
+  translation: "名称"
+- id: api_in
+  translation: "位置"
+- id: api_type
+  translation: "类型"
+- id: api_description
+  translation: "描述"
+- id: api_field
+  translation: "字段"
+- id: api_required
+  translation: "必填"
+- id: api_deprecated
+  translation: "已废弃"
+- id: api_variant
+  translation: "变体"
+- id: api_no_content
+  translation: "// 无内容"
+- id: api_default_tag
+  translation: "默认"
+
 # 简历相关
 - id: resume_experience
   translation: "工作经历"

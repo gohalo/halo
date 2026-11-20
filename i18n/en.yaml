@@ -115,6 +115,52 @@
 - id: version_unselected
   translation: "Select version"
 
+# API reference
+- id: api_loading
+  translation: "Loading OpenAPI document..."
+- id: api_no_endpoints
+  translation: "No endpoints found in this OpenAPI document."
+- id: api_no_spec
+  translation: "No OpenAPI document configured. Set openapi in the page front matter."
+- id: api_load_failed
+  translation: "Failed to load OpenAPI document: "
+- id: api_authorizations
+  translation: "Authorizations"
+- id: api_parameters
+  translation: "Parameters"
+- id: api_request_body
+  translation: "Request Body"
+- id: api_responses
+  translation: "Responses"
+- id: api_request
+  translation: "Request"
+- id: api_copy_page
+  translation: "Copy page"
+- id: api_copy_request
+  translation: "Copy request"
+- id: api_copy_response
+  translation: "Copy response"
+- id: api_name
+  translation: "Name"
+- id: api_in
+  translation: "In"
+- id: api_type
+  translation: "Type"
+- id: api_description
+  translation: "Description"
+- id: api_field
+  translation: "Field"
+- id: api_required
+  translation: "required"
+- id: api_deprecated
+  translation: "deprecated"
+- id: api_variant
+  translation: "variant"
+- id: api_no_content
+  translation: "// No content"
+- id: api_default_tag
+  translation: "Default"
+
 # Resume
 - id: resume_experience
   translation: "Experience"

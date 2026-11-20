@@ -1,8 +1,13 @@
 {{- $docsVersions := partial "function/docs/versions.html" . -}}
 {{- $hideNav := and $docsVersions.versioned (not $docsVersions.current) -}}
-
-<!-- 顶部标签页导航 -->
-{{ partial "docs/tabs.html" . }}
+{{- $stickyTop := "lg:top-[4.5rem]" -}}
+{{- $stickyMax := "lg:max-h-[calc(100vh-9rem)]" -}}
+{{- with (partial "function/docs/root.html" .) -}}
+    {{- if .Params.tabbing -}}
+        {{- $stickyTop = "lg:top-[6.375rem]" -}}
+        {{- $stickyMax = "lg:max-h-[calc(100vh-12rem)]" -}}
+    {{- end -}}
+{{- end -}}
 
 <!-- 移动端菜单按钮 -->
 <div class="lg:hidden mb-4 -mx-4 sm:-mx-6 px-4 sm:px-6">
@@ -17,8 +22,8 @@
 <div class="flex mt-2 gap-6 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
     <!-- 左侧导航 -->
     <aside id="docs-sidebar" class="w-64 shrink-0
-        lg:self-start lg:block lg:sticky lg:top-16 lg:pt-2
-        lg:max-h-[calc(100vh-9rem)] overflow-y-auto
+        lg:self-start lg:block lg:sticky {{ $stickyTop }} lg:pt-2
+        {{ $stickyMax }} overflow-y-auto
         fixed left-0 inset-y-0 h-screen z-120 bg-background lg:bg-transparent
         transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col"
         {{ if $hideNav }}aria-hidden="true"{{ end }}>
@@ -62,7 +67,7 @@
 
     <!-- 右侧目录侧边栏 -->
     {{ if and (.Site.Params.toc.enable | default true) .TableOfContents }}
-        <aside class="hidden xl:block w-64 shrink-0 sticky top-16 pt-2 self-start max-h-[calc(100vh-9rem)] overflow-y-auto">
+        <aside class="hidden xl:block w-64 shrink-0 sticky {{ $stickyTop }} pt-2 self-start {{ $stickyMax }} overflow-y-auto">
             {{ partial "toc.html" . }}
         </aside>
     {{ end }}

@@ -8,8 +8,8 @@
         <header class="flex-none sticky top-0 z-100">
             {{ partial "docs/header.html" . }}
         </header>
-        <main class="flex-1">
-            <div class="{{ $layout.page }} mx-auto px-4 sm:px-6 lg:px-8">
+        <main class="flex-1 flex flex-col">
+            <div class="{{ $layout.page }} mx-auto w-full px-4 sm:px-6 lg:px-8 flex-1">
                 {{ block "main" . }}{{ end }}
             </div>
         </main>

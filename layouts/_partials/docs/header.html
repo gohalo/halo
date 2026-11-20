@@ -6,17 +6,22 @@
 {{ with (partial "function/docs/root.html" .) }}
     {{ if .Params.tabbing }}
         {{ $border = "" }}
-        {{ $height = "mt-2 h-12" }}
+        {{ $height = "h-14 pt-2" }}
     {{ end }}
 {{ end}}
 
 {{- $page := . -}}
 <nav class="bg-background {{ $border }}">
     <div class="px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center {{ $height }}">
+        <div class="relative flex justify-between items-center {{ $height }}">
             <!-- 左侧：Title 和 Logo -->
             <div class="flex items-center space-x-1">
                 {{ partial "header/title.html" . }}
+            </div>
+
+            <!-- 中间：全站搜索 -->
+            <div class="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm px-4">
+                {{ partial "header/search.html" . }}
             </div>
 
             <!-- 右侧：搜索、Dark/Light切换、语言选择、GitHub、关于 -->
@@ -24,6 +29,14 @@
                 {{ partial "docs/version.html" . }}
                 {{ partial "header/icons.html" $page }}
             </div>
+        </div>
+
+        <!-- tab 导航：放在 sticky header 内，滚动时始终固定在顶部 -->
+        {{ partial "docs/tabs.html" . }}
+
+        <!-- 移动端：全站搜索 -->
+        <div class="lg:hidden pb-2">
+            {{ partial "header/search.html" . }}
         </div>
     </div>
 </nav>

@@ -13,7 +13,7 @@
     {{ with (partial "function/docs/root.html" .) }}
         {{ if and (.Params.tabbing | default false) (gt (len .Children) 1) }}
             <div class="lg:hidden py-2 border-b border-border">
-                <select onchange="window.location.href=this.value" 
+                <select id="docs-tab-select" aria-label="{{ i18n "doc_menu_navigation" }}" onchange="window.location.href=this.value"
                     class="w-full border border-border rounded-sm px-2 py-1 cursor-pointer appearance-none">
                     {{ range $idx, $item := .Children }}
                         {{ $selected := or ($page.IsMenuCurrent .Menu .) ($page.HasMenuCurrent .Menu .) }}

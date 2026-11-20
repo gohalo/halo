@@ -1,5 +1,59 @@
 code {
-    @apply py-0.5 px-1 bg-muted text-wrap break-all rounded-sm;
+    @apply py-0.5 px-1 text-wrap break-all rounded-sm;
+}
+
+.content :not(pre) > code {
+    @apply bg-muted;
+}
+
+/* 非高亮代码块（缩进代码块）：占满宽度，超宽横向滚动不换行 */
+.content pre:not(.chroma):not(.mermaid) {
+    @apply my-2 w-full max-w-full rounded-md text-sm overflow-x-auto;
+    background-color: #eee8d5;
+    color: #586e75;
+}
+
+.dark .content pre:not(.chroma):not(.mermaid) {
+    background-color: #002b36;
+    color: #93a1a1;
+}
+
+.content pre:not(.chroma):not(.mermaid) code {
+    @apply block w-full bg-transparent px-3 py-2 whitespace-pre text-nowrap;
+}
+
+/* 非高亮代码块的工具栏容器：避免工具栏随横向滚动一起移动 */
+.code-block-shell {
+    @apply relative max-w-full;
+}
+
+/* 代码块工具栏 */
+.code-toolbar {
+    @apply top-1 right-1 absolute z-10 flex items-center gap-2;
+    @apply opacity-0 transition-all duration-200;
+}
+
+/* 鼠标悬停时显示工具栏 */
+.highlight:hover .code-toolbar,
+.code-block-shell:hover .code-toolbar {
+    @apply opacity-100;
+}
+
+/* 语言标签样式 */
+.code-language-label {
+    @apply h-6 min-w-6 px-2 rounded-md flex items-center justify-center;
+    @apply text-xs text-muted-foreground bg-background;
+}
+
+/* 复制按钮样式 */
+.copy-code-button {
+    @apply h-6 w-6 px-1 rounded-md flex items-center justify-center cursor-pointer;
+    @apply text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground;
+}
+
+/* 复制成功时的样式 */
+.copy-code-button.copied {
+    @apply bg-primary text-background;
 }
 
 /* code block */
@@ -9,7 +63,7 @@ code {
         @apply whitespace-pre px-0 text-nowrap;
     }
     > .chroma {
-        @apply py-1 rounded-md max-w-full overflow-x-auto;
+        @apply py-2 rounded-md max-w-full overflow-x-auto;
         table { /* 有行号的代码块使用 table 布局 */
             pre {
                 @apply p-0;
@@ -29,33 +83,5 @@ code {
     /* 没有行号的代码块 */
     > pre {
         @apply px-2 rounded-md max-w-full overflow-x-auto;
-    }
-
-    /* 工具栏固定在视口右上角 */
-    .code-toolbar {
-        @apply top-1 right-1 absolute z-10 flex items-center gap-2;
-        @apply opacity-0 transition-all duration-200;
-    }
-
-    /* 鼠标悬停时显示工具栏 */
-    &:hover .code-toolbar {
-        @apply opacity-100;
-    }
-
-    /* 语言标签样式 */
-    .code-language-label {
-        @apply h-6 min-w-6 px-2 rounded-md flex items-center justify-center;
-        @apply text-xs text-muted-foreground bg-muted;
-    }
-
-    /* 复制按钮样式 */
-    .copy-code-button {
-        @apply h-6 w-6 px-1 rounded-md flex items-center justify-center cursor-pointer;
-        @apply text-muted-foreground bg-muted hover:bg-accent hover:text-accent-foreground;
-    }
-
-    /* 复制成功时的样式 */
-    .copy-code-button.copied {
-        @apply bg-primary text-background;
     }
 }

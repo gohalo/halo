@@ -316,7 +316,7 @@ It's a short cordes for detail information.
 
 或者类似如下方式。
 
-``` details {title="Details info",open=true}
+```details {title="Details info",open=true}
 Just like codes
 ```
 
@@ -331,7 +331,7 @@ Just like codes
 {{< notice type=info title="提示信息" >}}
 某些内容的说明或者提示信息，例如一些文档、资料外的信息可以提供给用户参考，可能会涉及的原始内容比较多，这里仅整理简略内容，例如一些简单示例代码：
 
-``` c
+```c
 int main() {
     puts("Hello World!!!");
 }

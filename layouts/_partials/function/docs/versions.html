@@ -1,0 +1,22 @@
+{{- $page := . -}}
+{{- $versioned := false -}}
+{{- $current := "" -}}
+{{- $items := slice -}}
+
+{{- with (partial "function/docs/root-menu.html" .) -}}
+    {{- if (.Params.version | default false) -}}
+        {{- $versioned = true -}}
+        {{- $root := . -}}
+        {{- range .Children -}}
+            {{- $version := strings.SliceString .Identifier (add (len $root.Identifier) 1) -}}
+            {{- $info := dict "active" false "url" .Identifier "version" $version -}}
+            {{- if or ($page.IsMenuCurrent .Menu .) ($page.HasMenuCurrent .Menu .) -}}
+                {{- $current = $version -}}
+                {{- $info = merge $info (dict "active" true) -}}
+            {{- end -}}
+            {{- $items = $items | append $info -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+{{- return (dict "versioned" $versioned "current" $current "items" $items) -}}

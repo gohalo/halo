@@ -12,14 +12,14 @@
         {{ if and (ne $page_kind "all") (ne $page_kind .Kind) }}
             {{ continue }}
         {{ end }}
-        <a href="{{ .RelPermalink }}" class="group block p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-lg transition-all">
+        <a href="{{ .RelPermalink }}" class="group block p-4 bg-card text-card-foreground rounded-lg border border-border hover:border-primary hover:shadow-md transition-all">
             <div class="flex items-start justify-between mb-3">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <h3 class="text-xl font-semibold text-card-foreground group-hover:text-primary transition-colors">
                     {{ .LinkTitle }}
                 </h3>
-                {{ partial "component/icon.html" (dict "name" "chevron-right" "class" "text-gray-400 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all") }}
+                {{ partial "component/icon.html" (dict "name" "chevron-right" "class" "text-muted-foreground group-hover:text-primary transform group-hover:translate-x-1 transition-all") }}
             </div>
-            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+            <p class="text-sm text-muted-foreground line-clamp-2">
             {{ if .Description }}
                 {{ .Description }}
             {{ else if and .Summary (lt (len .Summary) 300) }}

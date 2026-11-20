@@ -29,7 +29,7 @@
     }
 
     blockquote {
-        @apply ml-8 my-2 p-2 bg-muted rounded-md border-s-6 border-secondary text-muted-foreground;
+        @apply ml-8 my-2 p-2 bg-muted rounded-md border-s-6 border-primary text-muted-foreground;
     }
 
     /* 列表样式 */

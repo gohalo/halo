@@ -88,7 +88,7 @@ sidebar-ring	Sidebar-specific focus rings.	Focused controls inside the sidebar.
         --popover-foreground:   #0a0a0a;
         --accent:               #f3f4f6;   /* gray-100 */
         --accent-foreground:    #111827;
-        --card:                 #f9fafb;   /* gray-50  */
+        --card:                 white;
         --card-foreground:      #111827;
         --destructive:          #ef4444;   /* red-500  */
         --border:               oklch(92% 0.004 286.32);   /* gray-300 */

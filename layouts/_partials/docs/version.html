@@ -1,26 +1,10 @@
-{{ $versions := slice }} {{/* all version */}}
-{{ $version := "" }} {{/* current version */}}
-{{ $page := . }}
-
-{{ $root := partial "function/docs/root-menu.html" . }}
-{{ if $root }}
-    {{ if ($root.Params.version | default false) }}
-        {{ range $root.Children }}
-            {{ $_version := strings.SliceString .Identifier (add (len $root.Identifier) 1) }}
-            {{ $_info := dict "active" false "url" .Identifier "version" $_version }}
-            {{ if or ($page.IsMenuCurrent .Menu .) ($page.HasMenuCurrent .Menu .) }}
-                {{ $version = $_version }}
-                {{ $_info = merge $_info (dict "active" true)}}
-            {{ end }}
-            {{ $versions = $versions | append $_info }}
-        {{ end }}
-    {{ end }}
-{{ end}}
+{{- $info := partial "function/docs/versions.html" . -}}
+{{- $versions := $info.items -}}
 
 {{ if (lt 0 (len $versions)) }}
 <div class="relative has-dropdown">
     <button class="menu-item flex items-center">
-        {{ i18n "version" }}: {{ $version }}
+        {{ i18n "version" }}: {{ or $info.current (i18n "version_unselected") }}
         {{ partial "component/icon.html" (dict "name" "chevron-down" "width" "16") }}
     </button>
 

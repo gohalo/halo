@@ -112,6 +112,9 @@
 - id: version
   translation: "Version"
 
+- id: version_unselected
+  translation: "Select version"
+
 # Resume
 - id: resume_experience
   translation: "Experience"

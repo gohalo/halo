@@ -111,6 +111,9 @@
 - id: version
   translation: "版本"
 
+- id: version_unselected
+  translation: "请选择"
+
 # 简历相关
 - id: resume_experience
   translation: "工作经历"

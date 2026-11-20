@@ -109,12 +109,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 代码块复制按钮
     function addCopyButtonToCodeBlocks() {
-        // 查找所有代码块
-        const codeBlocks = document.querySelectorAll('.highlight');
+        // 查找所有代码块：Chroma 高亮块 + 非高亮的缩进代码块
+        const codeBlocks = document.querySelectorAll('.highlight, .content pre:not(.chroma):not(.mermaid)');
         codeBlocks.forEach((block) => {
-            // 避免重复添加
-            if (block.querySelector('.copy-code-button')) {
+            // 避免重复添加（工具栏已存在，或已被包进 shell）
+            if (
+                block.querySelector('.copy-code-button') ||
+                (block.parentElement && block.parentElement.classList.contains('code-block-shell'))
+            ) {
                 return;
+            }
+
+            // 非高亮代码块包一层容器，避免工具栏随横向滚动移动
+            let container = block;
+            if (block.tagName === 'PRE') {
+                container = document.createElement('div');
+                container.className = 'code-block-shell';
+                block.parentNode.insertBefore(container, block);
+                container.appendChild(block);
             }
 
             // 创建复制按钮
@@ -151,9 +163,9 @@ document.addEventListener('DOMContentLoaded', function() {
             toolbar.appendChild(langLabel);
             toolbar.appendChild(button);
 
-            // 将工具栏添加到代码块
-            block.style.position = 'relative';
-            block.appendChild(toolbar);
+            // 将工具栏添加到代码块容器
+            container.style.position = 'relative';
+            container.appendChild(toolbar);
             button.addEventListener('click', async () => {
                 let code = '';
 
@@ -170,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 } else {
                     // 方法2: 不带行号的代码块
-                    const codeElement = block.querySelector('pre code');
+                    const codeElement = block.querySelector('code');
                     if (codeElement) {
                         const codeLines = codeElement.querySelectorAll('.cl');
                         if (codeLines.length > 0) {
@@ -221,14 +233,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // 返回顶部按钮功能
     const backToTopButton = document.getElementById('back-to-top');
     if (backToTopButton) {
-        // 监听滚动事件，显示/隐藏按钮
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 300) {
-                backToTopButton.classList.remove('hidden');
-            } else {
-                backToTopButton.classList.add('hidden');
-            }
-        });
+        const updateBackToTop = function() {
+            backToTopButton.classList.toggle('hidden', window.scrollY <= 300);
+        };
+        window.addEventListener('scroll', updateBackToTop, { passive: true });
+        // 页面加载/刷新、浏览器恢复滚动位置后同步一次状态
+        updateBackToTop();
+        window.addEventListener('load', updateBackToTop);
+        window.addEventListener('pageshow', updateBackToTop);
     }
 
     // 初始化文档菜单

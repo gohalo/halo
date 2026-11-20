@@ -5,6 +5,7 @@
 {{ with site.Params.menu.theme.default }}
     <meta name="theme-default" content="{{ . }}">
 {{ end }}
+{{ partial "head/lang.html" . }}
 
 {{ with (templates.Defer (dict "key" "global")) }}
     {{ partial "head/css.html" . }}
@@ -77,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 {{- end -}}
 
-{{- if eq .Site.Language.Lang "cn" -}}
+{{- if eq .Site.Language.Lang "zh" -}}
 <style type="text/css">
 .content {
     p {

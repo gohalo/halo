@@ -4,8 +4,8 @@ en:
   contentDir: 'content/en'
   weight: 10
 
-cn:
+zh:
   languageCode: 'zh-CN'
   languageName: '中文'
-  contentDir: 'content/cn'
+  contentDir: 'content/zh'
   weight: 20

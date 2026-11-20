@@ -3,8 +3,8 @@ title: 'New Hugo Site'
 theme: 'halo'
 
 # Multilingual
-defaultContentLanguage: 'cn'
-# true: 多语言都添加 cn en 路径；false: 默认语言会复制到默认路径
+defaultContentLanguage: 'zh'
+# true: 多语言都添加 zh en 路径；false: 默认语言会复制到默认路径
 defaultContentLanguageInSubdir: true
 
 # disableKinds = ['taxonomy', 'term']

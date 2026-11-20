@@ -8,29 +8,27 @@
     </button>
 
     <div class="menu-dropdown right-0">
-        {{ range site.Languages }}
-            {{ $target := .Lang }}
+        {{ range site.Sites }}
+            {{ $target := .Language.Lang }}
 
-            {{/* default navigate to home */}}
-            {{ $url := printf "/%s/" $target }}
-            {{ if $page.IsTranslated }}
-                {{ range $page.Translations }}
-                    {{ if eq .Language.Lang $target }}
-                        {{- $url = .RelPermalink }}
-                    {{ end }}
+            {{/* default navigate to the home page of the target language */}}
+            {{ $url := .Home.RelPermalink }}
+            {{ range $page.Translations }}
+                {{ if eq .Language.Lang $target }}
+                    {{- $url = .RelPermalink }}
                 {{ end }}
             {{ end }}
 
             <div class="menu-item">
-                {{ if eq $page.Language.Lang .Lang }}
+                {{ if eq $page.Language.Lang $target }}
                     <!-- 当前语言：高亮显示且不可点击 -->
                     <span class="dropdown-item dropdown-item-active">
-                        {{ .LanguageName }}
+                        {{ .Language.LanguageName }}
                     </span>
                 {{ else }}
-                    <!-- 其他语言：可点击 -->
-                    <a href="{{ $url }}" class="dropdown-item dropdown-item-link">
-                        {{ .LanguageName }}
+                    <!-- 其他语言：可点击，并记住用户选择 -->
+                    <a href="{{ $url }}" class="dropdown-item dropdown-item-link" hreflang="{{ .Language.LanguageCode | default $target }}" data-set-lang="{{ $target }}">
+                        {{ .Language.LanguageName }}
                     </a>
                 {{ end }}
             </div>

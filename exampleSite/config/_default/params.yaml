@@ -47,4 +47,8 @@ toc:
 layout: # support 'full' 'wide' 'standard'
   width: "full"
 
+language:
+  detect: true # 首次访问按浏览器语言自动跳转
+  remember: true   # 记住用户在语言切换器中的选择
+
 example: http://github.com/example

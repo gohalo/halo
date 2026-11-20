@@ -2,6 +2,7 @@ menu:
   logo: "/images/logo.svg"
   title: "Halo"
   align: "center" # left center
+  border: "none" # buttom
   icons: # align to right
   - name: "theme"
     default: "auto" # light dark auto

@@ -1,4 +1,5 @@
 .content {
+    @apply leading-relaxed;
     h1, h2, h3 {
         @apply text-foreground my-4 scroll-mt-18 clear-both font-semibold;
     }

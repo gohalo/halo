@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halo 主题全站搜索实现方案</title>
+<style>
+    :root {
+        color-scheme: light dark;
+        --bg: #ffffff;
+        --fg: #1f2937;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --code-bg: #f6f8fa;
+        --accent: #2563eb;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg: #111827;
+            --fg: #f3f4f6;
+            --muted: #9ca3af;
+            --border: #374151;
+            --code-bg: #1f2937;
+            --accent: #60a5fa;
+        }
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0 auto;
+        padding: 2rem 1.25rem 6rem;
+        max-width: 60rem;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.75 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    h1 { font-size: 1.9rem; margin: 0 0 .5rem; }
+    h2 { font-size: 1.35rem; margin: 2.5rem 0 .75rem; padding-bottom: .35rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.08rem; margin: 1.75rem 0 .5rem; }
+    p, li { color: var(--fg); }
+    .lead { color: var(--muted); margin-top: 0; }
+    code {
+        padding: .15em .4em;
+        border-radius: 4px;
+        background: var(--code-bg);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: .875em;
+    }
+    pre {
+        margin: .75rem 0 1.25rem;
+        padding: 1rem 1.15rem;
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--code-bg);
+        font-size: .8125rem;
+        line-height: 1.6;
+    }
+    pre code { padding: 0; background: none; font-size: inherit; }
+    table { width: 100%; border-collapse: collapse; margin: .75rem 0 1.5rem; font-size: .9rem; }
+    th, td { padding: .5rem .75rem; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { background: var(--code-bg); font-weight: 600; }
+    a { color: var(--accent); }
+    .note {
+        margin: 1rem 0;
+        padding: .75rem 1rem;
+        border-left: 3px solid var(--accent);
+        border-radius: 0 6px 6px 0;
+        background: var(--code-bg);
+        font-size: .9rem;
+    }
+    .flow { font-size: .9rem; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>Halo 主题全站搜索实现方案</h1>
+<p class="lead">基于 Hugo 构建期索引 + FlexSearch 纯前端检索 + 原生 &lt;dialog&gt; 命令面板，多语言、离线可用、无需后端。</p>
+
+<h2>1. 总体架构</h2>
+<pre class="flow"><code>Hugo 构建期                                  浏览器运行期
+─────────────────────────────────────       ────────────────────────────────────
+页面内容
+  └─ 按标题切分（function/search/fragments）
+       └─ 生成 {lang}.search-data.json  ──→  fetch（首次打开搜索时懒加载）
+                                              └─ FlexSearch.Document × 2
+                                                   ├─ pageIndex    整页索引（分组用）
+                                                   └─ sectionIndex 片段索引（命中定位）
+                                                        └─ 查询 / 排序 / 去重
+                                                             └─ &lt;dialog&gt; 面板渲染 + 高亮</code></pre>
+
+<p>核心设计：<strong>构建期只产出数据，运行期只做检索和渲染</strong>。没有服务端接口，不与搜索服务耦合，站点可部署到任意静态托管。</p>
+
+<h2>2. 文件职责</h2>
+<table>
+    <thead>
+        <tr><th>文件</th><th>阶段</th><th>职责</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>assets/json/search-data.json</code></td>
+            <td>构建期</td>
+            <td>Hugo 模板：筛选页面，调用片段切分 partial，输出 JSON 索引数据。</td>
+        </tr>
+        <tr>
+            <td><code>layouts/_partials/function/search/headings.html</code></td>
+            <td>构建期</td>
+            <td>把 <code>.Fragments.Headings</code> 拍平成 <code>[{id, title, level}]</code>，保持文档顺序。</td>
+        </tr>
+        <tr>
+            <td><code>layouts/_partials/function/search/collect.html</code></td>
+            <td>构建期</td>
+            <td>递归收集嵌套标题树到 Scratch。</td>
+        </tr>
+        <tr>
+            <td><code>layouts/_partials/function/search/fragments.html</code></td>
+            <td>构建期</td>
+            <td>按标题把正文切分成可搜索片段，支持 content / heading / title / summary 四种模式。</td>
+        </tr>
+        <tr>
+            <td><code>layouts/_partials/head/search.html</code></td>
+            <td>构建期</td>
+            <td>注册索引资源、加载 FlexSearch 运行时与两个前端脚本（按语言生成、生产环境压缩 + 指纹）。</td>
+        </tr>
+        <tr>
+            <td><code>package.json</code> + <code>exampleSite/config/_default/hugo.yaml</code></td>
+            <td>构建期</td>
+            <td>FlexSearch 作为 devDependency 安装，并通过 <code>module.mounts</code> 把 <code>node_modules/flexsearch/dist</code> 挂载到 <code>static/flexsearch</code>（与 katex / mermaid / reveal 的方式相同）。</td>
+        </tr>
+        <tr>
+            <td><code>assets/js/flexsearch.js</code></td>
+            <td>运行期</td>
+            <td>数据层：懒加载 JSON、建索引、执行查询、返回分组结果（<code>window.haloSearch</code>）。</td>
+        </tr>
+        <tr>
+            <td><code>assets/js/search-dialog.js</code></td>
+            <td>运行期</td>
+            <td>交互层：dialog 开关、快捷键、键盘导航、ARIA、结果渲染与关键词高亮。</td>
+        </tr>
+        <tr>
+            <td><code>layouts/_partials/component/search.html</code></td>
+            <td>构建期</td>
+            <td><code>&lt;dialog&gt;</code> 面板结构。</td>
+        </tr>
+        <tr>
+            <td><code>layouts/_partials/header/search.html</code></td>
+            <td>构建期</td>
+            <td>文档页顶部搜索栏样式的触发器。</td>
+        </tr>
+        <tr>
+            <td><code>layouts/_partials/header/icons/search.html</code></td>
+            <td>构建期</td>
+            <td>导航栏搜索图标触发器。</td>
+        </tr>
+        <tr>
+            <td><code>assets/css/search.css</code></td>
+            <td>运行期</td>
+            <td>面板样式。全部使用原生 CSS + 主题 CSS 变量，不依赖 Tailwind 扫描。</td>
+        </tr>
+        <tr>
+            <td><code>i18n/{zh,en}.yaml</code></td>
+            <td>构建期</td>
+            <td><code>search_placeholder</code>、<code>search_no_results</code>、<code>search_results_found</code> 等文案。</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note">
+    <strong>模板挂载点：</strong><code>layouts/baseof.html</code>（普通页面）、
+    <code>layouts/docs/baseof.html</code>（文档列表）、
+    <code>layouts/docs/single.html</code>（文档详情）都必须引入
+    <code>component/search.html</code>。
+    文档页使用独立的完整 HTML 模板，不继承根 <code>baseof.html</code>，遗漏会出现"有搜索框但点击无反应"。
+</div>
+
+<h2>3. 构建期：索引数据生成</h2>
+
+<h3>3.1 页面筛选</h3>
+<p><code>assets/json/search-data.json</code> 的筛选规则：</p>
+<pre><code>{{- $pages := where .Site.Pages "Kind" "in" (slice "page" "section") -}}
+{{- $pages = where $pages "Params.searchable" "!=" false -}}
+{{- $pages = where $pages "Content" "!=" "" -}}</code></pre>
+<ul>
+    <li>只索引 <code>page</code> 与 <code>section</code>，排除 taxonomy / term / home 等。</li>
+    <li>页面 front matter 设置 <code>searchable: false</code> 可排除单页（默认 <code>true</code>，即默认参与搜索）。</li>
+    <li>没有正文的页面不进入索引。</li>
+</ul>
+<p>每页标题取 <code>LinkTitle</code>，缺失时回退到文件名：</p>
+<pre><code>{{- $pageTitle := .LinkTitle -}}
+{{- if not $pageTitle -}}
+    {{- with .File -}}{{- $pageTitle = .BaseFileName -}}{{- end -}}
+{{- end -}}</code></pre>
+
+<h3>3.2 标题提取</h3>
+<p>使用 Hugo 的 <code>Page.Fragments</code>（由正文渲染结果生成，ID 与页内锚点一致），递归拍平：</p>
+<pre><code># 页面标题树
+.Fragments.Headings
+  ├─ { ID: "intro", Title: "Introduction", Level: 1, Headings: [...] }
+  └─ ...
+
+# 拍平结果
+[
+  { id: "intro", title: "Introduction", level: 1 },
+  { id: "setup", title: "Setup", level: 2 }
+]</code></pre>
+<ul>
+    <li><code>.Fragments.Headings</code> 顶层可能包含一个 <code>Level 0</code>、无标题的虚拟根节点，递归收集时会跳过它但保留其子标题，避免生成 <code>"#"</code> 这类空片段键。</li>
+    <li>标题是否成立完全由 Hugo/Goldmark 的渲染结果决定：只有渲染成 <code>&lt;hN&gt;</code> 的才是标题，正文或代码块中以 <code>#</code> 开头的行仍属于内容文本，本方案不会按 Markdown 的 <code>#</code> 语法做二次解析。</li>
+    <li>标题文本本身可能包含 <code>#</code>（如 "C#"），片段键使用「ID#标题」格式，前端按<strong>第一个</strong> <code>#</code> 拆分，因此标题中的 <code>#</code> 会被完整保留。</li>
+</ul>
+
+<h3>3.3 片段切分算法</h3>
+<p><code>function/search/fragments.html</code>（content 模式）从页面 HTML 中按标题切分，采用 <strong>自下而上</strong> 的方式，避免上层标题重复处理已切走的片段：</p>
+<pre><code>{{- range seq $len -}}
+    {{- $i := sub $len . -}}                       {{/* 从最后一个标题开始 */}}
+    {{- $heading := index $headings $i -}}
+    {{- $opening := printf "&lt;h%d id=\"%s\"" $heading.level $heading.id -}}
+    {{- $endTag := printf "&lt;/h%d&gt;" $heading.level -}}
+
+    {{- $parts := split $content $opening -}}
+    {{- if gt (len $parts) 1 -}}
+        {{- $before := index $parts 0 -}}
+        {{- $rest := delimit (after 1 $parts) $opening -}}
+        {{- $sub := split $rest $endTag -}}
+        {{- if gt (len $sub) 1 -}}
+            {{- $fragment := delimit (after 1 $sub) $endTag -}}
+            {{- $text := $fragment | plainify | htmlUnescape | strings.TrimSpace -}}
+            {{- $data = $data | merge (dict (printf "%s#%s" $heading.id $heading.title) $text) -}}
+            {{- $content = $before -}}             {{/* 剩余内容继续处理上面的标题 */}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}</code></pre>
+<ul>
+    <li>定位标记为 <code>&lt;hN id="锚点"</code>，因此要求 <code>render-heading.html</code> 输出标准 <code>id</code> 属性；自定义 render hook 不符合此格式时会退化为空片段。</li>
+    <li>直接使用原始 <code>Page.Content</code> 切分，<strong>不做前置 <code>htmlUnescape</code></strong>：否则代码块里被转义的 <code>&lt;hN id="…"&gt;</code> 会被还原成真实标签，误判为标题边界；正文里字面的 <code>&lt;tag&gt;</code> 也会在 <code>plainify</code> 时被当作标签吞掉。</li>
+    <li>片段是 <code>&lt;/hN&gt;</code> 之后的正文，本身不包含标题内的锚点 <code>#</code>，因此<strong>不会剥离尾部 <code>#</code></strong>，避免把恰好以 <code>#</code> 结尾的正文（如 "C#"）错误截断。</li>
+    <li>最后一个标题切完后剩余的 HTML 作为前言片段，键为 <code>""</code>。</li>
+</ul>
+
+<h3>3.4 四种索引模式</h3>
+<table>
+    <thead><tr><th><code>params.search.flexsearch.index</code></th><th>行为</th><th>适用</th></tr></thead>
+    <tbody>
+        <tr><td><code>content</code>（默认）</td><td>按标题切分正文，保留标题与段落</td><td>文档站，定位到具体小节</td></tr>
+        <tr><td><code>summary</code></td><td>只索引 <code>Page.Summary</code></td><td>博客，结果轻量</td></tr>
+        <tr><td><code>heading</code></td><td>只索引标题键，内容为空</td><td>只要目录级检索</td></tr>
+        <tr><td><code>title</code></td><td>只索引页面标题</td><td>页面数量多、追求速度</td></tr>
+    </tbody>
+</table>
+
+<h3>3.5 JSON 结构</h3>
+<p>键为页面 <code>RelPermalink</code>，值为标题 + 片段字典（片段键为 <code>锚点ID#标题文本</code>，前言为 <code>""</code>；前端按第一个 <code>#</code> 拆分，标题里的 <code>#</code> 不影响解析）：</p>
+<pre><code>{
+  "/zh/blog/hello-world/": {
+    "title": "Hello World",
+    "data": {
+      "": "页面开头段落……",
+      "mermaid#Mermaid": "Mermaid 相关正文……",
+      "目录-1#目录 1": "……"
+    }
+  }
+}</code></pre>
+<p>资源按语言生成：<code>{lang}.search-data.json</code>；生产环境执行 <code>minify | fingerprint</code>。</p>
+
+<h2>4. 运行期：索引构建</h2>
+<p><code>assets/js/flexsearch.js</code> 在首次打开搜索框或首次输入时才 <code>fetch</code> 数据（<code>preloadIndex()</code>），并用 Promise 缓存，避免重复加载；失败会清空缓存以便下次重试。</p>
+
+<h3>4.1 两个 Document 索引</h3>
+<table>
+    <thead><tr><th>索引</th><th>存储字段</th><th>用途</th></tr></thead>
+    <tbody>
+        <tr>
+            <td><code>pageIndex</code></td>
+            <td><code>title</code>、<code>breadcrumbs</code>、<code>content</code>（整页文本）</td>
+            <td>决定“命中哪些页面”并作为结果分组标题。</td>
+        </tr>
+        <tr>
+            <td><code>sectionIndex</code></td>
+            <td><code>title</code>、<code>content</code>、<code>url</code>、<code>display</code>、<code>crumb</code>，并按 <code>tag: pageId</code> 归属页面</td>
+            <td>决定“页面内命中哪些小节”，提供跳转锚点与摘要。</td>
+        </tr>
+    </tbody>
+</table>
+<pre><code>pageIndex = new FlexSearch.Document({
+  tokenize, encode, cache: 100,
+  document: { id: 'id', store: ['title', 'breadcrumbs'], index: 'content' }
+});
+
+sectionIndex = new FlexSearch.Document({
+  tokenize, encode, cache: 100,
+  document: {
+    id: 'id',
+    store: ['title', 'content', 'url', 'display', 'crumb'],
+    index: 'content',
+    tag: [{ field: 'pageId' }]
+  }
+});</code></pre>
+<p>每个片段除自身外还会额外写入一条只含标题的文档（带 <code>display</code>），用于判断“标题命中”并参与排序。</p>
+
+<h3>4.2 中日韩分词</h3>
+<p>FlexSearch 默认分词不适用于无空格语言。这里的 <code>encode</code> 对 CJK / 日文假名 / 韩文输出「单字 + 相邻双字（bigram）」，其他语言（拉丁/西里尔/阿拉伯等）按完整单词输出：</p>
+<pre><code>// "页面" =&gt; ["页", "面", "页面"]
+encode("页面");
+// "静态页面搭建" =&gt; ["静","静态","态","态页","页","页面","面","面搭","搭","搭建","建"]</code></pre>
+<ul>
+    <li><strong>单字 token</strong> 保证「页」这类单字查询能命中。</li>
+    <li><strong>bigram token</strong> 保证「页面」这类词组查询要求两个字连续出现，避免同一段落里分散出现的「页」「面」造成误命中。</li>
+    <li>多个 token 的查询在 FlexSearch 中按 AND 处理；配合 <code>tokenize</code>（默认 <code>forward</code>，前缀匹配）可支持输入过程中的增量检索。</li>
+    <li>若查询完全无结果，会退化为「每字一个 token」（如把 <code>页面</code> 转成 <code>页 面</code>）再检索一次，作为召回兜底。</li>
+    <li>不使用 <code>suggest: true</code>：它会放宽多 token 查询，导致「页面」命中只包含「页」或「面」的小节。</li>
+    <li>输入法组合期间（<code>isComposing</code>）不触发检索，并在 <code>compositionend</code> 后补触发一次，避免组合输入完成后没有结果。</li>
+</ul>
+
+<h3>4.3 面包屑</h3>
+<p>由 <code>RelPermalink</code> 逐级累加（如 <code>/zh/docs/basic/about/</code> → <code>/zh/</code>、<code>/zh/docs/</code>、…），在 JSON 中查找对应页面标题拼接为 <code>Docs &gt; Basic Docs &gt; Basic About</code>。若中间层级未建索引（被排除），该级自动跳过。</p>
+
+<h2>5. 查询与结果结构</h2>
+<pre><code>1. pageIndex.search(query, maxPageResults, { enrich: true })
+2. 对每个命中页面：
+     sectionIndex.search(query, {
+       enrich: true,
+       tag: { pageId: `page_${pageId}` }
+     })
+   若所有页面均无结果：将 CJK 拆为单字（relaxQuery）后重试一次
+3. 片段去重：url + '@' + content
+4. 统计每个页面的“标题命中数”
+5. 排序：标题命中数降序 → 页面相关度顺序
+6. 截断：页面 maxPageResults，片段 maxSectionResults</code></pre>
+<p>返回结构：</p>
+<pre><code>[{
+  id: "halo-search-opt-0",
+  route: "/zh/docs/basic/about/",
+  title: "Basic About",
+  breadcrumbs: ["Docs", "Basic Docs"],
+  matches: [{
+    id: "halo-search-opt-1",
+    route: "/zh/docs/basic/about/#intro",
+    title: "Introduction",
+    content: "片段摘要……"
+  }]
+}]</code></pre>
+
+<h2>6. 交互与可访问性</h2>
+<ul>
+    <li><strong>触发入口</strong>：导航栏图标（<code>menu.icons</code> 中加入 <code>name: "search"</code>）、文档页顶部搜索栏；所有入口统一使用 <code>data-search-open</code>。</li>
+    <li><strong>快捷键</strong>：<code>⌘K</code> / <code>Ctrl+K</code> 切换；<code>/</code> 打开（输入框 / contenteditable / 按钮中不触发）。</li>
+    <li><strong>键盘导航</strong>：<code>↑</code> <code>↓</code> <code>Home</code> <code>End</code> 在结果间移动，<code>Enter</code> 打开当前项，<code>Esc</code> 关闭；鼠标悬停与焦点都会同步高亮。</li>
+    <li><strong>输入法</strong>：组合输入期间（<code>isComposing</code> / <code>keyCode === 229</code>）不处理键盘事件，避免选词被截获。</li>
+    <li><strong>ARIA</strong>：输入框 <code>role="combobox"</code> + <code>aria-controls</code> + <code>aria-activedescendant</code>，结果 <code>role="listbox"</code> / <code>option</code>，状态文案通过 <code>role="status"</code> 播报。</li>
+    <li><strong>竞态处理</strong>：异步查询返回时若输入框内容已变化，丢弃旧结果。</li>
+    <li><strong>动画</strong>：面板入场/退场与遮罩动画；<code>prefers-reduced-motion</code> 时直接关闭。</li>
+    <li><strong>保持现场</strong>：重新打开时保留上次查询与结果，仅重置 ARIA 状态。</li>
+    <li><strong>高亮</strong>：按查询词做正则转义后 <code>split</code> 渲染，命中部分包 <code>&lt;span class="halo-search-match"&gt;</code>，不注入 HTML。</li>
+</ul>
+
+<h2>7. 第三方依赖加载（与 katex 一致）</h2>
+<ul>
+    <li><strong>依赖声明</strong>：<code>package.json</code> 的 <code>devDependencies</code> 增加 <code>flexsearch</code>，通过 <code>npm install</code> 安装。</li>
+    <li><strong>目录挂载</strong>：<code>hugo.yaml</code> 的 <code>module.mounts</code> 将 <code>../node_modules/flexsearch/dist</code> 挂载到 <code>static/flexsearch</code>，构建时随 static 目录一起发布。</li>
+    <li><strong>页面引用</strong>：<code>head/search.html</code> 直接输出
+        <code>&lt;script defer src="{{ "flexsearch/flexsearch.bundle.min.js" | relURL }}"&gt;</code>，
+        与 katex / mermaid / reveal 的引入方式一致；不在构建期下载，也不把库文件提交到仓库。</li>
+    <li><strong>路径覆盖</strong>：<code>params.search.flexsearch.js</code> 可指定其他静态路径或完整 URL。</li>
+    <li>索引 JSON 与业务脚本仍走 Hugo 资源管线（生产环境 <code>minify</code> + <code>fingerprint</code> + <code>integrity</code>）。</li>
+</ul>
+<div class="note">
+    <strong>使用前提：</strong>与 katex 等库相同，站点需要执行 <code>npm install</code> 并在自己的 <code>hugo.yaml</code> 中配置相同的 mount。
+    <code>exampleSite</code> 已配置，可直接参考：
+    <code>source: ../node_modules/flexsearch/dist</code> → <code>target: static/flexsearch</code>。
+</div>
+
+<h2>8. 多语言</h2>
+<ul>
+    <li>每个语言生成独立的 <code>{lang}.search-data.json</code> 与 <code>{lang}.flexsearch.js</code>、<code>{lang}.search-dialog.js</code>。</li>
+    <li>脚本在同一站点内跨语言共享（发布在站点根路径），页面按自身语言引用对应文件。</li>
+    <li>界面文案通过 <code>i18n</code> 注入；缺失的翻译使用英文默认值。</li>
+</ul>
+
+<h2>9. 配置项</h2>
+<pre><code>params:
+  search:
+    enable: true
+    flexsearch:
+      index: "content"        # content | summary | heading | title
+      tokenize: "forward"     # forward | strict | full
+      maxPageResults: 20
+      maxSectionResults: 10
+      # js: "js/my-flexsearch.js"     # 自定义本地运行时（assets 下）
+      # base: "https://cdn.example.com/flexsearch"  # 远程运行时目录
+
+  menu:
+    search:
+      enable: true
+      display: "always"       # always | md | lg | never
+    icons:
+      - name: "search"        # 导航栏显示搜索图标
+        responsive: "always"
+        section:
+          exclude: []         # 不按栏目隐藏
+
+# 单页排除
+# front matter: searchable: false   # 默认 true，设为 false 不参与搜索</code></pre>
+
+<h2>10. 扩展与排查</h2>
+<h3>10.1 页面点开搜索没反应</h3>
+<ol>
+    <li>检查该页面使用的 base 模板是否引入了 <code>component/search.html</code>（文档页、独立版式最容易遗漏）。</li>
+    <li>在 DevTools 中执行 <code>document.getElementById('halo-search-dialog')</code>，返回 <code>null</code> 即为未引入。</li>
+    <li>确认 <code>params.search.enable</code> 未被关闭。</li>
+</ol>
+
+<h3>10.2 搜索无结果或结果缺失</h3>
+<ol>
+    <li>确认页面有正文且未设置 <code>searchable: false</code>。</li>
+    <li>检查自定义 <code>render-heading.html</code> 是否输出 <code>&lt;hN id="…"&gt;</code>，片段切分依赖该格式。</li>
+    <li>调整 <code>index</code> 模式（如 <code>content</code> → <code>summary</code>）或减小 <code>maxSectionResults</code> 观察差异。</li>
+</ol>
+
+<h3>10.3 控制台出现 Context-Search 警告</h3>
+<p>FlexSearch 在非 <code>strict</code> 分词下会输出 <code>Context-Search could not applied</code>，属于库内提示，不影响检索结果；如需消除可忽略或改用 <code>tokenize: "strict"</code>。</p>
+
+<h3>10.4 本地多开 Hugo Server</h3>
+<p>多个 <code>hugo server</code> 同时运行可能争用构建锁，导致未缓存页面长时间等待。排查时使用新端口并加 <code>--noBuildLock</code> 验证；确认问题在进程状态后重启 server。</p>
+
+</body>
+</html>

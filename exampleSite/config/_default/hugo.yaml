@@ -45,11 +45,8 @@ module:
     target: static/mermaid
   - source: ../node_modules/reveal.js
     target: static/reveal
-
-  # [[module.mounts]]
-  #   source = "node_modules/flexsearch"
-  #   target = "assets/js/vendor/flexsearch"
-  #
+  - source: ../node_modules/flexsearch/dist
+    target: static/flexsearch
 
 # [menus]
 #   [[menus.main]]

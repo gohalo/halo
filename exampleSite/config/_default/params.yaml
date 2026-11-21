@@ -3,7 +3,14 @@ menu:
   title: "Halo"
   align: "center" # left center
   border: "none" # buttom
+  search:
+    enable: true
+    display: "always" # always md lg
   icons: # align to right
+  - name: "search"
+    responsive: "always"
+    section:
+      exclude: []
   - name: "theme"
     default: "auto" # light dark auto
     responsive: "always"
@@ -34,6 +41,18 @@ menu:
     target: "/about/"   # http://example.com about
     section:
       include: ["docs"]
+
+# 全站搜索（FlexSearch）
+search:
+  enable: true
+  flexsearch:
+    index: "content"        # content summary heading title
+    tokenize: "forward"     # forward strict full
+    maxPageResults: 20
+    maxSectionResults: 10
+    # 默认加载 static 挂载目录下的 flexsearch/flexsearch.bundle.min.js
+    # 依赖 hugo.yaml 中 node_modules/flexsearch/dist → static/flexsearch 的挂载
+    # js: "flexsearch/flexsearch.bundle.min.js"  # 可自定义静态路径或完整 URL
 
 toc:
   enable: true

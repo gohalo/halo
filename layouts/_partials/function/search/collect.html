@@ -1,0 +1,11 @@
+{{- /* 递归收集标题，写入 scratch 的 "headings" 列表（按文档顺序）。
+      .Fragments.Headings 会包含一个 level 0 / 无标题的虚拟根节点，跳过它但继续处理其子标题。 */ -}}
+{{- $scratch := .scratch -}}
+{{- range .headings -}}
+    {{- if not (and (eq .Level 0) (not .Title)) -}}
+        {{- $scratch.Add "headings" (slice (dict "id" .ID "title" (.Title | plainify | htmlUnescape | strings.TrimSpace) "level" .Level)) -}}
+    {{- end -}}
+    {{- with .Headings -}}
+        {{- partial "function/search/collect.html" (dict "headings" . "scratch" $scratch) -}}
+    {{- end -}}
+{{- end -}}

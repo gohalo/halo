@@ -1,0 +1,36 @@
+{{- $search := site.Params.search -}}
+{{- $enabled := true -}}
+{{- with $search -}}{{- $enabled = .enable | default true -}}{{- end -}}
+{{- if $enabled -}}
+{{- $placeholder := i18n "search_placeholder" | default "Search..." -}}
+{{- $closeLabel := i18n "close" | default "Close" -}}
+<dialog id="halo-search-dialog" class="halo-search-dialog" aria-label="{{ $placeholder }}">
+    <div class="halo-search">
+        <div class="halo-search-input-wrapper">
+            {{ partial "component/icon.html" (dict "name" "search" "class" "halo-search-input-icon" "width" "18") }}
+            <input
+                class="halo-search-input"
+                id="halo-search-input"
+                type="search"
+                role="combobox"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                placeholder="{{ $placeholder }}"
+                aria-label="{{ $placeholder }}"
+                aria-controls="halo-search-results"
+                aria-expanded="false"
+            >
+            <button type="button" class="halo-search-esc" data-search-close aria-label="{{ $closeLabel }}">ESC</button>
+        </div>
+        <div class="halo-search-viewport" data-search-viewport>
+            <div class="halo-search-inner" data-search-inner>
+                <ul id="halo-search-results" class="halo-search-results" role="listbox" aria-label="{{ i18n "nav_search" | default "Search" }}"></ul>
+                <div class="halo-search-empty" data-search-empty hidden>{{ i18n "search_no_results" | default "No results found." }}</div>
+            </div>
+        </div>
+        <div class="halo-search-status" aria-live="polite" role="status"></div>
+    </div>
+</dialog>
+{{- end -}}

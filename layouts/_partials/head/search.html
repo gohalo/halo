@@ -1,0 +1,39 @@
+{{- /* 搜索资源：索引数据 + FlexSearch 运行时 + 面板脚本 */ -}}
+{{- $search := site.Params.search -}}
+{{- $enabled := true -}}
+{{- with $search -}}{{- $enabled = .enable | default true -}}{{- end -}}
+
+{{- if $enabled -}}
+    {{- $flexsearch := dict -}}
+    {{- with $search -}}{{- with .flexsearch -}}{{- $flexsearch = . -}}{{- end -}}{{- end -}}
+
+    {{- /* 索引数据（按语言生成） */ -}}
+    {{- $searchDataFile := printf "%s.search-data.json" .Language.Lang -}}
+    {{- $searchData := resources.Get "json/search-data.json" | resources.ExecuteAsTemplate $searchDataFile . -}}
+    {{- if hugo.IsProduction -}}
+        {{- $searchData = $searchData | minify | fingerprint -}}
+    {{- end -}}
+
+    {{- /* FlexSearch 运行时：与 katex/mermaid 一致，从 node_modules 挂载到 static 的目录加载 */ -}}
+    {{- $lib := $flexsearch.js | default "flexsearch/flexsearch.bundle.min.js" -}}
+    {{- $libURL := $lib -}}
+    {{- if not (or (strings.HasPrefix $lib "http://") (strings.HasPrefix $lib "https://")) -}}
+        {{- $libURL = $lib | relURL -}}
+    {{- end -}}
+    <script defer src="{{ $libURL }}"></script>
+
+    {{- /* 数据层 */ -}}
+    {{- $jsSearch := resources.Get "js/flexsearch.js" | resources.ExecuteAsTemplate (printf "%s.flexsearch.js" .Language.Lang) (dict "page" . "searchData" $searchData "flexsearch" $flexsearch) -}}
+    {{- if hugo.IsProduction -}}
+        {{- $jsSearch = $jsSearch | minify | fingerprint -}}
+    {{- end -}}
+
+    {{- /* 面板交互 */ -}}
+    {{- $jsDialog := resources.Get "js/search-dialog.js" | resources.ExecuteAsTemplate (printf "%s.search-dialog.js" .Language.Lang) . -}}
+    {{- if hugo.IsProduction -}}
+        {{- $jsDialog = $jsDialog | minify | fingerprint -}}
+    {{- end -}}
+
+    <script defer src="{{ $jsSearch.RelPermalink }}"{{ if hugo.IsProduction }} integrity="{{ $jsSearch.Data.Integrity }}"{{ end }}></script>
+    <script defer src="{{ $jsDialog.RelPermalink }}"{{ if hugo.IsProduction }} integrity="{{ $jsDialog.Data.Integrity }}"{{ end }}></script>
+{{- end -}}

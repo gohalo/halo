@@ -1,0 +1,7 @@
+{{- /* 返回页面所有标题的扁平列表：[{id, title, level}, ...] */ -}}
+{{- $scratch := newScratch -}}
+{{- $scratch.Set "headings" slice -}}
+{{- with .Fragments.Headings -}}
+    {{- partial "function/search/collect.html" (dict "headings" . "scratch" $scratch) -}}
+{{- end -}}
+{{- return $scratch.Get "headings" -}}

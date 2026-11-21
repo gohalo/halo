@@ -75,6 +75,9 @@
 - id: search_no_results
   translation: "No results found"
 
+- id: search_results_found
+  translation: "%d results found"
+
 - id: search_dev_notice
   translation: "Search functionality is under development..."
 

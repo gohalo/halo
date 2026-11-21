@@ -74,6 +74,9 @@
 - id: search_no_results
   translation: "未找到相关内容"
 
+- id: search_results_found
+  translation: "找到 %d 条结果"
+
 - id: search_dev_notice
   translation: "搜索功能开发中，待集成搜索引擎..."
 

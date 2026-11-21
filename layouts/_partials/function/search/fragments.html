@@ -1,0 +1,83 @@
+{{- /*
+  将页面内容按标题切分为可搜索片段。
+
+  注意：
+  - 只以渲染后的 <hN> 标签作为标题边界，不解析 Markdown 的 "#" 语法；
+    正文/代码块中以 "#" 开头的行仍属于内容文本。
+  - 片段键为 "<锚点ID>#<标题文本>"，"#" 仅作为分隔符（前端按第一个 "#" 拆分）。
+  - 使用原始 Page.Content 切分，不做前置 htmlUnescape，避免代码块内
+    被转义的 <hN id="…"> 被误判为标题；片段本身不含标题锚点，故不剥离尾部 "#"。
+
+  @param {Page} context 页面
+  @param {string} type 片段类型：content（默认）| heading | title | summary
+  @returns {dict} 形如 {"heading-id#标题": "片段文本", "": "前言文本"}
+
+  示例（type "content"）：
+    输入：
+      # Introduction
+      This is the intro.
+      ## Setup
+      Setup instructions here.
+    输出：
+      {
+        "": "This is the intro.",
+        "setup#Setup": "Setup instructions here."
+      }
+*/ -}}
+
+{{- $page := .context -}}
+{{- $type := .type | default "content" -}}
+{{- $headings := partial "function/search/headings.html" $page -}}
+{{- $data := dict -}}
+
+{{- if eq $type "content" -}}
+    {{- $content := $page.Content -}}
+    {{- $len := len $headings -}}
+
+    {{- if eq $len 0 -}}
+        {{- $data = $data | merge (dict "" ($page.Plain | htmlUnescape | strings.TrimSpace)) -}}
+    {{- else -}}
+        {{- /* 自下而上切分，避免上层标题重复处理已切走的片段 */ -}}
+        {{- range seq $len -}}
+            {{- $i := sub $len . -}}
+            {{- $heading := index $headings $i -}}
+            {{- $key := printf "%s#%s" $heading.id $heading.title -}}
+            {{- $opening := printf "<h%d id=\"%s\"" $heading.level $heading.id -}}
+            {{- $endTag := printf "</h%d>" $heading.level -}}
+            {{- $parts := split $content $opening -}}
+
+            {{- if gt (len $parts) 1 -}}
+                {{- $before := index $parts 0 -}}
+                {{- $rest := delimit (after 1 $parts) $opening -}}
+                {{- $sub := split $rest $endTag -}}
+
+                {{- if gt (len $sub) 1 -}}
+                    {{- $fragment := delimit (after 1 $sub) $endTag -}}
+                    {{- $text := $fragment | plainify | htmlUnescape | strings.TrimSpace -}}
+                    {{- $data = $data | merge (dict $key $text) -}}
+                    {{- $content = $before -}}
+                {{- else -}}
+                    {{- $data = $data | merge (dict $key "") -}}
+                {{- end -}}
+            {{- else -}}
+                {{- $data = $data | merge (dict $key "") -}}
+            {{- end -}}
+        {{- end -}}
+
+        {{- $preamble := $content | replaceRE "<[^>]*$" "" | plainify | htmlUnescape | strings.TrimSpace -}}
+        {{- with $preamble -}}
+            {{- $data = $data | merge (dict "" .) -}}
+        {{- end -}}
+    {{- end -}}
+{{- else if eq $type "heading" -}}
+    {{- $data = dict "" "" -}}
+    {{- range $headings -}}
+        {{- $data = $data | merge (dict (printf "%s#%s" .id .title) "") -}}
+    {{- end -}}
+{{- else if eq $type "title" -}}
+    {{- $data = dict "" "" -}}
+{{- else if eq $type "summary" -}}
+    {{- $data = $data | merge (dict "" ($page.Summary | plainify | htmlUnescape | strings.TrimSpace)) -}}
+{{- end -}}
+
+{{- return $data -}}

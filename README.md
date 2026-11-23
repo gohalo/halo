@@ -5,3 +5,5 @@ A Hugo static page template implementation based on TailwindCSS v4, supporting v
 https://imfing.github.io/hextra/
 文本动画展示
 https://that-daniel.github.io/nuno/
+有些不错的网站设计
+https://www.webdesign-inspiration.com/web-designs?page=2

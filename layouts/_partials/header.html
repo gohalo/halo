@@ -1,6 +1,6 @@
 {{- $page := . -}}
 {{- $align := .Site.Params.menu.align | default "left" -}}
-<nav class="{{ if eq .Site.Params.menu.border "border" }}border-b border-border {{ end }}bg-background">
+<nav class="{{ if eq .Site.Params.menu.border true }}border-b border-border {{ end }}bg-background">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="{{ if eq $align "center" }}relative {{ end }}flex justify-between items-center h-16">
             <div class="flex items-center{{ if eq $align "left" }} space-x-1{{ end }}">

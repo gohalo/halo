@@ -4,12 +4,12 @@ main:
   pageRef: '/project/'
   identifier: 'project'
 - name: 'Halo'
-  weight: 30
+  weight: 11
   pageRef: '/project/halo/'
   identifier: 'project-halo'
   parent: 'project'
 - name: 'BootServer'
-  weight: 31
+  weight: 12
   pageRef: '/project/bootserver/'
   identifier: 'project-bootserver'
   parent: 'project'
@@ -20,12 +20,12 @@ main:
   weight: 20
 - name: '归档'
   pageRef: '/blog/archives/'
-  weight: 20
+  weight: 21
   params:
     section: 'blog'
 - name: '标签'
   pageRef: '/blog/tags/'
-  weight: 20
+  weight: 22
   params:
     section: 'blog'
 - name: '幻灯片'

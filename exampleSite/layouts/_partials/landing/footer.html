@@ -1,0 +1,55 @@
+{{ $footer := .Params.footer }}
+{{ with $footer }}
+<footer class="relative overflow-hidden border-t border-border bg-muted/30">
+    <div class="landing-grid pointer-events-none absolute inset-0 opacity-70"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">
+            <div>
+                {{ with .about }}
+                    <a href="{{ site.Home.RelPermalink }}" class="inline-flex items-center gap-2.5">
+                        {{ with site.Params.menu.logo }}
+                            <img src="{{ . | relURL }}" alt="" width="32" height="32" class="size-8" loading="lazy" decoding="async">
+                        {{ else }}
+                            <span class="flex size-8 items-center justify-center rounded-lg bg-foreground text-sm font-bold text-background">G</span>
+                        {{ end }}
+                        <span class="text-lg font-bold tracking-tight">{{ .title }}</span>
+                    </a>
+                    <p class="mt-4 max-w-xs text-sm leading-6 text-muted-foreground">{{ .description }}</p>
+                    {{ with .socials }}
+                        <div class="mt-6 flex items-center gap-2">
+                            {{ range . }}
+                                <a href="{{ .url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ .label }}" title="{{ .label }}" class="inline-flex size-9 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground">
+                                    {{ partial "component/icon.html" (dict "name" .icon "width" 17) }}
+                                </a>
+                            {{ end }}
+                        </div>
+                    {{ end }}
+                {{ end }}
+            </div>
+
+            {{ range .columns }}
+                <div>
+                    <h3 class="text-sm font-semibold">{{ .title }}</h3>
+                    <ul class="mt-4 space-y-3">
+                        {{ range .links }}
+                            {{ $href := .url }}
+                            {{ if not (or (strings.HasPrefix $href "http") (strings.HasPrefix $href "#")) }}
+                                {{ $href = $href | relLangURL }}
+                            {{ end }}
+                            <li>
+                                <a href="{{ $href }}"{{ if strings.HasPrefix $href "http" }} target="_blank" rel="noopener noreferrer"{{ end }} class="text-sm text-muted-foreground transition-colors hover:text-foreground">{{ .text }}</a>
+                            </li>
+                        {{ end }}
+                    </ul>
+                </div>
+            {{ end }}
+        </div>
+
+        <div class="mt-14 flex flex-col gap-3 border-t border-border pt-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <p>© {{ now.Year }} {{ .about.title }} · {{ i18n "all_rights_reserved" }}</p>
+            {{ with .note }}<p>{{ . }}</p>{{ end }}
+        </div>
+    </div>
+</footer>
+{{ end }}

@@ -4,35 +4,35 @@ main:
   pageRef: '/project/'
   identifier: 'project'
 - name: 'Halo'
-  weight: 30
+  weight: 11
   pageRef: '/project/halo/'
   identifier: 'project-halo'
   parent: 'project'
 - name: 'BootServer'
-  weight: 31
+  weight: 12
   pageRef: '/project/bootserver/'
   identifier: 'project-bootserver'
   parent: 'project'
   params:
-    disabled: true
+    enabled: false
 - name: 'Blog'
   pageRef: '/blog/'
   weight: 20
 - name: 'Archives'
   pageRef: '/blog/archives/'
-  weight: 20
+  weight: 21
   params:
     section: 'blog'
 - name: 'Tags'
   pageRef: '/blog/tags/'
-  weight: 20
+  weight: 22
   params:
     section: 'blog'
 - name: 'Slides'
   pageRef: '/slide/'
   weight: 30
   params:
-    disabled: false
+    enabled: false
 - name: 'Docs'
   pageRef: '/docs/'
   weight: 40

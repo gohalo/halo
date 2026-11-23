@@ -1,9 +1,127 @@
 {{ define "main" }}
-<article class="flex-1 min-w-0 py-8">
-    <header class="mb-8 text-center">
-        <div class="text-4xl font-bold mb-4">{{ .Title }}</div>
-    </header>
-    <div class="content">{{ .Content }}</div>
+{{- $page := . -}}
+{{- $hero := .Params.hero -}}
+<div class="max-w-7xl mx-auto py-8 md:py-12">
+    {{ if $hero }}
+        <div class="flex flex-col items-start">
+            {{ with $hero.badge }}
+                {{ if .url }}
+                    {{ $badgeHref := .url }}
+                    {{ if not (or (strings.HasPrefix $badgeHref "http") (strings.HasPrefix $badgeHref "#")) }}
+                        {{ $badgeHref = $badgeHref | relLangURL }}
+                    {{ end }}
+                    <a href="{{ $badgeHref }}"{{ if strings.HasPrefix $badgeHref "http" }} target="_blank" rel="noopener noreferrer"{{ end }} class="not-prose inline-flex items-center rounded-full gap-2 px-3 py-1 text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-800 hover:border-gray-400 dark:hover:text-gray-50 dark:hover:border-gray-600 transition-all ease-in duration-200">
+                        <span class="w-2 h-2 rounded-full bg-primary"></span>
+                        <span>{{ .text }}</span>
+                        {{ partial "component/icon.html" (dict "name" (.icon | default "circle-arrow-right") "width" 14) }}
+                    </a>
+                {{ else }}
+                    <div class="not-prose inline-flex items-center rounded-full gap-2 px-3 py-1 text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-800">
+                        <span class="w-2 h-2 rounded-full bg-primary"></span>
+                        <span>{{ .text }}</span>
+                    </div>
+                {{ end }}
+            {{ end }}
+
+            {{ with $hero.title }}
+                <div class="mt-6 mb-6">
+                    <h1 class="not-prose text-4xl font-bold leading-none tracking-tighter md:text-5xl py-2 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400">
+                        {{ replace . "|" "<br class=\"sm:block hidden\">" | safeHTML }}
+                    </h1>
+                </div>
+            {{ end }}
+
+            {{ with $hero.subtitle }}
+                <div class="mb-12">
+                    <p class="not-prose text-xl text-gray-600 dark:text-gray-400 sm:text-xl leading-relaxed">
+                        {{ replace . "|" "<br class=\"sm:block hidden\">" | safeHTML }}
+                    </p>
+                </div>
+            {{ end }}
+
+            {{ with $hero.action }}
+                {{ $actionHref := .url }}
+                {{ if not (or (strings.HasPrefix $actionHref "http") (strings.HasPrefix $actionHref "#")) }}
+                    {{ $actionHref = $actionHref | relLangURL }}
+                {{ end }}
+                <div class="mb-12">
+                    <a href="{{ $actionHref }}" class="not-prose font-medium cursor-pointer px-6 py-3 rounded-full text-center text-white inline-block bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-all ease-in duration-200">
+                        {{ .text }}
+                    </a>
+                </div>
+            {{ end }}
+        </div>
+    {{ else }}
+        <header class="mb-8 text-center">
+            <div class="text-4xl font-bold mb-4">{{ .Title }}</div>
+        </header>
+    {{ end }}
+
+    {{ with .Params.features }}
+        <div class="grid grid-cols-1 sm:max-lg:grid-cols-2 lg:grid-cols-3 gap-4 w-full not-prose">
+            {{ range . }}
+                {{ $hasImage := isset . "image" }}
+                {{ $bgStyle := .style | default (cond $hasImage "background:radial-gradient(ellipse at 50% 80%,rgba(194,97,254,.15),hsla(0,0%,100%,0))" "") }}
+                {{ $cardClass := printf "%s relative overflow-hidden rounded-3xl border border-gray-200 hover:border-gray-300 dark:border-neutral-800 dark:hover:border-neutral-700 transition-colors duration-200" (cond $hasImage "aspect-auto md:aspect-[1.1/1] max-md:min-h-[340px] block" "block") }}
+                {{ with .span }}
+                    {{ if eq . 2 }}
+                        {{ $cardClass = printf "%s lg:col-span-2" $cardClass }}
+                    {{ else if eq . 3 }}
+                        {{ $cardClass = printf "%s lg:col-span-3" $cardClass }}
+                    {{ end }}
+                {{ end }}
+
+                {{ $imgSrc := "" }}
+                {{ with .image }}
+                    {{ with $page.Resources.GetMatch . }}
+                        {{ $imgSrc = .RelPermalink }}
+                    {{ else }}
+                        {{ $imgSrc = . | relURL }}
+                    {{ end }}
+                {{ end }}
+
+                {{ if .url }}
+                    {{ $cardHref := .url }}
+                    {{ if not (or (strings.HasPrefix $cardHref "http") (strings.HasPrefix $cardHref "#")) }}
+                        {{ $cardHref = $cardHref | relLangURL }}
+                    {{ end }}
+                    <a href="{{ $cardHref }}" {{ with $bgStyle }}style="{{ . | safeCSS }}"{{ end }} class="{{ $cardClass }}">
+                        <div class="relative w-full p-6">
+                            <h3 class="text-2xl font-medium leading-6 mb-2 flex items-center gap-2">
+                                {{ with .icon }}
+                                    {{ partial "component/icon.html" (dict "name" . "width" 22) }}
+                                {{ end }}
+                                <span>{{ .title }}</span>
+                            </h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm leading-6">{{ .description }}</p>
+                        </div>
+                        {{ if $imgSrc }}
+                            <img src="{{ $imgSrc }}" class="{{ .image_class | default "absolute max-w-none top-[40%] left-[24px] w-[180%] sm:w-[110%] dark:opacity-80" }}" alt="{{ .title }}" loading="lazy" decoding="async">
+                        {{ end }}
+                    </a>
+                {{ else }}
+                    <div {{ with $bgStyle }}style="{{ . | safeCSS }}"{{ end }} class="{{ $cardClass }}">
+                        <div class="relative w-full p-6">
+                            <h3 class="text-2xl font-medium leading-6 mb-2 flex items-center gap-2">
+                                {{ with .icon }}
+                                    {{ partial "component/icon.html" (dict "name" . "width" 22) }}
+                                {{ end }}
+                                <span>{{ .title }}</span>
+                            </h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm leading-6">{{ .description }}</p>
+                        </div>
+                        {{ if $imgSrc }}
+                            <img src="{{ $imgSrc }}" class="{{ .image_class | default "absolute max-w-none top-[40%] left-[24px] w-[180%] sm:w-[110%] dark:opacity-80" }}" alt="{{ .title }}" loading="lazy" decoding="async">
+                        {{ end }}
+                    </div>
+                {{ end }}
+            {{ end }}
+        </div>
+    {{ end }}
+
+    {{ with .Content }}
+        <div class="content mt-8">{{ . }}</div>
+    {{ end }}
     {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
-</article>
+</div>
 {{ end }}

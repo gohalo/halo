@@ -1,0 +1,13 @@
+{{- /* 调试按钮：悬停显示当前页面的 Section / Kind / Type 等信息 */ -}}
+{{- $page := .page -}}
+{{- $responsive := partial "function/responsive.html" (.icon.responsive | default "md") -}}
+<div class="relative group {{ $responsive }}">
+    <button type="button" class="nav-icon" aria-label="debug">
+        {{ partial "component/icon.html" (dict "name" "sparkles" "width" "20") }}
+        <span class="icon-tip text-left">
+            Section: {{ $page.Section | default "-" }}<br>
+            Kind: {{ $page.Kind | default "-" }}<br>
+            Type: {{ $page.Type | default "-" }}
+        </span>
+    </button>
+</div>

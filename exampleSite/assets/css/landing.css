@@ -1,0 +1,59 @@
+.landing-grid {
+    background-image:
+        linear-gradient(to right, color-mix(in oklab, var(--border) 60%, transparent) 1px, transparent 1px),
+        linear-gradient(to bottom, color-mix(in oklab, var(--border) 60%, transparent) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 55% at 50% 45%, #000 35%, transparent 100%);
+    mask-image: radial-gradient(ellipse 75% 55% at 50% 45%, #000 35%, transparent 100%);
+}
+
+.landing-gradient-text {
+    background-image: linear-gradient(100deg, #0284c7 0%, #4f46e5 48%, #059669 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.dark .landing-gradient-text {
+    background-image: linear-gradient(100deg, #38bdf8 0%, #818cf8 48%, #34d399 100%);
+}
+
+.landing-shot {
+    position: relative;
+}
+
+.landing-shot-glow {
+    position: absolute;
+    inset: -1.75rem;
+    border-radius: 3rem;
+    filter: blur(52px);
+    opacity: 0.6;
+}
+
+.dark .landing-shot-glow {
+    opacity: 0.35;
+}
+
+.landing-shot-frame {
+    position: relative;
+    padding: 0.5rem;
+    border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+    border-radius: 1.75rem;
+    background: color-mix(in oklab, var(--card) 70%, transparent);
+    box-shadow:
+        0 40px 90px -30px rgb(15 23 42 / 0.38),
+        0 12px 32px -20px rgb(15 23 42 / 0.25);
+    backdrop-filter: blur(8px);
+}
+
+.dark .landing-shot-frame {
+    border-color: rgb(255 255 255 / 0.09);
+    box-shadow: 0 40px 90px -28px rgb(0 0 0 / 0.65);
+}
+
+.landing-shot-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1.25rem;
+}

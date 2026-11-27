@@ -60,29 +60,33 @@ The following are equivalent.
 
 Single paragraph blockquote.
 
-> My conclusion after the trip was "well, now I know that there's at least one company in the world that can succeed with the waterfall model" and I decided to stop bashing the waterfall model as hard as I usually do. Now, however, with all the problems Toyota are having, I'm starting to reconsider.q q q q q q q q q q q q q q q<from>kkkkk</from>
+> It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way.<from>Charles Dickens, A Tale of Two Cities</from>
 
 Multi-paragraph blockquote.
 
-> My conclusion after the trip was "well, now I know that there's at least one company in the world that can succeed with the waterfall model" and I decided to stop bashing the waterfall model as hard as I usually do. Now, however, with all the problems Toyota are having, I'm starting to reconsider.
+> It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness;
 >
-> My conclusion after the trip was "well, now I know that there's at least one company in the world that can succeed with the waterfall model" and I decided to stop bashing the waterfall model as hard as I usually do. Now, however, with all the problems Toyota are having, I'm starting to .q q q q q
+> It was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way.<from>Charles Dickens, A Tale of Two Cities</from>
 
 Single paragraph, more complex blockquote.
 
-> My conclusion after the trip was "well,
-> now I know that there's at least one company in the world
-> that can succeed with the waterfall model" and I decided to
-> stop bashing the waterfall model as hard as I usually do.
-> Now, however, with all the problems Toyota are having, I'm starting to reconsider.
+> It was the best of times, it was the worst of times,
+> it was the age of wisdom, it was the age of foolishness,
+> it was the epoch of belief, it was the epoch of incredulity,
+> it was the season of Light, it was the season of Darkness,
+> it was the spring of hope, it was the winter of despair,
+> we had everything before us, we had nothing before us,
+> we were all going direct to Heaven, we were all going direct the other way.<from>Charles Dickens, A Tale of Two Cities</from>
 
 Nested blockquote.
 
-> My conclusion after the trip was "well,
-> now I know that there's at least one company in the world
-> > that can succeed with the waterfall model" and I decided to
-> stop bashing the waterfall model as hard as I usually do.
-> Now, how ever, with all the problems Toyota are having, I'm starting to re consider.
+> It was the best of times, it was the worst of times,
+> it was the age of wisdom, it was the age of foolishness,
+> > it was the epoch of belief, it was the epoch of incredulity,
+> it was the season of Light, it was the season of Darkness,
+> it was the spring of hope, it was the winter of despair,
+> we had everything before us, we had nothing before us,
+> we were all going direct to Heaven, we were all going direct the other way.<from>Charles Dickens, A Tale of Two Cities</from>
 
 # Links
 
@@ -162,9 +166,9 @@ Images are centered by default and stay within the page boundaries even for larg
 
 ![large picture](images/large-picture.png)
 
-You can set height or width, including `%` values, which will render as `<img>` tags.
+You can set height or width, including `%` values, which will render as `<img>` tags, and dark mode images can also be configured.
 
-![hello world logo](images/hello-world.jpg?width=20%&height=100px)
+![hello world logo](images/hello-world.jpg?width=30%)
 
 Adding `title` information will use `<figure>` for display.
 
@@ -172,13 +176,13 @@ Adding `title` information will use `<figure>` for display.
 
 Images are centered by default but can also float left or right.
 
-![some small logo](images/linux-liberty.png?float=right&width=50px)
-
-Need some text content.
-
-Otherwise the image might move to the next paragraph.
-
-This is one of the issues with floating.
+![some small logo](images/linux-liberty.png?float=right&width=100px)
+<!---->
+<!-- Need some text content. -->
+<!---->
+<!-- Otherwise the image might move to the next paragraph. -->
+<!---->
+<!-- This is one of the issues with floating. -->
 
 <!--
 <img src="/post/images/misc/hello-world.jpg" alt="hello world logo" width="70%" />
@@ -376,3 +380,25 @@ func hello() {
 ```
 {{< /tab >}}
 {{< /tabs >}}
+
+## Steps
+
+Used to display step-by-step workflows.
+
+{{< steps >}}
+{{< step "Step 1: Install Environment" >}}
+First, install the Go language environment and Hugo CLI tool.
+{{< /step >}}
+
+{{< step "Step 2: Create Project" >}}
+Use the `hugo new site` command to create a new Hugo site.
+{{< /step >}}
+
+{{< step "Step 3: Run Server" >}}
+Run `hugo server` to start the local development server.
+{{< /step >}}
+{{< /steps >}}
+
+# Others
+
+Example code repository [test/file.txt]({{< param "example" >}}/test/file.txt).

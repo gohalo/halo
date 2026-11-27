@@ -5,9 +5,20 @@
         {{- $profile := . -}}
         <div class="flex flex-col items-center text-center mb-8">
             {{ with .avatar }}
-                {{- $target := partial "function/asset.html" (dict "page" $page "target" .) -}}
-                <img src="{{ $target }}" alt="{{ $profile.name | default $page.Title }}"
-                    class="w-32 h-32 transition-transform duration-300 hover:scale-105" />
+                {{- $ext := path.Ext . -}}
+                {{- $base := strings.TrimSuffix $ext . -}}
+                {{- $darkPath := printf "%s-dark%s" $base $ext -}}
+                {{- $lightSrc := partial "function/asset.html" (dict "page" $page "target" .) -}}
+                {{- $darkSrc := partial "function/asset.html" (dict "page" $page "target" $darkPath "strict" true) -}}
+                {{- if $darkSrc -}}
+                    <img src="{{ $lightSrc }}" alt="{{ $profile.name | default $page.Title }}"
+                        class="w-32 h-32 dark:hidden transition-transform duration-300 hover:scale-105" />
+                    <img src="{{ $darkSrc }}" alt="{{ $profile.name | default $page.Title }}"
+                        class="w-32 h-32 hidden dark:block transition-transform duration-300 hover:scale-105" />
+                {{- else -}}
+                    <img src="{{ $lightSrc }}" alt="{{ $profile.name | default $page.Title }}"
+                        class="w-32 h-32 transition-transform duration-300 hover:scale-105" />
+                {{- end -}}
             {{ end }}
 
             {{ with .name }}
@@ -15,7 +26,7 @@
             {{ end }}
 
             {{ with .subtitle }}
-                <p class="mt-2 text-base text-muted-foreground max-w-md">{{ . }}</p>
+                <p class="mt-2 text-base text-muted-foreground max-w-lg">{{ . }}</p>
             {{ end }}
 
             {{ with .socials }}

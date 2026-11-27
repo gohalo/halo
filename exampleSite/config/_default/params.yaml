@@ -68,6 +68,14 @@ toc:
 layout: # support 'full' 'wide' 'standard'
   width: "full"
 
+footer:
+  hugo: true
+  copyright: true
+  author: "GoHalo"
+  since: 2024
+  license: ""
+  icp: ""
+
 language:
   detect: true # 首次访问按浏览器语言自动跳转
   remember: true   # 记住用户在语言切换器中的选择

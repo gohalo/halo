@@ -15,33 +15,21 @@
     {{ $base := strings.TrimSuffix $ext $dest_path }}
     {{ $dark_dest := printf "%s-dark%s" $base $ext }}
 
-    {{/* 尝试查找暗色模式图片资源 */}}
-    {{ $dark_resource := .Page.Resources.GetMatch (strings.TrimPrefix "/" $dark_dest) }}
-    {{ if not $dark_resource }}
-        {{ $dark_resource = resources.Get (strings.TrimPrefix "/" $dark_dest) }}
-    {{ end }}
+    {{ $light_src := partial "function/asset.html" (dict "page" .Page "target" $dest_path) }}
+    {{ $dark_src := partial "function/asset.html" (dict "page" .Page "target" $dark_dest "strict" true) }}
 
-    {{/* 进一步检查 static 目录（Hugo resources.Get 不会自动搜索 static） */}}
-    {{ $dark_static_path := "" }}
-    {{ if not $dark_resource }}
-        {{ if fileExists (path.Join "static" $dark_dest) }}
-            {{ $dark_static_path = $dark_dest | relURL }}
-        {{ end }}
-    {{ end }}
-
-    {{ if or $dark_resource $dark_static_path }}
-        {{/* 保持原始 Destination 以保留查询参数 */}}
-        {{ partial "inline/render-img.html" (dict "dot" . "src" .Destination "extraClass" "dark:hidden") }}
-
-        {{/* 暗色模式图片也尝试保留原始查询参数 */}}
-        {{ $dark_src := $dark_dest }}
+    {{ if $dark_src }}
         {{ if $uri.RawQuery }}
+            {{ $light_src = printf "%s?%s" $light_src $uri.RawQuery }}
             {{ $dark_src = printf "%s?%s" $dark_src $uri.RawQuery }}
         {{ end }}
+        {{ partial "inline/render-img.html" (dict "dot" . "src" $light_src "extraClass" "dark:hidden") }}
         {{ partial "inline/render-img.html" (dict "dot" . "src" $dark_src "extraClass" "hidden dark:block") }}
     {{ else }}
-        {{/* 默认回退：如果不存在暗色版本，则直接渲染原图，且在 dark 模式下不隐藏 */}}
-        {{ partial "inline/render-img.html" (dict "dot" . "src" .Destination "extraClass" "") }}
+        {{ if $uri.RawQuery }}
+            {{ $light_src = printf "%s?%s" $light_src $uri.RawQuery }}
+        {{ end }}
+        {{ partial "inline/render-img.html" (dict "dot" . "src" $light_src "extraClass" "") }}
     {{ end }}
 {{ end }}
 

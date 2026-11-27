@@ -1,0 +1,85 @@
+{
+    "summary": {
+        "name": "Name",
+        "title": "Title",
+        "location": "Location",
+        "email": "your.email@foobar.com",
+        "photo": "images/avatar.png",
+        "description": "Personal summary"
+    },
+    "details": [{
+        "name": "experience",
+        "details": [{
+            "company": "Leading Tech Company",
+            "logo": "images/company.svg",
+            "date_from": "2016-07",
+            "description": [{
+                "summary": "Open-Source Product",
+                "date_from": "2023-05",
+                "details": [
+                    "**Introduced new open-source components to ensure product security, stability, and usability**",
+                    "Led architecture design and development of core business systems supporting tens of millions of daily requests.",
+                    "Optimized database query performance, reducing core API response latency by 50%.",
+                    "Led a 5-engineer team to complete microservice decomposition and improve scalability.",
+                    "![OLAP System](images/olap.svg?width=40%)"
+                ]
+            }]
+        }, {
+            "company": "Tech Startup",
+            "logo": "images/company.svg",
+            "date_from": "2014-07",
+            "date_to": "2016-07",
+            "description": [{
+                "role": "DBA",
+                "details": [
+                    "Independently developed and maintained the company website and admin backend.",
+                    "Built high-performance full-stack applications with Vue.js and Node.js."
+                ]
+            }]
+        }]
+    }, {
+        "name": "education",
+        "sidebar": true,
+        "details": [{
+            "name": "Northeastern University",
+            "degree": "M.S.",
+            "major": "Computer Science",
+            "date_from": "2011.09",
+            "date_to": "2014.07"
+        }, {
+            "name": "Northeastern University",
+            "degree": "B.S.",
+            "major": "Computer Science",
+            "date_from": "2007.09",
+            "date_to": "2011.07"
+        }]
+    }, {
+        "name": "skill",
+        "sidebar": true,
+        "details": [{
+            "name": "Distributed Systems",
+            "description": "Familiar with Paxos and Raft consensus protocols"
+        }, {
+            "name": "Embedded Systems",
+            "description": "Hardware circuit design"
+        }]
+    }, {
+        "name": "intention",
+        "sidebar": true,
+        "details": [{
+            "name": "OLAP Engine Kernel R&D",
+            "description": "In-house engine covering compute, scheduling, storage, and SQL modules"
+        }, {
+            "name": "DevOps Systems R&D",
+            "description": "Large-scale infrastructure and monitoring systems for million-node clusters"
+        }]
+    }, {
+        "name": "others",
+        "sidebar": true,
+        "details": [{
+            "description": "English: CET-6"
+        }, {
+            "description": "Open-Source Contributor"
+        }]
+    }]
+}

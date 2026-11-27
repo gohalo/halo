@@ -1,10 +1,38 @@
-<div class="bg-muted border-t border-border">
-  <div class="mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <p class="text-center text-sm text-muted-foreground">
-      {{ i18n "copyright" }} {{ now.Year }}. {{ i18n "all_rights_reserved" }}
-    </p>
+{{- with site.Params.footer -}}
+<div class="bg-muted border-t border-border py-6 text-xs text-muted-foreground">
+  <div class="mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-1.5 text-center">
+    {{ if .hugo }}
+    <div class="flex flex-wrap items-center justify-center gap-1.5">
+      {{- $link := `<a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">Hugo</a>` -}}
+      <span>{{ printf (i18n "powered_by" | default "Powered by %s") $link | safeHTML }}</span>
+      <span>|</span>
+      <span>{{ i18n "footer_theme" | default "Theme" }} <a href="https://github.com/gohalo/halo" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">Halo</a></span>
+    </div>
+    {{ end }}
+    <div class="flex flex-wrap items-center justify-center gap-1.5">
+      {{- if .copyright }}
+      <span class="inline-flex items-center gap-1">
+        <span>&copy; {{ if and .since (lt (int .since) now.Year) }}{{ .since }} - {{ end }}{{ now.Year }}</span>
+        {{- with .author }}
+          {{ partial "component/icon.html" (dict "name" "heart" "width" "12" "class" "text-destructive inline-block") }}
+          <a href="{{ site.Home.RelPermalink }}" class="hover:text-primary transition-colors">{{ . }}</a>
+        {{- end }}
+      </span>
+      {{- end }}
+
+      {{- with .license }}
+      <span>&middot;</span>
+      <span>{{ . | safeHTML }}</span>
+      {{- end }}
+
+      {{- with .icp }}
+      <span>&middot;</span>
+      <span>{{ . | safeHTML }}</span>
+      {{- end }}
+    </div>
   </div>
 </div>
+{{- end -}}
 
 {{- if and (isset .Params "math") (eq .Params.math true) }}
   <script src="{{ "katex/katex.min.js" | relURL }}"></script>

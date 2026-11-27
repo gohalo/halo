@@ -100,6 +100,12 @@
 - id: all_rights_reserved
   translation: "保留所有权利"
 
+- id: powered_by
+  translation: "由 %s 驱动"
+
+- id: footer_theme
+  translation: "主题"
+
 # Blog 页面
 - id: blog_previous
   translation: "上一篇"

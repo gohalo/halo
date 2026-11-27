@@ -1,5 +1,5 @@
 ---
-title : "Tabbing"
+title : "标签页文档"
 layout: "redirect"
 redirect: "home"
 menu:
@@ -10,4 +10,4 @@ menu:
       tabbing: true
 ---
 
-Tabbing verson and summary docs test template for halo theme.
+集成顶部多标签页导航（`tabbing: true`）、多版本手册与 OpenAPI 接口文档的综合示例。

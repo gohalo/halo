@@ -206,14 +206,14 @@ Andy
 
 基础语言高亮显示。
 
-``` c
+```c
 int main()
 {
 	return 0;
 }
 ```
 
-``` javascript
+```javascript
 // Javascript code with syntax highlighting.
 var fun = function lang(l) {
   dateformat.i18n = require('./lang/' + l)
@@ -223,7 +223,7 @@ var fun = function lang(l) {
 
 带有行号、文件名并设置高亮显示，同时代码宽度超过显示区域。
 
-``` css {linenos=table,hl_lines=[2,"5-7"],linenostart=199,filename="style.css"}
+```css {linenos=table,hl_lines=[2,"5-7"],linenostart=199,filename="style.css"}
 #container {
 	float: left;
 	margin: 0 -240px 0                                                                                                               0;

@@ -1,5 +1,5 @@
 ---
-title : "Summary Docs"
+title : "分类文档"
 menu:
   docs:
     identifier: "summary"
@@ -9,4 +9,4 @@ menu:
       category: true
 ---
 
-Summary docs test template for halo theme.
+启用一级分类分组（`category: true`）的文档布局示例，左侧导航栏按模块带图标分组展示，结构更加清晰。

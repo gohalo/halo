@@ -1,7 +1,5 @@
 ---
 title: "Slides"
-date: 2024-03-20T10:00:00+08:00
-description: "English presentations"
 ---
 
-Welcome to the English slide deck collection.
+Online Markdown presentations powered by Reveal.js, featuring 2D navigation, step-by-step code highlighting, fragment animations, and speaker notes.

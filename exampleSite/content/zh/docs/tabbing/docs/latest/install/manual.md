@@ -1,5 +1,5 @@
 ---
-title : "Tabbing Install Manually"
+title : "手动部署"
 menu:
   docs:
     weight: 2
@@ -7,4 +7,4 @@ menu:
     identifier: "tabbing/docs/latest/install/manual"
 ---
 
-Tabbing install manually.
+通过标准 Linux 发行包手动配置节点角色、数据目录与守护进程服务。

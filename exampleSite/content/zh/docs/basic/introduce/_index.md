@@ -1,5 +1,5 @@
 ---
-title : "Basic Introduce"
+title : "产品介绍"
 tabs:
   enabled: true
   api: false
@@ -10,4 +10,4 @@ menu:
     identifier: "basic/introduce"
 ---
 
-Basic Introduce Index.
+了解项目的设计理念、核心架构以及本地安装方式。

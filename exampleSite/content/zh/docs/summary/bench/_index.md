@@ -1,5 +1,5 @@
 ---
-title : "Summary Bench"
+title : "基准测试"
 menu:
   docs:
     weight: 4
@@ -9,4 +9,4 @@ menu:
         icon: "presentation"
 ---
 
-Summary bench.
+标准数据集下的吞吐量、延迟与资源利用率测试报告。

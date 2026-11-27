@@ -1,5 +1,5 @@
 ---
-title : "Tabbing FAQ"
+title : "常见问题"
 menu:
   docs:
     weight: 3
@@ -7,4 +7,4 @@ menu:
     identifier: "tabbing/docs/latest/faq"
 ---
 
-Tabbing faq.
+集群安装、权限配置与日常运维中的常见问题汇总。

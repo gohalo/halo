@@ -1,5 +1,5 @@
 ---
-title : "Version Install K8S"
+title : "Kubernetes 部署"
 menu:
   docs:
     weight: 4
@@ -7,4 +7,4 @@ menu:
     identifier: "version/latest/install/k8s"
 ---
 
-Version install K8S.
+提供存算分离（Separated）与存算一体（Integrated）两种 Kubernetes 部署拓扑方案。

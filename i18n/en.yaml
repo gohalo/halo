@@ -101,6 +101,12 @@
 - id: all_rights_reserved
   translation: "All Rights Reserved"
 
+- id: powered_by
+  translation: "Powered by %s"
+
+- id: footer_theme
+  translation: "Theme"
+
 # Blog page
 - id: blog_previous
   translation: "Previous"

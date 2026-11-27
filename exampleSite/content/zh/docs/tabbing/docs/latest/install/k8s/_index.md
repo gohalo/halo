@@ -1,5 +1,5 @@
 ---
-title : "Tabbing Install K8S"
+title : "Kubernetes 部署"
 menu:
   docs:
     weight: 4
@@ -7,4 +7,4 @@ menu:
     identifier: "tabbing/docs/latest/install/k8s"
 ---
 
-Tabbing install K8S.
+基于 Kubernetes 原生机制实现存算分离或存算一体集群的自动化运维。

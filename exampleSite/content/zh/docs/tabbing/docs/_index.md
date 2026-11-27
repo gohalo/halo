@@ -1,5 +1,5 @@
 ---
-title : "Tabbing Docs"
+title : "使用手册"
 menu:
   docs:
     weight: 2
@@ -10,4 +10,4 @@ menu:
       category: true
 ---
 
-Tabbing Docs
+包含多版本切换与模块化分类目录的完整产品使用手册。

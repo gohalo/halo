@@ -1,5 +1,5 @@
 ---
-title : "Tabbing Latest"
+title : "最新版本 (Latest)"
 menu:
   docs:
     weight: 1
@@ -7,4 +7,4 @@ menu:
     identifier: "tabbing/docs/latest"
 ---
 
-Tabbing version docs test template for halo theme.
+当前最新版本的完整使用手册，涵盖快速开始、集群部署、常见问题与性能基准。

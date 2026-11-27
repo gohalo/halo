@@ -1,5 +1,5 @@
 ---
-title : "Version FAQ"
+title : "常见问题"
 menu:
   docs:
     weight: 3
@@ -7,4 +7,4 @@ menu:
     identifier: "version/latest/faq"
 ---
 
-Version faq.
+最新版本升级、兼容性与日常运维常见问题解答。

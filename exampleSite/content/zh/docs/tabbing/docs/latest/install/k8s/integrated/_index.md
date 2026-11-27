@@ -1,5 +1,5 @@
 ---
-title : "Tabbing Install K8S Integrated"
+title : "存算一体部署"
 params:
   version: true
   category: true
@@ -10,4 +10,4 @@ menu:
     identifier: "tabbing/docs/latest/install/k8s/integrated"
 ---
 
-Tabbing install K8S Integrated.
+紧耦合本地高速存储与计算实例，适合追求极致 I/O 吞吐与稳定低延迟的核心业务。

@@ -5,7 +5,7 @@ header:
   logo: "/images/logo.svg"
   title: "Halo"
   url: "/"
-  align: "center"
+  align: "right"
   border: false
   menus:
     - name: "Blog"
@@ -15,17 +15,17 @@ header:
       pageRef: "/docs/"
       weight: 40
   icons:
-    - name: "theme"
-      default: "auto"
-      responsive: "always"
-    - name: "language"
-      responsive: "md"
     - name: "link"
       responsive: "lg"
       icon: "github"
       blank: true
       translate: "github"
       target: "https://github.com/gohalo/halo"
+    - name: "language"
+      responsive: "md"
+    - name: "theme"
+      default: "auto"
+      responsive: "always"
 hero:
   badge:
     text: "Free, open source"

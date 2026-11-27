@@ -1,5 +1,5 @@
 ---
-title : "Tabbing Install K8S Integrated Operator"
+title : "Operator 管理"
 menu:
   docs:
     weight: 2
@@ -7,4 +7,4 @@ menu:
     identifier: "tabbing/docs/latest/install/k8s/integrated/operator"
 ---
 
-Tabbing install K8S Integrated Operator.
+使用 Kubernetes Operator 实现版本在线升级、配置热更新与故障节点自动替换。

@@ -1,5 +1,5 @@
 ---
-title : "Tabbing Install"
+title : "安装部署"
 menu:
   docs:
     weight: 2
@@ -7,4 +7,4 @@ menu:
     identifier: "tabbing/docs/latest/install"
 ---
 
-Tabbing install.
+支持从单机二进制、云平台托管到 Kubernetes 生产集群的全场景安装部署。

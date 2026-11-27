@@ -1,12 +1,5 @@
 ---
-title : "Docs"
+title : "文档中心"
 ---
 
-所有文档。
-
-<!--
-Alpine.js 可以用来简化 JS 编写
-
-Docs Example
-https://docs.tavily.com/welcome
--->
+集中展示 Halo 主题支持的各类文档布局示例，涵盖基础树形文档、分类汇总文档、多版本文档以及带顶部标签页（含 OpenAPI）的综合文档。

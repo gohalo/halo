@@ -1,10 +1,14 @@
 {{/* $src := partial "function/asset.html" (dict "page" $page "target" "images/logo.svg") */}}
+{{/* $darkSrc := partial "function/asset.html" (dict "page" $page "target" "images/logo-dark.svg" "strict" true) */}}
 {{- $src := "" -}}
 {{- $page := .page -}}
+{{- $strict := .strict | default false -}}
 {{- with (or .target .src .path) -}}
     {{- $clean := strings.TrimPrefix "/" . -}}
     {{- if or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://") (strings.HasPrefix . "//") -}}
-        {{- $src = . -}}
+        {{- if not $strict -}}
+            {{- $src = . -}}
+        {{- end -}}
     {{- else -}}
         {{- with $page.Resources.GetMatch $clean -}}
             {{- $src = .RelPermalink -}}
@@ -12,10 +16,18 @@
             {{- with site.Home.Resources.GetMatch $clean -}}
                 {{- $src = .RelPermalink -}}
             {{- else -}}
-                {{- if os.FileExists (printf "/static/%s" $clean) -}}
-                    {{- $src = . | relURL -}}
+                {{- with resources.Get $clean -}}
+                    {{- $src = .RelPermalink -}}
                 {{- else -}}
-                    {{- $src = . | relLangURL -}}
+                    {{- if os.FileExists (printf "/static/%s" $clean) -}}
+                        {{- $src = . | relURL -}}
+                    {{- else if not $strict -}}
+                        {{- if strings.HasPrefix . "/" -}}
+                            {{- $src = . | relLangURL -}}
+                        {{- else -}}
+                            {{- $src = . -}}
+                        {{- end -}}
+                    {{- end -}}
                 {{- end -}}
             {{- end -}}
         {{- end -}}

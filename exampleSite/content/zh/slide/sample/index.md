@@ -1,44 +1,100 @@
 ---
-title: "Slide Sample"
+title: "Halo 主题与 Reveal.js 演示指南"
 date: 2024-03-20T10:00:00+08:00
-description: "A sample presentation using Reveal.js"
+description: "使用纯 Markdown 编写支持二维翻页、代码逐行聚焦与演讲备注的在线幻灯片"
 reveal:
     theme: "black"
 ---
 
-# Slide 1
+# Halo 在线演示
 
-This is a sample slide.
+### 用纯 Markdown 打造优雅的技术分享文稿
 
----
+按 `Space` 或方向键开始浏览 · 按 `S` 打开演讲者视图
 
-# Slide 2
-
-- Item 1
-- Item 2
-- Item 3
+Note:
+欢迎大家！这是演讲者备注区域，按下键盘上的 S 键即可在独立窗口中查看当前页备注、计时器与下一页预览。
 
 ---
 
-# Slide 3
+## 核心特性一览
 
-Code example:
+- **纯文本驱动**：告别繁琐排版，专注于内容本身 <!-- .element: class="fragment" -->
+- **二维章节结构**：`---` 横向切换主题，`--` 纵向深入细节 <!-- .element: class="fragment" -->
+- **代码逐行聚焦**：专为技术分享打造的代码高亮演进效果 <!-- .element: class="fragment" -->
+- **丰富交互插件**：内置演讲备注、全局搜索与局部放大 <!-- .element: class="fragment" -->
 
-```go
+---
+
+## 二维导航演示
+
+向右翻页进入下一章节，**向下翻页（`↓`）** 查看本章节的深入内容
+
+--
+
+### 纵向子页 2.1：为什么需要二维结构？
+
+1. 主线流程保持简洁，听众不会迷失在细节中
+2. 遇到提问时可以向下展开备选方案或架构图
+3. 时间紧凑时可直接向右跳过纵向深入页
+
+--
+
+### 纵向子页 2.2：引用与强调
+
+> 优秀的工具应当让创作者忘记工具的存在，把全部精力留给表达与思考。
+
+---
+
+## 代码高亮与逐行演进
+
+通过 `[行号|行号]` 语法翻页时分步聚焦代码：
+
+```go [1-3|5-9|11-14]
+package main
+
+import "fmt"
+
+type Service struct {
+    Name string
+    Port int
+}
+
 func main() {
-    fmt.Println("Hello, World!")
+    svc := Service{Name: "halo-docs", Port: 8080}
+    fmt.Printf("Starting %s on :%d\n", svc.Name, svc.Port)
 }
 ```
 
+Note:
+第一步展示包声明与导入；第二步聚焦结构体定义；第三步展示服务初始化与启动输出。
+
 ---
 
-# Slide 4
+## 表格与架构对比
+
+| 特性维度 | 传统演示软件 | Halo + Reveal.js |
+| :--- | :--- | :--- |
+| 版本管理 | 二进制文件难以 Diff | 纯文本 Git 协同 |
+| 代码展示 | 手动截图或复制粘贴 | 原生语法高亮与分步聚焦 |
+| 发布分享 | 需导出发送附件 | 构建即生成在线链接 |
+
+---
+
+<!-- .slide: data-background="#0f172a" -->
+
+## 常用快捷键速查
+
+- `←` `→` `↑` `↓` / `Space`：二维方向翻页
+- `ESC` / `O`：开启全局幻灯片鸟瞰图
+- `S`：打开演讲者视图（含计时与备注）
+- `Alt + 点击`：放大查看当前局部内容
+- `Ctrl + Shift + F`：全文检索幻灯片内容
+
+---
+
+# 感谢观看！
 
 ![Logo](/images/logo.svg)
 
----
-
-# Slide 5
-
-Thanks!
-
+点击左上角图标即可返回幻灯片列表

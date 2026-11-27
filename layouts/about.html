@@ -1,0 +1,53 @@
+{{ define "main" }}
+{{- $page := . -}}
+<article class="flex-1 min-w-0 py-12 flex flex-col items-center justify-center min-h-[calc(100vh-12rem)]">
+    {{ with .Params.profile }}
+        {{- $profile := . -}}
+        <div class="flex flex-col items-center text-center mb-8">
+            {{ with .avatar }}
+                {{- $target := partial "function/asset.html" (dict "page" $page "target" .) -}}
+                <img src="{{ $target }}" alt="{{ $profile.name | default $page.Title }}"
+                    class="w-32 h-32 transition-transform duration-300 hover:scale-105" />
+            {{ end }}
+
+            {{ with .name }}
+                <h1 class="mt-4 text-3xl font-bold text-foreground">{{ . }}</h1>
+            {{ end }}
+
+            {{ with .subtitle }}
+                <p class="mt-2 text-base text-muted-foreground max-w-md">{{ . }}</p>
+            {{ end }}
+
+            {{ with .socials }}
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-4">
+                    {{ range . }}
+                        {{- $tip := or .tooltip .title -}}
+                        {{- $href := partial "function/url.html" (dict "page" $page "target" .url) -}}
+                        {{ if $href }}
+                        <a href="{{ $href }}"
+                            {{ with $tip }}aria-label="{{ . }}"{{ end }}
+                            {{ if or (strings.HasPrefix $href "http://") (strings.HasPrefix $href "https://") }}target="_blank" rel="noopener noreferrer"{{ end }}
+                            class="relative group text-muted-foreground hover:text-primary transition-colors">
+                            {{ partial "component/icon.html" (dict "name" .icon "width" "22") }}
+                            {{ with $tip }}
+                                <span class="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 text-xs bg-foreground text-background rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-100">{{ . }}</span>
+                            {{ end }}
+                        </a>
+                        {{ end }}
+                    {{ end }}
+                </div>
+            {{ end }}
+        </div>
+    {{ else }}
+        {{ with .Title }}
+            <header class="mb-8 text-center">
+                <h1 class="text-4xl font-bold text-foreground mb-4">{{ . }}</h1>
+            </header>
+        {{ end }}
+    {{ end }}
+
+    {{ with .Content }}
+        <div class="content max-w-2xl w-full text-center">{{ . }}</div>
+    {{ end }}
+</article>
+{{ end }}

@@ -60,29 +60,33 @@ This is <u>Underline</u>. 下划线。
 
 单段的引用。
 
-> My conclusion after the trip was "well, now I know that there's at least one company in the world that can succeed with the waterfall model" and I decided to stop bashing the waterfall model as hard as I usually do. Now, however, with all the problems Toyota are having, I'm starting to reconsider.q q q q q q q q q q q q q q q<from>kkkkk</from>
+> 是最好的时代，这是最坏的时代；这是智慧的时代，这是愚蠢的时代；这是信仰的时期，这是怀疑的时期；这是光明的季节，这是黑暗的季节；这是希望之春，这是失望之冬；人们面前有着各样事物，人们面前一无所有；人们正在直登天堂，人们正在直下地狱。<from>查尔斯·狄更斯 《双城记》</from>
 
 多段的引用。
 
-> My conclusion after the trip was "well, now I know that there's at least one company in the world that can succeed with the waterfall model" and I decided to stop bashing the waterfall model as hard as I usually do. Now, however, with all the problems Toyota are having, I'm starting to reconsider.
+> 是最好的时代，这是最坏的时代；这是智慧的时代，这是愚蠢的时代；
 >
-> My conclusion after the trip was "well, now I know that there's at least one company in the world that can succeed with the waterfall model" and I decided to stop bashing the waterfall model as hard as I usually do. Now, however, with all the problems Toyota are having, I'm starting to .q q q q q
+> 这是信仰的时期，这是怀疑的时期；这是光明的季节，这是黑暗的季节；这是希望之春，这是失望之冬；人们面前有着各样事物，人们面前一无所有；人们正在直登天堂，人们正在直下地狱。<from>查尔斯·狄更斯 《双城记》</from>
 
 单段，但较为复杂的引用。
 
-> My conclusion after the trip was "well,
-> now I know that there's at least one company in the world
-> that can succeed with the waterfall model" and I decided to
-> stop bashing the waterfall model as hard as I usually do.
-> Now, however, with all the problems Toyota are having, I'm starting to reconsider.
+> 是最好的时代，这是最坏的时代；
+> 这是智慧的时代，这是愚蠢的时代；
+> 这是信仰的时期，这是怀疑的时期；
+> 这是光明的季节，这是黑暗的季节；
+> 这是希望之春，这是失望之冬；
+> 人们面前有着各样事物，人们面前一无所有；
+> 人们正在直登天堂，人们正在直下地狱。<from>查尔斯·狄更斯 《双城记》</from>
 
 嵌套引用。
 
-> My conclusion after the trip was "well,
-> now I know that there's at least one company in the world
-> > that can succeed with the waterfall model" and I decided to
-> stop bashing the waterfall model as hard as I usually do.
-> Now, how ever, with all the problems Toyota are having, I'm starting to re consider.
+> 是最好的时代，这是最坏的时代；
+> 这是智慧的时代，这是愚蠢的时代；
+> > 这是信仰的时期，这是怀疑的时期；
+> 这是光明的季节，这是黑暗的季节；
+> 这是希望之春，这是失望之冬；
+> 人们面前有着各样事物，人们面前一无所有；
+> 人们正在直登天堂，人们正在直下地狱。<from>查尔斯·狄更斯 《双城记》</from>
 
 # 引用
 

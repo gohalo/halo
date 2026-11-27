@@ -31,6 +31,9 @@
 
     blockquote {
         @apply ml-8 my-2 p-2 bg-muted rounded-md border-s-6 border-primary text-muted-foreground;
+        from {
+            @apply block mt-1 text-xs text-right before:content-['—_'];
+        }
     }
 
     /* 列表样式 */

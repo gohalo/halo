@@ -5,7 +5,7 @@
 {{ $url := "" }}
 {{ $page := .page }}
 {{ with .target }}
-    {{ if or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://") (strings.HasPrefix . "//") }}
+    {{ if or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://") (strings.HasPrefix . "//") (strings.HasPrefix . "mailto:") (strings.HasPrefix . "tel:") (strings.HasPrefix . "#") }}
         {{ $url = . }}
     {{ else if strings.HasPrefix . "/" }}
         {{ with site.GetPage . }}

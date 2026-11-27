@@ -3,10 +3,11 @@
 {{- $enabled := true -}}
 {{- with $search -}}{{- $enabled = .enable | default true -}}{{- end -}}
 
-{{- $menuSearch := dict -}}
-{{- with site.Params.menu -}}{{- with .search -}}{{- $menuSearch = . -}}{{- end -}}{{- end -}}
+{{- $header := .header | default (partial "function/header.html" .page) -}}
+{{- $menuSearch := $header.search | default dict -}}
 {{- if and $enabled (or (not $menuSearch) ($menuSearch.enable | default true)) -}}
-    {{- $responsive := partial "function/responsive.html" ($menuSearch.display | default "md") -}}
+    {{- $display := .icon.responsive | default ($menuSearch.display | default "md") -}}
+    {{- $responsive := partial "function/responsive.html" $display -}}
     <button
         type="button"
         class="nav-icon group {{ $responsive }}"

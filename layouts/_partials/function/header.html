@@ -1,0 +1,180 @@
+{{- $page := . -}}
+{{- $siteMenu := site.Params.menu | default dict -}}
+{{- $pageHeader := $page.Params.header | default dict -}}
+
+{{- $logo := index $siteMenu "logo" -}}
+{{- if isset $pageHeader "logo" -}}
+    {{- $logo = index $pageHeader "logo" -}}
+{{- end -}}
+
+{{- $title := index $siteMenu "title" -}}
+{{- if isset $pageHeader "title" -}}
+    {{- $title = index $pageHeader "title" -}}
+{{- end -}}
+
+{{- $url := "/" | relLangURL -}}
+{{- with index $pageHeader "url" -}}
+    {{- if or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://") (strings.HasPrefix . "#") -}}
+        {{- $url = . -}}
+    {{- else -}}
+        {{- $url = . | relLangURL -}}
+    {{- end -}}
+{{- end -}}
+
+{{- $align := $siteMenu.align | default "left" -}}
+{{- if isset $pageHeader "align" -}}
+    {{- $align = index $pageHeader "align" -}}
+{{- end -}}
+
+{{- $border := $siteMenu.border | default false -}}
+{{- if isset $pageHeader "border" -}}
+    {{- $border = index $pageHeader "border" -}}
+{{- end -}}
+
+{{- $search := $siteMenu.search | default dict -}}
+{{- if isset $pageHeader "search" -}}
+    {{- $search = index $pageHeader "search" -}}
+{{- end -}}
+
+{{- $icons := $siteMenu.icons | default slice -}}
+{{- if isset $pageHeader "icons" -}}
+    {{- $icons = index $pageHeader "icons" -}}
+{{- end -}}
+
+{{- $menus := index site.Menus "main" -}}
+{{- if isset $pageHeader "menus" -}}
+    {{- $rawMenus := index $pageHeader "menus" -}}
+    {{- if reflect.IsSlice $rawMenus -}}
+        {{- $menus = partial "inline/header/build-menus.html" (dict "page" $page "items" $rawMenus) -}}
+    {{- else if $rawMenus -}}
+        {{- $menus = index site.Menus (printf "%v" $rawMenus) -}}
+    {{- else -}}
+        {{- $menus = slice -}}
+    {{- end -}}
+{{- end -}}
+
+{{- return (dict
+    "logo" $logo
+    "title" $title
+    "url" $url
+    "align" $align
+    "border" $border
+    "search" $search
+    "icons" $icons
+    "menus" $menus
+) -}}
+
+{{- define "_partials/inline/header/resolve-item-url.html" -}}
+    {{- $page := .page -}}
+    {{- $item := .item -}}
+    {{- $url := "" -}}
+    {{- with (or $item.url $item.URL) -}}
+        {{- if or (strings.HasPrefix . "http://") (strings.HasPrefix . "https://") (strings.HasPrefix . "//") (strings.HasPrefix . "#") -}}
+            {{- $url = . -}}
+        {{- else -}}
+            {{- $url = . | relLangURL -}}
+        {{- end -}}
+    {{- else -}}
+        {{- with (or $item.pageRef $item.PageRef) -}}
+            {{- with site.GetPage . -}}
+                {{- $url = .RelPermalink -}}
+            {{- else -}}
+                {{- $url = . | relLangURL -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+    {{- return $url -}}
+{{- end -}}
+
+{{- define "_partials/inline/header/build-menus.html" -}}
+    {{- $page := .page -}}
+    {{- $items := .items -}}
+    {{- $normalized := slice -}}
+
+    {{- range $idx, $item := $items -}}
+        {{- $itemURL := partial "inline/header/resolve-item-url.html" (dict "page" $page "item" $item) -}}
+        {{- $weight := $item.weight | default (add (mul $idx 10) 10) -}}
+        {{- $params := $item.params | default dict -}}
+        {{- $hasExplicitActive := isset $item "active" -}}
+        {{- $explicitActive := false -}}
+        {{- if $hasExplicitActive -}}
+            {{- $explicitActive = $item.active -}}
+        {{- end -}}
+        {{- $normalized = $normalized | append (dict
+            "Name" (or $item.name $item.Name)
+            "URL" $itemURL
+            "Weight" $weight
+            "Identifier" ($item.identifier | default "")
+            "Parent" ($item.parent | default "")
+            "Params" $params
+            "RawChildren" ($item.children | default slice)
+            "HasExplicitActive" $hasExplicitActive
+            "ExplicitActive" $explicitActive
+        ) -}}
+    {{- end -}}
+
+    {{- $sorted := sort $normalized "Weight" -}}
+    {{- $result := slice -}}
+
+    {{- range $sorted -}}
+        {{- if not .Parent -}}
+            {{- $top := . -}}
+            {{- $children := slice -}}
+            {{- $hasActiveChild := false -}}
+
+            {{- if $top.Identifier -}}
+                {{- range $sorted -}}
+                    {{- if and .Parent (eq .Parent $top.Identifier) -}}
+                        {{- $cActive := eq .URL $page.RelPermalink -}}
+                        {{- if .HasExplicitActive -}}
+                            {{- $cActive = .ExplicitActive -}}
+                        {{- end -}}
+                        {{- if $cActive -}}
+                            {{- $hasActiveChild = true -}}
+                        {{- end -}}
+                        {{- $children = $children | append (dict
+                            "Name" .Name
+                            "URL" .URL
+                            "Params" .Params
+                            "Children" slice
+                            "Active" $cActive
+                        ) -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+
+            {{- range $top.RawChildren -}}
+                {{- $cURL := partial "inline/header/resolve-item-url.html" (dict "page" $page "item" .) -}}
+                {{- $cActive := eq $cURL $page.RelPermalink -}}
+                {{- if isset . "active" -}}
+                    {{- $cActive = .active -}}
+                {{- end -}}
+                {{- if $cActive -}}
+                    {{- $hasActiveChild = true -}}
+                {{- end -}}
+                {{- $children = $children | append (dict
+                    "Name" (or .name .Name)
+                    "URL" $cURL
+                    "Params" (.params | default dict)
+                    "Children" slice
+                    "Active" $cActive
+                ) -}}
+            {{- end -}}
+
+            {{- $topActive := or (eq $top.URL $page.RelPermalink) (and $hasActiveChild (not $page.Layout)) -}}
+            {{- if $top.HasExplicitActive -}}
+                {{- $topActive = $top.ExplicitActive -}}
+            {{- end -}}
+
+            {{- $result = $result | append (dict
+                "Name" $top.Name
+                "URL" $top.URL
+                "Params" $top.Params
+                "Children" $children
+                "Active" $topActive
+            ) -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- return $result -}}
+{{- end -}}

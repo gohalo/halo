@@ -11,7 +11,9 @@
         {{ end }}
 
         {{- $active := false }}
-        {{- if $page.IsMenuCurrent "main" . }}
+        {{- if reflect.IsMap . }}
+            {{- $active = .Active | default false }}
+        {{- else if $page.IsMenuCurrent "main" . }}
             {{- $active = true }}
         {{- else if and ($page.HasMenuCurrent "main" .) (not $page.Layout) }}
             {{- $active = true }} {{/* Layout for blog tags and archives pages */}}

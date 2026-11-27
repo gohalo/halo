@@ -1,15 +1,16 @@
 {{- $page := . -}}
-{{- $align := .Site.Params.menu.align | default "left" -}}
-<nav class="{{ if eq .Site.Params.menu.border true }}border-b border-border {{ end }}bg-background">
+{{- $header := partial "function/header.html" $page -}}
+{{- $align := $header.align | default "left" -}}
+<nav class="{{ if eq $header.border true }}border-b border-border {{ end }}bg-background">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="{{ if eq $align "center" }}relative {{ end }}flex justify-between items-center h-16">
             <div class="flex items-center{{ if eq $align "left" }} space-x-1{{ end }}">
                 <!-- 左侧：Title 和 Logo -->
-                {{ partial "header/title.html" . }}
+                {{ partial "header/title.html" (dict "page" $page "header" $header) }}
 
                 <!-- 主菜单（靠左） -->
                 {{ if eq $align "left" }}
-                    {{ with index site.Menus "main" }}
+                    {{ with $header.menus }}
                     <div class="hidden md:flex items-center space-x-1 ml-8">
                         {{ partial "menu.html" (dict "menu" . "page" $page) }}
                     </div>
@@ -19,16 +20,24 @@
 
             <!-- 主菜单（居中） -->
             {{ if eq $align "center" }}
-                {{ with index site.Menus "main" }}
+                {{ with $header.menus }}
                 <div class="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center space-x-1">
                     {{ partial "menu.html" (dict "menu" . "page" $page) }}
                 </div>
                 {{ end }}
             {{ end }}
 
-            <!-- 右侧：搜索、Dark/Light切换、语言选择、GitHub、关于 -->
+            <!-- 右侧：主菜单（靠右）、搜索、Dark/Light切换、语言选择、GitHub、关于 -->
             <div class="flex items-center space-x-2">
-                {{ partial "header/icons.html" $page }}
+                {{ if eq $align "right" }}
+                    {{ with $header.menus }}
+                    <div class="hidden md:flex items-center space-x-1 mr-4">
+                        {{ partial "menu.html" (dict "menu" . "page" $page) }}
+                    </div>
+                    {{ end }}
+                {{ end }}
+
+                {{ partial "header/icons.html" (dict "page" $page "header" $header) }}
 
                 <!-- 移动端菜单按钮 -->
                 <button type="button" class="icon-button md:hidden" aria-label="Open menu" id="main-mobile-menu-button">
@@ -42,7 +51,7 @@
     <div class="hidden md:hidden" id="main-mobile-menu">
         <div class="p-1 space-y-1 border-t border-border">
         {{ $class := "py-1 block text-sm rounded-sm" }}
-        {{ with index site.Menus "main" }}
+        {{ with $header.menus }}
             {{ range . }}
                 {{- $enabled := true }}
                 {{- if isset .Params "enabled" }}

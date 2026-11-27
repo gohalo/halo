@@ -1,6 +1,8 @@
+{{- $page := . -}}
+{{- $header := partial "function/header.html" $page -}}
 {{ $height := "h-16" }}
 {{ $border := "" }}
-{{ if eq .Site.Params.menu.border "border" }}
+{{ if eq $header.border true }}
     {{ $border = "border-b border-border" }}
 {{ end }}
 {{ with (partial "function/docs/root.html" .) }}
@@ -10,13 +12,12 @@
     {{ end }}
 {{ end}}
 
-{{- $page := . -}}
 <nav class="bg-background {{ $border }}">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="relative flex justify-between items-center {{ $height }}">
             <!-- 左侧：Title 和 Logo -->
             <div class="flex items-center space-x-1">
-                {{ partial "header/title.html" . }}
+                {{ partial "header/title.html" (dict "page" $page "header" $header) }}
             </div>
 
             <!-- 中间：全站搜索 -->
@@ -27,7 +28,7 @@
             <!-- 右侧：搜索、Dark/Light切换、语言选择、GitHub、关于 -->
             <div class="flex items-center space-x-2">
                 {{ partial "docs/version.html" . }}
-                {{ partial "header/icons.html" $page }}
+                {{ partial "header/icons.html" (dict "page" $page "header" $header) }}
             </div>
         </div>
 

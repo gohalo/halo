@@ -217,9 +217,9 @@ var fun = function lang(l) {
 }
 ```
 
-With line numbers and highlighting, code width exceeds display area.
+With line numbers, filename and highlighting, code width exceeds display area.
 
-``` css {linenos=table,hl_lines=[2,"5-7"],linenostart=199}
+``` css {linenos=table,hl_lines=[2,"5-7"],linenostart=199,filename="style.css"}
 #container {
 	float: left;
 	margin: 0 -240px 0                                                                                                               0;

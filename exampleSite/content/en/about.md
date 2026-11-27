@@ -1,5 +1,5 @@
 ---
-title : "About"
+width: wide
 ---
 
 Some tips for you.

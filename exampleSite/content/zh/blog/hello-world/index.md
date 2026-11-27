@@ -164,7 +164,7 @@ Andy
 
 还可以设置高度或者宽度，支持 `%` 方式，如下会渲染为 `<img>` 图片，而且允许配置 Dark 模式下的图片。
 
-![hello world logo](images/hello-world.jpg?width=20%&height=100px)
+![hello world logo](images/hello-world.jpg?width=30%)
 
 如下因为添加了 `title` 信息会使用 `<figure>` 展示。
 
@@ -172,7 +172,7 @@ Andy
 
 默认居中显示，还可以设置浮动到左或者右。
 
-![some small logo](images/linux-liberty.png?float=right&width=50px)
+![some small logo](images/linux-liberty.png?float=right&width=100px)
 <!---->
 <!-- 还需要一些文本数据。 -->
 <!---->
@@ -217,9 +217,9 @@ var fun = function lang(l) {
 }
 ```
 
-带有行号并设置高亮显示，同时代码宽度超过显示区域。
+带有行号、文件名并设置高亮显示，同时代码宽度超过显示区域。
 
-``` css {linenos=table,hl_lines=[2,"5-7"],linenostart=199}
+``` css {linenos=table,hl_lines=[2,"5-7"],linenostart=199,filename="style.css"}
 #container {
 	float: left;
 	margin: 0 -240px 0                                                                                                               0;

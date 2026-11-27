@@ -34,9 +34,28 @@ code {
 }
 
 /* 鼠标悬停时显示工具栏 */
+.code-block:hover .code-toolbar,
 .highlight:hover .code-toolbar,
 .code-block-shell:hover .code-toolbar {
     @apply opacity-100;
+}
+
+/* 带文件名的代码块容器 */
+.code-block {
+    @apply my-2 relative max-w-full;
+    .highlight {
+        @apply my-0;
+        > .chroma,
+        > pre {
+            @apply rounded-t-none;
+        }
+    }
+}
+
+/* 代码块顶部文件名栏 */
+.code-filename {
+    @apply h-8 px-3 pr-24 flex items-center rounded-t-md text-xs font-mono font-medium truncate;
+    @apply bg-muted text-muted-foreground;
 }
 
 /* 语言标签样式 */

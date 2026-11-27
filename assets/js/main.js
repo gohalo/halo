@@ -22,13 +22,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // 非高亮代码块包一层容器，避免工具栏随横向滚动移动
+            // 非高亮代码块包一层容器，避免工具栏随横向滚动移动；带文件名的代码块挂载到外层容器
             let container = block;
             if (block.tagName === 'PRE') {
                 container = document.createElement('div');
                 container.className = 'code-block-shell';
                 block.parentNode.insertBefore(container, block);
                 container.appendChild(block);
+            } else if (block.parentElement && block.parentElement.classList.contains('code-block')) {
+                container = block.parentElement;
             }
 
             // 创建复制按钮

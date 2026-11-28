@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
     <head>
+        {{ partial "head/meta.html" . }}
         {{ partial "head/css.html" . }}
     </head>
     <body class="leading-normal tracking-normal print:bg-white">

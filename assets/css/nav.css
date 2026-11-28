@@ -39,7 +39,15 @@ nav {
         }
 
         .menu-item {
-            @apply p-0 whitespace-nowrap;
+            @apply p-0 rounded-none whitespace-nowrap;
+            &:first-child,
+            &:first-child > .dropdown-item {
+                @apply rounded-t-md;
+            }
+            &:last-child,
+            &:last-child > .dropdown-item {
+                @apply rounded-b-md;
+            }
         }
 
         .dropdown-item {

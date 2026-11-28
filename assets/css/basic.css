@@ -57,7 +57,7 @@
     }
 
     /* 表格样式 */
-    table {
+    table:not(.lntable) {
         @apply max-w-[95%] my-2 mx-auto border-collapse;
         thead {
             @apply bg-muted;

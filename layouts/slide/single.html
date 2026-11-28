@@ -1,10 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>{{ .Title }} | {{ .Site.Title }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+    {{ partial "head/meta.html" . }}
     <link rel="stylesheet" href="/reveal/dist/reveal.css">
     <link rel="stylesheet" href="/reveal/dist/theme/{{ .Params.reveal.theme | default "black" }}.css" id="theme">
     <link rel="stylesheet" href="/reveal/plugin/highlight/monokai.css">

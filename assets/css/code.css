@@ -79,19 +79,20 @@ code {
 .highlight {
     @apply my-2 relative max-w-full text-sm;
     code {
-        @apply whitespace-pre px-0 text-nowrap;
+        @apply inline-block min-w-full whitespace-pre px-0 text-nowrap;
     }
     > .chroma {
         @apply py-2 rounded-md max-w-full overflow-x-auto;
         table { /* 有行号的代码块使用 table 布局 */
+            @apply w-full max-w-full m-0;
             pre {
                 @apply p-0;
             }
             td:first-child { /* lineno */
-                @apply ml-2;
+                @apply ml-2 w-auto;
             }
             td:last-child { /* code */
-                @apply p-0;
+                @apply w-full p-0;
             }
         }
         .hl {

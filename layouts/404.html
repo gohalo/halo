@@ -1,0 +1,16 @@
+{{ define "main" }}
+<div class="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)] py-12 text-center">
+    <div class="text-8xl font-extrabold text-muted-foreground/80 select-none">404</div>
+    <h1 class="mt-4 text-2xl font-bold text-foreground">
+        {{ i18n "page_not_found" | default "Page Not Found" }}
+    </h1>
+    <p class="mt-2 text-sm text-muted-foreground max-w-md">
+        {{ i18n "page_not_found_desc" | default "Sorry, the page you are looking for does not exist or has been moved." }}
+    </p>
+    <a href="{{ site.Home.RelPermalink }}"
+       class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-muted tebg-muted-foreground hover:bg-secondary/90 transition-colors">
+        {{ partial "component/icon.html" (dict "name" "house" "width" "16") }}
+        <span>{{ i18n "back_to_home" | default "Back to Home" }}</span>
+    </a>
+</div>
+{{ end }}

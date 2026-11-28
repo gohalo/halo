@@ -170,6 +170,14 @@
 - id: api_default_tag
   translation: "Default"
 
+# 404 page
+- id: page_not_found
+  translation: "Page Not Found"
+- id: page_not_found_desc
+  translation: "Sorry, the page you are looking for does not exist or has been moved."
+- id: back_to_home
+  translation: "Back to Home"
+
 # Resume
 - id: resume_experience
   translation: "Experience"

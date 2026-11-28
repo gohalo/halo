@@ -169,6 +169,14 @@
 - id: api_default_tag
   translation: "默认"
 
+# 404 页面
+- id: page_not_found
+  translation: "页面未找到"
+- id: page_not_found_desc
+  translation: "抱歉，您访问的页面不存在或已被移除。"
+- id: back_to_home
+  translation: "返回首页"
+
 # 简历相关
 - id: resume_experience
   translation: "工作经历"

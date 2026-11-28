@@ -21,7 +21,7 @@
                     "Led architecture design and development of core business systems supporting tens of millions of daily requests.",
                     "Optimized database query performance, reducing core API response latency by 50%.",
                     "Led a 5-engineer team to complete microservice decomposition and improve scalability.",
-                    "![OLAP System](images/olap.svg?width=40%)"
+                    "![svg log](images/example.svg?width=40%)"
                 ]
             }]
         }, {

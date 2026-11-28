@@ -95,6 +95,6 @@ Note:
 
 # 感谢观看！
 
-![Logo](/images/logo.svg)
+![Logo](/images/logo.svg) <!-- .element: style="filter: invert(1);" -->
 
 点击左上角图标即可返回幻灯片列表

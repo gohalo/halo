@@ -2,8 +2,11 @@
 <html lang="en">
   <head>
     {{ partial "head/meta.html" . }}
+    {{- $theme := .Params.reveal.theme | default "black" -}}
+    {{- $darkThemes := slice "black" "blood" "dracula" "league" "moon" "night" -}}
+    {{- $invertLogo := in $darkThemes $theme -}}
     <link rel="stylesheet" href="/reveal/dist/reveal.css">
-    <link rel="stylesheet" href="/reveal/dist/theme/{{ .Params.reveal.theme | default "black" }}.css" id="theme">
+    <link rel="stylesheet" href="/reveal/dist/theme/{{ $theme }}.css" id="theme">
     <link rel="stylesheet" href="/reveal/plugin/highlight/monokai.css">
     <style>
       .slide-logo {
@@ -23,7 +26,7 @@
   </head>
   <body>
     <a href="{{ "slide/" | relLangURL }}" class="slide-logo" title="Back to Slides">
-      <img src="/images/logo.svg" alt="Logo">
+      <img src="{{ site.Params.menu.logo | default "/images/logo.svg" | relURL }}" alt="Logo"{{ if $invertLogo }} style="filter: invert(1);"{{ end }}>
     </a>
     <div class="reveal">
       <div class="slides">

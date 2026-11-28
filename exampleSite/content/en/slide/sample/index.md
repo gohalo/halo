@@ -95,6 +95,6 @@ Step 1 highlights package and imports; Step 2 focuses on the struct definition; 
 
 # Thank You!
 
-![Logo](/images/logo.svg)
+![Logo](/images/logo.svg) <!-- .element: style="filter: invert(1);" -->
 
 Click the top-left logo to return to the slides list
